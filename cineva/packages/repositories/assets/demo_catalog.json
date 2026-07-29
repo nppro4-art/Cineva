@@ -1,0 +1,4075 @@
+{
+  "contents": [
+    {
+      "id": "movie_radiant_city",
+      "title": "Radiant City",
+      "subtitle": "Thriller néon • 2026",
+      "contentType": "movie",
+      "badge": "4K HDR",
+      "description": "Dans une métropole nocturne ultra-connectée, une enquêtrice découvre une architecture secrète enfouie sous la ville.",
+      "directorName": "Lina Voss",
+      "genres": [
+        "Thriller",
+        "Science-fiction"
+      ],
+      "year": 2026,
+      "durationMinutes": 124,
+      "ageRating": "13+",
+      "backdropPath": "demo://radiant_city_backdrop",
+      "posterPath": "demo://radiant_city_poster",
+      "isFeatured": true,
+      "castNames": [
+        "Ava Mercer",
+        "Noah Vale",
+        "Iris Kane"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 8.8,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "movie_radiant_city",
+      "seasons": []
+    },
+    {
+      "id": "movie_after_midnight",
+      "title": "After Midnight Atlas",
+      "subtitle": "Drame urbain • 2025",
+      "contentType": "movie",
+      "badge": "Nouveau",
+      "description": "Un cartographe de nuit retrace les souvenirs d'une ville qui refuse de dormir.",
+      "directorName": "Marco Elian",
+      "genres": [
+        "Drame",
+        "Mystère"
+      ],
+      "year": 2025,
+      "durationMinutes": 112,
+      "ageRating": "13+",
+      "backdropPath": "demo://after_midnight_backdrop",
+      "posterPath": "demo://after_midnight_poster",
+      "isFeatured": true,
+      "castNames": [
+        "Sofia Lann",
+        "Mika Rowan"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 8.1,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "movie_after_midnight",
+      "seasons": []
+    },
+    {
+      "id": "movie_azur_protocol",
+      "title": "Azur Protocol",
+      "subtitle": "Action futuriste • 2026",
+      "contentType": "movie",
+      "badge": "Dolby Vision",
+      "description": "Une équipe clandestine tente d'arrêter une IA financière avant qu'elle ne redessine l'économie mondiale.",
+      "directorName": "Eva Serrin",
+      "genres": [
+        "Action",
+        "Science-fiction"
+      ],
+      "year": 2026,
+      "durationMinutes": 138,
+      "ageRating": "16+",
+      "backdropPath": "demo://azur_protocol_backdrop",
+      "posterPath": "demo://azur_protocol_poster",
+      "isFeatured": true,
+      "castNames": [
+        "Liam Cross",
+        "Nina Hart",
+        "Zed Okoro"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 8.6,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "movie_azur_protocol",
+      "seasons": []
+    },
+    {
+      "id": "movie_velvet_run",
+      "title": "Velvet Run",
+      "subtitle": "Crime • 2024",
+      "contentType": "movie",
+      "badge": "Top 10",
+      "description": "Une fuite millimétrée, une voiture mythique et une seule nuit pour disparaître.",
+      "directorName": "Soren Hale",
+      "genres": [
+        "Crime",
+        "Action"
+      ],
+      "year": 2024,
+      "durationMinutes": 109,
+      "ageRating": "16+",
+      "backdropPath": "demo://velvet_run_backdrop",
+      "posterPath": "demo://velvet_run_poster",
+      "castNames": [
+        "Jonas Creed",
+        "Mila Snow"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 7.9,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "movie_velvet_run",
+      "seasons": []
+    },
+    {
+      "id": "movie_horizon_code",
+      "title": "Horizon Code",
+      "subtitle": "Aventure spatiale • 2025",
+      "contentType": "movie",
+      "badge": "IMAX",
+      "description": "À bord d'un vaisseau de prospection, une équipière décrypte un signal plus ancien que l'humanité.",
+      "directorName": "Noah Krell",
+      "genres": [
+        "Aventure",
+        "Science-fiction"
+      ],
+      "year": 2025,
+      "durationMinutes": 131,
+      "ageRating": "10+",
+      "backdropPath": "demo://horizon_code_backdrop",
+      "posterPath": "demo://horizon_code_poster",
+      "castNames": [
+        "Elena Moss",
+        "Theo Glass"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 8.4,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "movie_horizon_code",
+      "seasons": []
+    },
+    {
+      "id": "series_nova_zero",
+      "title": "Nova Zero",
+      "subtitle": "Série • 2 saisons",
+      "contentType": "series",
+      "badge": "Hit Série",
+      "description": "Après l'effondrement des réseaux orbitaux, une cellule d'ingénieurs reconstruit les communications clandestines.",
+      "directorName": "Tara Quinn",
+      "genres": [
+        "Science-fiction",
+        "Drame"
+      ],
+      "year": 2026,
+      "durationMinutes": 46,
+      "ageRating": "13+",
+      "backdropPath": "demo://nova_zero_backdrop",
+      "posterPath": "demo://nova_zero_poster",
+      "isFeatured": true,
+      "castNames": [
+        "Kira Sol",
+        "Marek Flint",
+        "Ada Veil"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 640,
+      "rating": 9.1,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "seasons": [
+        {
+          "id": "series_nova_zero_season_1",
+          "seriesId": "series_nova_zero",
+          "seasonNumber": 1,
+          "title": "Saison 1",
+          "synopsis": "Nova Zero — Saison 1",
+          "posterPath": "demo://nova_zero_poster",
+          "episodes": [
+            {
+              "id": "series_nova_zero_s01e01",
+              "seasonId": "series_nova_zero_season_1",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 1,
+              "episodeNumber": 1,
+              "title": "Réveil orbital",
+              "synopsis": "Nova Zero — Réveil orbital. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s01e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_nova_zero_s01e02",
+              "seasonId": "series_nova_zero_season_1",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 1,
+              "episodeNumber": 2,
+              "title": "Ligne fantôme",
+              "synopsis": "Nova Zero — Ligne fantôme. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s01e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_nova_zero_s01e03",
+              "seasonId": "series_nova_zero_season_1",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 1,
+              "episodeNumber": 3,
+              "title": "Silence de phase",
+              "synopsis": "Nova Zero — Silence de phase. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s01e04",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_nova_zero_s01e04",
+              "seasonId": "series_nova_zero_season_1",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 1,
+              "episodeNumber": 4,
+              "title": "Dernière impulsion",
+              "synopsis": "Nova Zero — Dernière impulsion. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s02e01",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "series_nova_zero_season_2",
+          "seriesId": "series_nova_zero",
+          "seasonNumber": 2,
+          "title": "Saison 2",
+          "synopsis": "Nova Zero — Saison 2",
+          "posterPath": "demo://nova_zero_poster",
+          "episodes": [
+            {
+              "id": "series_nova_zero_s02e01",
+              "seasonId": "series_nova_zero_season_2",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 2,
+              "episodeNumber": 1,
+              "title": "Retour au vide",
+              "synopsis": "Nova Zero — Retour au vide. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s02e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_nova_zero_s02e02",
+              "seasonId": "series_nova_zero_season_2",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 2,
+              "episodeNumber": 2,
+              "title": "Atlas coupé",
+              "synopsis": "Nova Zero — Atlas coupé. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s02e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_nova_zero_s02e03",
+              "seasonId": "series_nova_zero_season_2",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 2,
+              "episodeNumber": 3,
+              "title": "Voies parallèles",
+              "synopsis": "Nova Zero — Voies parallèles. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": "series_nova_zero_s02e04",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_nova_zero_s02e04",
+              "seasonId": "series_nova_zero_season_2",
+              "seriesId": "series_nova_zero",
+              "seasonNumber": 2,
+              "episodeNumber": 4,
+              "title": "Zero Day",
+              "synopsis": "Nova Zero — Zero Day. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 46,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://nova_zero_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2702,
+              "nextEpisodeId": null,
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "defaultPlaybackId": "series_nova_zero_s01e01"
+    },
+    {
+      "id": "series_ember_files",
+      "title": "The Ember Files",
+      "subtitle": "Série • 1 saison",
+      "contentType": "series",
+      "badge": "À suivre",
+      "description": "Une archiviste judiciaire relie des affaires classées depuis des décennies à un même opérateur fantôme.",
+      "directorName": "Mira Deen",
+      "genres": [
+        "Policier",
+        "Mystère"
+      ],
+      "year": 2025,
+      "durationMinutes": 52,
+      "ageRating": "13+",
+      "backdropPath": "demo://ember_files_backdrop",
+      "posterPath": "demo://ember_files_poster",
+      "castNames": [
+        "June Calder",
+        "Amir Sloan"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 640,
+      "rating": 8.2,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "seasons": [
+        {
+          "id": "series_ember_files_season_1",
+          "seriesId": "series_ember_files",
+          "seasonNumber": 1,
+          "title": "Saison 1",
+          "synopsis": "The Ember Files — Saison 1",
+          "posterPath": "demo://ember_files_poster",
+          "episodes": [
+            {
+              "id": "series_ember_files_s01e01",
+              "seasonId": "series_ember_files_season_1",
+              "seriesId": "series_ember_files",
+              "seasonNumber": 1,
+              "episodeNumber": 1,
+              "title": "Dossier Cendre",
+              "synopsis": "The Ember Files — Dossier Cendre. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 52,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://ember_files_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.1,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3062,
+              "nextEpisodeId": "series_ember_files_s01e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_ember_files_s01e02",
+              "seasonId": "series_ember_files_season_1",
+              "seriesId": "series_ember_files",
+              "seasonNumber": 1,
+              "episodeNumber": 2,
+              "title": "Le témoin absent",
+              "synopsis": "The Ember Files — Le témoin absent. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 52,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://ember_files_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.2,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3062,
+              "nextEpisodeId": "series_ember_files_s01e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_ember_files_s01e03",
+              "seasonId": "series_ember_files_season_1",
+              "seriesId": "series_ember_files",
+              "seasonNumber": 1,
+              "episodeNumber": 3,
+              "title": "Archivage noir",
+              "synopsis": "The Ember Files — Archivage noir. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 52,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://ember_files_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.2,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3062,
+              "nextEpisodeId": "series_ember_files_s01e04",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_ember_files_s01e04",
+              "seasonId": "series_ember_files_season_1",
+              "seriesId": "series_ember_files",
+              "seasonNumber": 1,
+              "episodeNumber": 4,
+              "title": "Piste dormant",
+              "synopsis": "The Ember Files — Piste dormant. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 52,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://ember_files_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.2,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3062,
+              "nextEpisodeId": null,
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "defaultPlaybackId": "series_ember_files_s01e01"
+    },
+    {
+      "id": "series_pulse_division",
+      "title": "Pulse Division",
+      "subtitle": "Série • 3 saisons",
+      "contentType": "series",
+      "badge": "Trending",
+      "description": "Une unité de crise médicale intervient dans des environnements urbains extrêmes où chaque minute compte.",
+      "directorName": "Jade Aster",
+      "genres": [
+        "Action",
+        "Drame"
+      ],
+      "year": 2024,
+      "durationMinutes": 44,
+      "ageRating": "10+",
+      "backdropPath": "demo://pulse_division_backdrop",
+      "posterPath": "demo://pulse_division_poster",
+      "castNames": [
+        "Leah Stone",
+        "Ravi Knox"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 640,
+      "rating": 8.0,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "seasons": [
+        {
+          "id": "series_pulse_division_season_1",
+          "seriesId": "series_pulse_division",
+          "seasonNumber": 1,
+          "title": "Saison 1",
+          "synopsis": "Pulse Division — Saison 1",
+          "posterPath": "demo://pulse_division_poster",
+          "episodes": [
+            {
+              "id": "series_pulse_division_s01e01",
+              "seasonId": "series_pulse_division_season_1",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 1,
+              "episodeNumber": 1,
+              "title": "Code Rouge",
+              "synopsis": "Pulse Division — Code Rouge. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 7.9,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": "series_pulse_division_s01e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_pulse_division_s01e02",
+              "seasonId": "series_pulse_division_season_1",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 1,
+              "episodeNumber": 2,
+              "title": "Tunnel 7",
+              "synopsis": "Pulse Division — Tunnel 7. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": "series_pulse_division_s01e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_pulse_division_s01e03",
+              "seasonId": "series_pulse_division_season_1",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 1,
+              "episodeNumber": 3,
+              "title": "Effondrement",
+              "synopsis": "Pulse Division — Effondrement. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": "series_pulse_division_s01e04",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_pulse_division_s01e04",
+              "seasonId": "series_pulse_division_season_1",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 1,
+              "episodeNumber": 4,
+              "title": "Température critique",
+              "synopsis": "Pulse Division — Température critique. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": "series_pulse_division_s02e01",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "series_pulse_division_season_2",
+          "seriesId": "series_pulse_division",
+          "seasonNumber": 2,
+          "title": "Saison 2",
+          "synopsis": "Pulse Division — Saison 2",
+          "posterPath": "demo://pulse_division_poster",
+          "episodes": [
+            {
+              "id": "series_pulse_division_s02e01",
+              "seasonId": "series_pulse_division_season_2",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 2,
+              "episodeNumber": 1,
+              "title": "Bascule",
+              "synopsis": "Pulse Division — Bascule. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 7.9,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": "series_pulse_division_s02e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_pulse_division_s02e02",
+              "seasonId": "series_pulse_division_season_2",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 2,
+              "episodeNumber": 2,
+              "title": "Point de rupture",
+              "synopsis": "Pulse Division — Point de rupture. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": "series_pulse_division_s02e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_pulse_division_s02e03",
+              "seasonId": "series_pulse_division_season_2",
+              "seriesId": "series_pulse_division",
+              "seasonNumber": 2,
+              "episodeNumber": 3,
+              "title": "Dernier tri",
+              "synopsis": "Pulse Division — Dernier tri. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 44,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://pulse_division_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 2582,
+              "nextEpisodeId": null,
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "defaultPlaybackId": "series_pulse_division_s01e01"
+    },
+    {
+      "id": "series_silent_orbit",
+      "title": "Silent Orbit",
+      "subtitle": "Mini-série",
+      "contentType": "series",
+      "badge": "Mini",
+      "description": "Six survivants dérivent à la frontière du système solaire et enregistrent leurs derniers messages.",
+      "directorName": "Luca Renn",
+      "genres": [
+        "Science-fiction",
+        "Survie"
+      ],
+      "year": 2026,
+      "durationMinutes": 58,
+      "ageRating": "13+",
+      "backdropPath": "demo://silent_orbit_backdrop",
+      "posterPath": "demo://silent_orbit_poster",
+      "castNames": [
+        "Eden Frost",
+        "Kai Mercer"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 640,
+      "rating": 8.7,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "seasons": [
+        {
+          "id": "series_silent_orbit_season_1",
+          "seriesId": "series_silent_orbit",
+          "seasonNumber": 1,
+          "title": "Saison unique",
+          "synopsis": "Silent Orbit — Saison unique",
+          "posterPath": "demo://silent_orbit_poster",
+          "episodes": [
+            {
+              "id": "series_silent_orbit_s01e01",
+              "seasonId": "series_silent_orbit_season_1",
+              "seriesId": "series_silent_orbit",
+              "seasonNumber": 1,
+              "episodeNumber": 1,
+              "title": "Isolement",
+              "synopsis": "Silent Orbit — Isolement. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 58,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://silent_orbit_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.6,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3422,
+              "nextEpisodeId": "series_silent_orbit_s01e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_silent_orbit_s01e02",
+              "seasonId": "series_silent_orbit_season_1",
+              "seriesId": "series_silent_orbit",
+              "seasonNumber": 1,
+              "episodeNumber": 2,
+              "title": "Nuit solaire",
+              "synopsis": "Silent Orbit — Nuit solaire. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 58,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://silent_orbit_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.7,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3422,
+              "nextEpisodeId": "series_silent_orbit_s01e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_silent_orbit_s01e03",
+              "seasonId": "series_silent_orbit_season_1",
+              "seriesId": "series_silent_orbit",
+              "seasonNumber": 1,
+              "episodeNumber": 3,
+              "title": "Sans gravité",
+              "synopsis": "Silent Orbit — Sans gravité. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 58,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://silent_orbit_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.7,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3422,
+              "nextEpisodeId": "series_silent_orbit_s01e04",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "series_silent_orbit_s01e04",
+              "seasonId": "series_silent_orbit_season_1",
+              "seriesId": "series_silent_orbit",
+              "seasonNumber": 1,
+              "episodeNumber": 4,
+              "title": "Message final",
+              "synopsis": "Silent Orbit — Message final. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 58,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://silent_orbit_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.7,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 3422,
+              "nextEpisodeId": null,
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "defaultPlaybackId": "series_silent_orbit_s01e01"
+    },
+    {
+      "id": "doc_deep_glacier",
+      "title": "Deep Glacier",
+      "subtitle": "Documentaire",
+      "contentType": "movie",
+      "badge": "Docu",
+      "description": "Une plongée contemplative dans les cavités bleues d'un glacier vivant et en mouvement.",
+      "directorName": "Anja Sol",
+      "genres": [
+        "Documentaire",
+        "Nature"
+      ],
+      "year": 2025,
+      "durationMinutes": 88,
+      "ageRating": "Tout public",
+      "backdropPath": "demo://deep_glacier_backdrop",
+      "posterPath": "demo://deep_glacier_poster",
+      "castNames": [
+        "Anja Sol"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 7.8,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "doc_deep_glacier",
+      "seasons": []
+    },
+    {
+      "id": "anime_lumen_blade",
+      "title": "Lumen Blade",
+      "subtitle": "Animé • 12 épisodes",
+      "contentType": "series",
+      "badge": "Animé",
+      "description": "Dans une cité verticale de lumière, une apprentie duelsmith découvre une lame capable de réécrire les souvenirs.",
+      "directorName": "Riku Han",
+      "genres": [
+        "Animé",
+        "Fantasy"
+      ],
+      "year": 2026,
+      "durationMinutes": 24,
+      "ageRating": "10+",
+      "backdropPath": "demo://lumen_blade_backdrop",
+      "posterPath": "demo://lumen_blade_poster",
+      "castNames": [
+        "Yuna Kaze",
+        "Riku Dae"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 640,
+      "rating": 8.9,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "seasons": [
+        {
+          "id": "anime_lumen_blade_season_1",
+          "seriesId": "anime_lumen_blade",
+          "seasonNumber": 1,
+          "title": "Livre I",
+          "synopsis": "Lumen Blade — Livre I",
+          "posterPath": "demo://lumen_blade_poster",
+          "episodes": [
+            {
+              "id": "anime_lumen_blade_s01e01",
+              "seasonId": "anime_lumen_blade_season_1",
+              "seriesId": "anime_lumen_blade",
+              "seasonNumber": 1,
+              "episodeNumber": 1,
+              "title": "Lame naissante",
+              "synopsis": "Lumen Blade — Lame naissante. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 24,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://lumen_blade_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.8,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 1382,
+              "nextEpisodeId": "anime_lumen_blade_s01e02",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "anime_lumen_blade_s01e02",
+              "seasonId": "anime_lumen_blade_season_1",
+              "seriesId": "anime_lumen_blade",
+              "seasonNumber": 1,
+              "episodeNumber": 2,
+              "title": "Éclat interdit",
+              "synopsis": "Lumen Blade — Éclat interdit. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 24,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://lumen_blade_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.9,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 1382,
+              "nextEpisodeId": "anime_lumen_blade_s01e03",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "anime_lumen_blade_s01e03",
+              "seasonId": "anime_lumen_blade_season_1",
+              "seriesId": "anime_lumen_blade",
+              "seasonNumber": 1,
+              "episodeNumber": 3,
+              "title": "Le souvenir du ciel",
+              "synopsis": "Lumen Blade — Le souvenir du ciel. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 24,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://lumen_blade_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.9,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 1382,
+              "nextEpisodeId": "anime_lumen_blade_s01e04",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "anime_lumen_blade_s01e04",
+              "seasonId": "anime_lumen_blade_season_1",
+              "seriesId": "anime_lumen_blade",
+              "seasonNumber": 1,
+              "episodeNumber": 4,
+              "title": "Duel de verre",
+              "synopsis": "Lumen Blade — Duel de verre. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 24,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://lumen_blade_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 8.9,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 1382,
+              "nextEpisodeId": "anime_lumen_blade_s01e05",
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            },
+            {
+              "id": "anime_lumen_blade_s01e05",
+              "seasonId": "anime_lumen_blade_season_1",
+              "seriesId": "anime_lumen_blade",
+              "seasonNumber": 1,
+              "episodeNumber": 5,
+              "title": "Lumen forge",
+              "synopsis": "Lumen Blade — Lumen forge. Un nouvel événement met à l’épreuve les personnages principaux et fait progresser l’arc narratif.",
+              "durationMinutes": 24,
+              "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+              "thumbnailPath": "demo://lumen_blade_poster",
+              "audioLanguages": [
+                "Français",
+                "English"
+              ],
+              "subtitleLanguages": [
+                "Français",
+                "English",
+                "Español"
+              ],
+              "rating": 9.0,
+              "introEndSeconds": 58,
+              "creditsStartSeconds": 1382,
+              "nextEpisodeId": null,
+              "availableQualities": [
+                {
+                  "preset": "auto",
+                  "bitrateMbps": 6.5,
+                  "resolutionLabel": "Adaptatif",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+                  "mimeType": "application/x-mpegURL"
+                },
+                {
+                  "preset": "p480",
+                  "bitrateMbps": 1.8,
+                  "resolutionLabel": "854×480",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p720",
+                  "bitrateMbps": 3.4,
+                  "resolutionLabel": "1280×720",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1080",
+                  "bitrateMbps": 6.2,
+                  "resolutionLabel": "1920×1080",
+                  "hdr": false,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p1440",
+                  "bitrateMbps": 11.5,
+                  "resolutionLabel": "2560×1440",
+                  "hdr": true,
+                  "dolbyVision": false,
+                  "dolbyAtmos": false,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                },
+                {
+                  "preset": "p4k",
+                  "bitrateMbps": 18.9,
+                  "resolutionLabel": "3840×2160",
+                  "hdr": true,
+                  "dolbyVision": true,
+                  "dolbyAtmos": true,
+                  "available": true,
+                  "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                  "mimeType": "video/mp4"
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "defaultPlaybackId": "anime_lumen_blade_s01e01"
+    },
+    {
+      "id": "movie_northern_signal",
+      "title": "Northern Signal",
+      "subtitle": "Mystère polaire • 2023",
+      "contentType": "movie",
+      "badge": "Recommandé",
+      "description": "Une station météorologique isolée capte une transmission impossible venue du pergélisol.",
+      "directorName": "Helena Storm",
+      "genres": [
+        "Mystère",
+        "Thriller"
+      ],
+      "year": 2023,
+      "durationMinutes": 103,
+      "ageRating": "13+",
+      "backdropPath": "demo://northern_signal_backdrop",
+      "posterPath": "demo://northern_signal_poster",
+      "castNames": [
+        "Helena North",
+        "Elias Hart"
+      ],
+      "audioLanguages": [
+        "Français",
+        "English"
+      ],
+      "subtitleLanguages": [
+        "Français",
+        "English",
+        "Español"
+      ],
+      "videoUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+      "downloadSizeMb": 1450,
+      "rating": 8.0,
+      "availableQualities": [
+        {
+          "preset": "auto",
+          "bitrateMbps": 6.5,
+          "resolutionLabel": "Adaptatif",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+          "mimeType": "application/x-mpegURL"
+        },
+        {
+          "preset": "p480",
+          "bitrateMbps": 1.8,
+          "resolutionLabel": "854×480",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p720",
+          "bitrateMbps": 3.4,
+          "resolutionLabel": "1280×720",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1080",
+          "bitrateMbps": 6.2,
+          "resolutionLabel": "1920×1080",
+          "hdr": false,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p1440",
+          "bitrateMbps": 11.5,
+          "resolutionLabel": "2560×1440",
+          "hdr": true,
+          "dolbyVision": false,
+          "dolbyAtmos": false,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        },
+        {
+          "preset": "p4k",
+          "bitrateMbps": 18.9,
+          "resolutionLabel": "3840×2160",
+          "hdr": true,
+          "dolbyVision": true,
+          "dolbyAtmos": true,
+          "available": true,
+          "streamUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+          "mimeType": "video/mp4"
+        }
+      ],
+      "defaultPlaybackId": "movie_northern_signal",
+      "seasons": []
+    }
+  ],
+  "sections": [
+    {
+      "key": "featured",
+      "title": "À la une",
+      "description": "Les grands visuels premium affichés en priorité sur l'accueil.",
+      "layoutType": "hero",
+      "itemIds": [
+        "movie_radiant_city",
+        "series_nova_zero",
+        "movie_azur_protocol",
+        "movie_after_midnight"
+      ]
+    },
+    {
+      "key": "continue_watching",
+      "title": "Continuer le visionnage",
+      "description": "Reprise instantanée des contenus déjà commencés.",
+      "layoutType": "continue_watching",
+      "itemIds": [
+        {
+          "id": "series_nova_zero",
+          "progressPercent": 0.62
+        },
+        {
+          "id": "movie_velvet_run",
+          "progressPercent": 0.31
+        },
+        {
+          "id": "series_ember_files",
+          "progressPercent": 0.84
+        }
+      ]
+    },
+    {
+      "key": "for_you",
+      "title": "Pour vous",
+      "description": "Suggestions personnalisées basées sur vos préférences et votre historique.",
+      "layoutType": "rail",
+      "itemIds": [
+        "movie_after_midnight",
+        "movie_horizon_code",
+        "series_silent_orbit",
+        "movie_northern_signal"
+      ]
+    },
+    {
+      "key": "trending",
+      "title": "Tendances",
+      "description": "Les contenus qui attirent le plus d'attention cette semaine.",
+      "layoutType": "rail",
+      "itemIds": [
+        "movie_radiant_city",
+        "series_pulse_division",
+        "movie_velvet_run",
+        "anime_lumen_blade"
+      ]
+    },
+    {
+      "key": "new_releases",
+      "title": "Nouveautés",
+      "description": "Les dernières sorties disponibles sur Cineva.",
+      "layoutType": "rail",
+      "itemIds": [
+        "movie_azur_protocol",
+        "series_nova_zero",
+        "anime_lumen_blade",
+        "series_silent_orbit"
+      ]
+    },
+    {
+      "key": "popular_movies",
+      "title": "Films populaires",
+      "description": "Sélection films premium.",
+      "layoutType": "rail",
+      "itemIds": [
+        "movie_radiant_city",
+        "movie_velvet_run",
+        "movie_horizon_code",
+        "movie_after_midnight"
+      ]
+    },
+    {
+      "key": "popular_series",
+      "title": "Séries populaires",
+      "description": "Les séries les plus regardées sur la plateforme.",
+      "layoutType": "rail",
+      "itemIds": [
+        "series_nova_zero",
+        "series_ember_files",
+        "series_pulse_division",
+        "series_silent_orbit"
+      ]
+    },
+    {
+      "key": "anime",
+      "title": "Animés",
+      "description": "Une sélection animée de démonstration.",
+      "layoutType": "rail",
+      "itemIds": [
+        "anime_lumen_blade",
+        "series_silent_orbit",
+        "series_nova_zero"
+      ]
+    },
+    {
+      "key": "documentaries",
+      "title": "Documentaires",
+      "description": "Formats documentaires et découverte.",
+      "layoutType": "rail",
+      "itemIds": [
+        "doc_deep_glacier",
+        "movie_northern_signal"
+      ]
+    },
+    {
+      "key": "my_list",
+      "title": "Ma liste",
+      "description": "Contenus enregistrés temporairement pour les tests UX.",
+      "layoutType": "rail",
+      "itemIds": [
+        "movie_horizon_code",
+        "series_ember_files",
+        "doc_deep_glacier"
+      ]
+    },
+    {
+      "key": "latest_added",
+      "title": "Derniers ajouts",
+      "description": "Ajouts récents pour valider l'expérience d'actualisation du catalogue.",
+      "layoutType": "rail",
+      "itemIds": [
+        "movie_azur_protocol",
+        "anime_lumen_blade",
+        "movie_after_midnight",
+        "series_nova_zero"
+      ]
+    }
+  ]
+}
