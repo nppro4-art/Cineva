@@ -1,0 +1,4 @@
+enum AppSurface {
+  user,
+  admin,
+}

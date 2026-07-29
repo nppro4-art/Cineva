@@ -1,0 +1,27 @@
+name: cineva_repositories
+description: Data repositories for Cineva.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cineva_models:
+    path: ../models
+  cineva_services:
+    path: ../services
+  cineva_shared:
+    path: ../shared
+  supabase_flutter: ^2.8.0
+
+flutter:
+  assets:
+    - assets/demo_catalog.json
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0

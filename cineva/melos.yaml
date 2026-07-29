@@ -1,0 +1,26 @@
+name: cineva
+
+packages:
+  - apps/**
+  - packages/**
+
+scripts:
+  analyze:
+    run: melos exec -- flutter analyze
+    description: Analyser tous les packages Flutter/Dart.
+
+  test:
+    run: melos exec --fail-fast -- "bash -lc 'if grep -q \"sdk: flutter\" pubspec.yaml; then flutter test; else dart test; fi'"
+    description: Lancer les tests adaptés sur l'ensemble du monorepo.
+
+  format:
+    run: melos exec -- dart format .
+    description: Formater le code.
+
+  pub:get:
+    run: melos exec -- flutter pub get
+    description: Installer les dépendances de tous les packages.
+
+command:
+  bootstrap:
+    usePubspecOverrides: true
