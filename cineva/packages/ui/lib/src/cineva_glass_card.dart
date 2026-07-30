@@ -17,12 +17,19 @@ class CinevaGlassCard extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(CinevaRadii.medium),
         border: Border.all(color: CinevaColors.border),
+        boxShadow: <BoxShadow>[
+          BoxShadow(
+            color: Colors.black.withOpacity(0.45),
+            blurRadius: 24,
+            offset: const Offset(0, 12),
+          ),
+        ],
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: <Color>[
-            Colors.white.withOpacity(0.06),
-            Colors.white.withOpacity(0.02),
+            Colors.white.withOpacity(0.05),
+            Colors.white.withOpacity(0.015),
           ],
         ),
       ),

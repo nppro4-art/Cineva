@@ -11,6 +11,7 @@ class DeviceLimitScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionControllerProvider).valueOrNull;
+    final limits = ref.watch(businessLimitsProvider).valueOrNull;
 
     return Scaffold(
       body: CinevaScaffoldContainer(
@@ -27,7 +28,9 @@ class DeviceLimitScreen extends ConsumerWidget {
                       Text('Limite d’appareils atteinte', style: Theme.of(context).textTheme.headlineSmall),
                       const SizedBox(height: CinevaSpacing.md),
                       Text(
-                        'Ce compte est déjà utilisé sur un autre appareil. Supprimez un appareil pour continuer.',
+                        'Ce compte permet ${limits?.maxDevices ?? 3} appareils '
+                        '(dont ${limits?.maxTvDevices ?? 1} TV maximum). '
+                        'Supprimez un appareil pour continuer.',
                         style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: CinevaColors.textMuted),
                       ),
                     ],

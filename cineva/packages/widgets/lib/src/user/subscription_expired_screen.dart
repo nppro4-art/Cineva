@@ -12,6 +12,7 @@ class SubscriptionExpiredScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final session = ref.watch(sessionControllerProvider).valueOrNull;
     final user = session?.user;
+    final limits = ref.watch(businessLimitsProvider).valueOrNull;
 
     return Scaffold(
       body: CinevaScaffoldContainer(
@@ -35,6 +36,14 @@ class SubscriptionExpiredScreen extends ConsumerWidget {
                       title: 'Expiration actuelle',
                       message: user.subscriptionExpiresLabel,
                       tone: CinevaBannerTone.warning,
+                    ),
+                  ],
+                  if (limits != null && limits.monthlyPriceEur > 0) ...<Widget>[
+                    const SizedBox(height: CinevaSpacing.md),
+                    CinevaStatusBanner(
+                      title: 'Tarif',
+                      message: 'Abonnement : ${limits!.priceLabel}.',
+                      tone: CinevaBannerTone.info,
                     ),
                   ],
                   const SizedBox(height: CinevaSpacing.lg),

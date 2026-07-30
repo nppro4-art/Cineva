@@ -52,7 +52,7 @@ class SupabaseSessionRepository implements SessionRepository {
     var deviceLimitReached = false;
 
     if (!user.isAdmin) {
-      deviceLimitReached = await _registerDeviceIfPossible(client);
+      deviceLimitReached = await _registerDeviceIfPossible(client, target);
     }
 
     final devices = await _fetchDevices(client);
@@ -138,9 +138,11 @@ class SupabaseSessionRepository implements SessionRepository {
         .toList();
   }
 
-  Future<bool> _registerDeviceIfPossible(SupabaseClient client) async {
+  Future<bool> _registerDeviceIfPossible(SupabaseClient client, AppTarget target) async {
     final fingerprint = await _deviceFingerprintService.getOrCreateFingerprint();
-    final platform = await _deviceFingerprintService.resolvePlatformLabel();
+    final platform = target == AppTarget.androidTv
+        ? 'androidTv'
+        : await _deviceFingerprintService.resolvePlatformLabel();
     final deviceName = await _deviceFingerprintService.resolveDeviceName();
 
     try {
@@ -153,7 +155,8 @@ class SupabaseSessionRepository implements SessionRepository {
       return false;
     } on PostgrestException catch (error) {
       final message = '${error.message} ${error.details ?? ''}'.toLowerCase();
-      if (message.contains('device_limit_reached')) {
+      if (message.contains('device_limit_reached') ||
+          message.contains('tv_limit_reached')) {
         return true;
       }
       rethrow;

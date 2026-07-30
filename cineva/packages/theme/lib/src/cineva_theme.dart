@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
 abstract final class CinevaColors {
-  static const background = Color(0xFF050505);
-  static const surface = Color(0xFF101014);
-  static const surfaceRaised = Color(0xFF16161B);
-  static const surfaceOverlay = Color(0xFF1B1B22);
-  static const border = Color(0x26FFFFFF);
+  static const background = Color(0xFF040406);
+  static const surface = Color(0xFF0B0B0F);
+  static const surfaceRaised = Color(0xFF111118);
+  static const surfaceOverlay = Color(0xFF16161E);
+  static const border = Color(0x1FFFFFFF);
   static const textPrimary = Color(0xFFF5F2EC);
-  static const textMuted = Color(0xB3F5F2EC);
-  static const accent = Color(0xFF7C4DFF);
-  static const accentSoft = Color(0xFF9D84FF);
+  static const textMuted = Color(0x99F5F2EC);
+  static const accent = Color(0xFFC9A86A);
+  static const accentSoft = Color(0xFFE6CE9A);
   static const success = Color(0xFF4ADE80);
   static const warning = Color(0xFFFBBF24);
   static const danger = Color(0xFFFF5C7A);

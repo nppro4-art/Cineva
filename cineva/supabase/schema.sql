@@ -23,7 +23,7 @@ create table if not exists public.app_settings (
 insert into public.app_settings (key, value_json, description)
 values (
   'limits',
-  '{"max_devices_per_account": 1}'::jsonb,
+  '{"max_devices_per_account": 3, "max_tv_devices_per_account": 1, "monthly_price_eur": 20}'::jsonb,
   'Réglages métier globaux pour Cineva.'
 )
 on conflict (key) do nothing;
@@ -412,6 +412,23 @@ as $$
   );
 $$;
 
+create or replace function public.get_max_tv_devices_per_account()
+returns integer
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select coalesce(
+    (
+      select (value_json ->> 'max_tv_devices_per_account')::integer
+      from public.app_settings
+      where key = 'limits'
+    ),
+    0
+  );
+$$;
+
 create or replace function public.register_device(
   p_device_fingerprint text,
   p_device_name text,
@@ -455,6 +472,25 @@ begin
   end if;
 
   v_limit := public.get_max_devices_per_account();
+
+  -- Limite spécifique aux TV (ex: Android TV, plateforme 'androidTv')
+  if p_platform = 'androidTv' then
+    declare
+      v_tv_limit integer := public.get_max_tv_devices_per_account();
+      v_tv_count integer;
+    begin
+      select count(*)
+      into v_tv_count
+      from public.devices
+      where user_id = v_user_id
+        and is_active = true
+        and platform = 'androidTv';
+
+      if v_tv_count >= v_tv_limit then
+        raise exception 'TV_LIMIT_REACHED';
+      end if;
+    end;
+  end if;
 
   select count(*)
   into v_count

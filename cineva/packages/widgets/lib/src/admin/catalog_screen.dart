@@ -7,7 +7,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:cineva_services/cineva_services.dart';
+
 import '../app/providers.dart';
+import 'import_url_screen.dart';
 
 part 'catalog_screen_tabs.dart';
 part 'catalog_screen_editors.dart';
@@ -26,7 +29,7 @@ class AdminCatalogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const DefaultTabController(
-      length: 4,
+      length: 5,
       child: Column(
         children: <Widget>[
           Padding(
@@ -40,6 +43,7 @@ class AdminCatalogScreen extends StatelessWidget {
               Tab(text: 'Séries'),
               Tab(text: 'Catégories'),
               Tab(text: 'Accueil'),
+              Tab(text: 'Importer'),
             ],
           ),
           Expanded(
@@ -49,6 +53,7 @@ class AdminCatalogScreen extends StatelessWidget {
                 _SeriesTab(),
                 _CategoriesTab(),
                 _HomeEditorTab(),
+                const ImportUrlScreen(),
               ],
             ),
           ),

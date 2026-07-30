@@ -167,26 +167,30 @@ class CinevaVisionService {
         break;
     }
 
-    if (settings.options.enhancedColors) saturation += 0.07;
-    if (settings.options.dynamicContrast) contrast += 0.1;
-    if (settings.options.smartSharpness) overlayOpacity += 0.03;
-    if (settings.options.noiseReduction) brightness += 0.01;
-    if (settings.options.optimizedHdr) shadowBoost += 0.05;
+    if (settings.options.enhancedColors) saturation += 0.09;
+    if (settings.options.dynamicContrast) contrast += 0.12;
+    if (settings.options.smartSharpness) overlayOpacity += 0.04;
+    if (settings.options.noiseReduction) brightness += 0.015;
+    if (settings.options.optimizedHdr) shadowBoost += 0.06;
     if (settings.options.aiEnhancement) {
-      contrast += 0.04;
-      saturation += 0.04;
+      contrast += 0.05;
+      saturation += 0.05;
+      overlayOpacity += 0.02;
     }
     if (settings.options.advancedSmoothness && capabilities.advancedSmoothnessSupported) {
-      overlayOpacity += 0.01;
+      overlayOpacity += 0.015;
     }
+    // Couche "film" subtile : vignette douce + grain léger pour un rendu cinéma.
+    shadowBoost += 0.03;
+    overlayOpacity += 0.01;
 
     return CinevaVisionRenderProfile(
-      saturation: saturation,
-      contrast: contrast,
-      brightness: brightness,
-      warmth: warmth,
-      overlayOpacity: overlayOpacity,
-      shadowBoost: shadowBoost,
+      saturation: saturation.clamp(0.8, 1.6),
+      contrast: contrast.clamp(0.8, 1.6),
+      brightness: brightness.clamp(-0.1, 0.1),
+      warmth: warmth.clamp(-0.1, 0.1),
+      overlayOpacity: overlayOpacity.clamp(0.0, 0.12),
+      shadowBoost: shadowBoost.clamp(0.0, 0.2),
     );
   }
 

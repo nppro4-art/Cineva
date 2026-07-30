@@ -1,6 +1,8 @@
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:flutter/material.dart';
 
+import 'cineva_ambient_backdrop.dart';
+
 class CinevaScaffoldContainer extends StatelessWidget {
   const CinevaScaffoldContainer({
     super.key,
@@ -13,20 +15,16 @@ class CinevaScaffoldContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: <Color>[Color(0xFF050505), Color(0xFF09090D)],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
+    return Stack(
+      children: <Widget>[
+        const CinevaAmbientBackdrop(),
+        SafeArea(
+          child: Padding(
+            padding: padding,
+            child: child,
+          ),
         ),
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: padding,
-          child: child,
-        ),
-      ),
+      ],
     );
   }
 }

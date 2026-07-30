@@ -11,6 +11,8 @@ dependencies:
     sdk: flutter
   cineva_models:
     path: ../models
+  cineva_repositories:
+    path: ../repositories
   cineva_shared:
     path: ../shared
   crypto: ^3.0.5

@@ -3,6 +3,7 @@ import 'package:cineva_repositories/cineva_repositories.dart';
 import 'package:cineva_services/cineva_services.dart';
 import 'package:cineva_shared/cineva_shared.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../auth/login_controller.dart';
 import '../library/library_controller.dart';
@@ -14,6 +15,19 @@ import 'session_controller.dart';
 
 final appTargetProvider = Provider<AppTarget>((ref) => throw UnimplementedError('Override appTargetProvider'));
 final appSurfaceProvider = Provider<AppSurface>((ref) => throw UnimplementedError('Override appSurfaceProvider'));
+
+final businessLimitsProvider = FutureProvider<BusinessLimits>((ref) async {
+  final res = await Supabase.instance.client
+      .from('app_settings')
+      .select()
+      .eq('key', 'limits')
+      .maybeSingle();
+  if (res == null) {
+    return const BusinessLimits(maxDevices: 3, maxTvDevices: 1, monthlyPriceEur: 20);
+  }
+  final value = (res['value_json'] as Map<String, dynamic>);
+  return BusinessLimits.fromJson(value);
+});
 
 final backendServiceProvider = Provider<BackendService>((ref) => BackendService());
 final localPreferencesServiceProvider = Provider<LocalPreferencesService>((ref) => const LocalPreferencesService());

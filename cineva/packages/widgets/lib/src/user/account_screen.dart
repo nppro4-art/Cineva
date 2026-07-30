@@ -19,6 +19,7 @@ class AccountScreen extends ConsumerWidget {
     final user = session?.user;
     final settings = settingsAsync.valueOrNull ?? user?.settings ?? AppSettingsModel.defaults();
     final visionState = ref.watch(visionControllerProvider);
+    final limits = ref.watch(businessLimitsProvider).valueOrNull;
 
     if (sessionAsync.isLoading && user == null) {
       return const CinevaLoadingView();
@@ -104,6 +105,15 @@ class AccountScreen extends ConsumerWidget {
                 icon: Icons.timelapse_rounded,
               ),
             ),
+            if (limits != null && limits.monthlyPriceEur > 0)
+              SizedBox(
+                width: 220,
+                child: CinevaStatTile(
+                  label: 'Tarif',
+                  value: limits.priceLabel,
+                  icon: Icons.euro_rounded,
+                ),
+              ),
             SizedBox(
               width: 220,
               child: CinevaStatTile(
