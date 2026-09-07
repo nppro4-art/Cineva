@@ -1,0 +1,22 @@
+name: cineva_audio_engine
+description: Cineva Audio Engine — chaîne de traitement audio temps réel (cœur Dart + cœur natif C via FFI).
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  equatable: ^2.0.5
+  ffi: ^2.1.0
+
+dev_dependencies:
+  test: ^1.25.0
+  lints: ^5.0.0
+
+# Le worklet JS (pipeline miroir du cœur C) est bundlé comme asset Flutter :
+# toute app dépendant de ce package le sert sous
+# `assets/packages/cineva_audio_engine/assets/js/cineva_audio_worklet.js`.
+flutter:
+  assets:
+    - assets/js/cineva_audio_worklet.js
