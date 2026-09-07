@@ -16,6 +16,29 @@ void main() {
     expect(state.language, 'en');
     expect(state.themeMode, AppThemeMode.light);
   });
+
+  test('SettingsController updates audio settings and persists them', () async {
+    final repository = _FakeAppSettingsRepository();
+    final controller = SettingsController(repository);
+
+    await Future<void>.delayed(Duration.zero);
+    await controller.updateAudioSettings(
+      CinevaAudioSettings.defaults().copyWith(
+        profile: CinevaAudioProfile.night,
+        dialogueAmount: 80,
+        output: CinevaAudioOutput.headphone,
+      ),
+    );
+
+    final state = controller.state.valueOrNull!;
+    expect(state.audioSettings.profile, CinevaAudioProfile.night);
+    expect(state.audioSettings.dialogueAmount, 80);
+    expect(state.audioSettings.output, CinevaAudioOutput.headphone);
+    // Persisté via le repository.
+    expect(repository.settings.audioSettings.profile, CinevaAudioProfile.night);
+    // Les autres réglages sont préservés.
+    expect(state.language, 'fr');
+  });
 }
 
 class _FakeAppSettingsRepository implements AppSettingsRepository {

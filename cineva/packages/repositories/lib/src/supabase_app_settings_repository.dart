@@ -92,6 +92,9 @@ class SupabaseAppSettingsRepository implements AppSettingsRepository {
       themeMode: _themeModeFromName(map['themeMode'] as String?) ?? AppThemeMode.dark,
       notificationPreferences: NotificationPreferencesModel.fromJson(_jsonMap(map['notificationPreferences'])),
       privacyPreferences: PrivacyPreferencesModel.fromJson(_jsonMap(map['privacyPreferences'])),
+      // Note : visionSettings vit dans son propre dépôt (clé locale dédiée) ;
+      // on ne le restaure pas depuis ce blob.
+      audioSettings: CinevaAudioSettings.fromJson(_jsonMap(map['audioSettings'])),
     );
   }
 

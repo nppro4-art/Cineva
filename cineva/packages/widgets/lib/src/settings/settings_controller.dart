@@ -70,4 +70,9 @@ class SettingsController extends StateNotifier<AsyncValue<AppSettingsModel>> {
     final current = state.valueOrNull ?? AppSettingsModel.defaults();
     await update(current.copyWith(privacyPreferences: prefs));
   }
+
+  Future<void> updateAudioSettings(CinevaAudioSettings audio) async {
+    final current = state.valueOrNull ?? AppSettingsModel.defaults();
+    await update(current.copyWith(audioSettings: audio));
+  }
 }

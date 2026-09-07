@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import 'cineva_audio_settings_model.dart';
 import 'cineva_vision_models.dart';
 import 'user_preferences_models.dart';
 
@@ -15,6 +16,7 @@ class AppSettingsModel extends Equatable {
     required this.notificationPreferences,
     required this.privacyPreferences,
     required this.visionSettings,
+    required this.audioSettings,
   });
 
   factory AppSettingsModel.defaults() {
@@ -29,6 +31,7 @@ class AppSettingsModel extends Equatable {
       notificationPreferences: NotificationPreferencesModel.defaults(),
       privacyPreferences: PrivacyPreferencesModel.defaults(),
       visionSettings: CinevaVisionSettings.defaults(),
+      audioSettings: CinevaAudioSettings.defaults(),
     );
   }
 
@@ -42,6 +45,7 @@ class AppSettingsModel extends Equatable {
   final NotificationPreferencesModel notificationPreferences;
   final PrivacyPreferencesModel privacyPreferences;
   final CinevaVisionSettings visionSettings;
+  final CinevaAudioSettings audioSettings;
 
   AppSettingsModel copyWith({
     String? language,
@@ -54,6 +58,7 @@ class AppSettingsModel extends Equatable {
     NotificationPreferencesModel? notificationPreferences,
     PrivacyPreferencesModel? privacyPreferences,
     CinevaVisionSettings? visionSettings,
+    CinevaAudioSettings? audioSettings,
   }) {
     return AppSettingsModel(
       language: language ?? this.language,
@@ -67,6 +72,7 @@ class AppSettingsModel extends Equatable {
           notificationPreferences ?? this.notificationPreferences,
       privacyPreferences: privacyPreferences ?? this.privacyPreferences,
       visionSettings: visionSettings ?? this.visionSettings,
+      audioSettings: audioSettings ?? this.audioSettings,
     );
   }
 
@@ -82,6 +88,7 @@ class AppSettingsModel extends Equatable {
       'notificationPreferences': notificationPreferences.toJson(),
       'privacyPreferences': privacyPreferences.toJson(),
       'visionSettings': visionSettings.toJson(),
+      'audioSettings': audioSettings.toJson(),
     };
   }
 
@@ -97,5 +104,6 @@ class AppSettingsModel extends Equatable {
         notificationPreferences,
         privacyPreferences,
         visionSettings,
+        audioSettings,
       ];
 }

@@ -90,6 +90,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
     _nextEpisodeTimer?.cancel();
     _persistProgress();
     _controller?.dispose();
+    try {
+      ref.read(audioEngineControllerProvider.notifier).detach();
+    } catch (_) {
+      // le provider peut déjà être disposé
+    }
     super.dispose();
   }
 
@@ -112,6 +117,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
     final detailAsync = ref.watch(contentDetailProvider(widget.contentId));
     final library = ref.watch(libraryControllerProvider);
     final visionState = ref.watch(visionControllerProvider);
+    final audioEngine = ref.watch(audioEngineControllerProvider);
     final connected = ref.watch(networkConnectedProvider).valueOrNull ?? true;
 
     return detailAsync.when(
@@ -397,6 +403,19 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                               selectedSubtitle: _selectedSubtitle ?? detail.subtitleLanguages.first,
                               selectedQuality: resolvedCurrentQuality,
                               isImmersive: _immersive,
+                              audioEngineLabel: audioEngine.backendAvailable
+                                  ? audioEngine.settings.profile.label
+                                  : null,
+                              audioProcessing: audioEngine.processingActive,
+                              audioAbCompare: audioEngine.settings.abCompare,
+                              onOpenAudioSettings: audioEngine.backendAvailable
+                                  ? () => context.push('/settings/audio')
+                                  : null,
+                              onToggleAudioAb: audioEngine.backendAvailable
+                                  ? () => ref
+                                      .read(audioEngineControllerProvider.notifier)
+                                      .toggleAbCompare()
+                                  : null,
                               onBack: () => context.go('/content/${Uri.encodeComponent(detail.seriesId ?? detail.id)}'),
                               onPlayPause: _togglePlayPause,
                               onSeek: _seekToRatio,
