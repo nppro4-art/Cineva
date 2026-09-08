@@ -54,6 +54,9 @@ CINEVA_DSP_LIB=$PWD/native/cineva_dsp/build/libcineva_dsp.so dart test
 
 # Worklet web (golden cross-check JS ↔ C, sans dépendance)
 node test/web/worklet_golden_test.js
+
+# Mode AudioWorklet simulé (enregistrement, messages params/reset/metrics)
+node test/web/worklet_processor_test.js
 ```
 
 ## Backend web (AudioWorklet)

@@ -8,6 +8,8 @@ library;
 export 'src/config/audio_engine_config.dart';
 export 'src/config/param_layout.dart';
 export 'src/dsp/dsp_pipeline.dart';
+export 'dart:typed_data' show Float32List, Float64List;
+
 export 'src/backends/audio_backend.dart';
 export 'src/backends/web_audio_backend.dart';
 export 'src/engine/audio_engine.dart';
