@@ -22,10 +22,12 @@ on:
       - ".github/workflows/build-android.yml"
       - "cineva/apps/cineva_mobile/**"
       - "cineva/apps/cineva_admin/**"
+      - "cineva/packages/**"
       - "cineva/scripts/apply_android_icon.py"
 
 permissions:
   contents: write # création de la Release
+  issues: write   # rapport d'échec lisible hors Azure blob
 
 jobs:
   apk:
@@ -78,12 +80,26 @@ jobs:
             (cd "cineva/apps/$app" && flutter create --no-pub --platforms=android --org com.cineva --project-name "$app" .)
           done
 
-      - name: Noms affichés sous les icônes
+      - name: Noms affichés sous les icônes + minSdk 24
         run: |
           sed -i 's/android:label="cineva_mobile"/android:label="Cineva"/' \
             cineva/apps/cineva_mobile/android/app/src/main/AndroidManifest.xml
           sed -i 's/android:label="cineva_admin"/android:label="Cineva Admin"/' \
             cineva/apps/cineva_admin/android/app/src/main/AndroidManifest.xml
+          # Plugins modernes (video_player, file_picker, firebase_*) exigent minSdk ≥ 21 ;
+          # on force 24 pour une surface d'API stable.
+          for app in cineva_mobile cineva_admin; do
+            gradle="cineva/apps/$app/android/app/build.gradle"
+            if [ -f "$gradle" ]; then
+              sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/' "$gradle" || true
+              sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' "$gradle" || true
+              # Kotlin build.gradle.kts variants
+              if [ -f "cineva/apps/$app/android/app/build.gradle.kts" ]; then
+                sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' \
+                  "cineva/apps/$app/android/app/build.gradle.kts" || true
+              fi
+            fi
+          done
 
       - name: Icônes de lancement Cineva
         run: |
@@ -93,21 +109,35 @@ jobs:
             python3 cineva/scripts/apply_android_icon.py "cineva/apps/$app"
           done
 
+      - name: pub get (diagnostic)
+        run: |
+          set -e
+          for app in cineva_mobile cineva_admin; do
+            echo "══ pub get : $app"
+            (cd "cineva/apps/$app" && flutter pub get)
+          done
+
       - name: Compiler cineva_mobile (release, backend réel)
+        id: build_mobile
         working-directory: cineva/apps/cineva_mobile
         run: |
+          set -o pipefail
           flutter build apk --release \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-            --dart-define=FIREBASE_ENABLED=false
+            --dart-define=FIREBASE_ENABLED=false \
+            2>&1 | tee /tmp/build-mobile.log
 
       - name: Compiler cineva_admin (release, backend réel)
+        id: build_admin
         working-directory: cineva/apps/cineva_admin
         run: |
+          set -o pipefail
           flutter build apk --release \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
-            --dart-define=FIREBASE_ENABLED=false
+            --dart-define=FIREBASE_ENABLED=false \
+            2>&1 | tee /tmp/build-admin.log
 
       - name: Préparer les APK
         run: |
@@ -140,3 +170,37 @@ jobs:
               --notes-file release-notes.md
           fi
           echo "Release publiée : $TAG"
+
+      - name: Publier le rapport d'échec (issue)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "## build-android échec — run ${GITHUB_RUN_NUMBER}"
+            echo ""
+            echo "Run: https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo ""
+            echo "### build-mobile (tail)"
+            echo '```'
+            tail -n 120 /tmp/build-mobile.log 2>/dev/null || echo "(pas de log mobile)"
+            echo '```'
+            echo ""
+            echo "### build-admin (tail)"
+            echo '```'
+            tail -n 80 /tmp/build-admin.log 2>/dev/null || echo "(pas de log admin)"
+            echo '```'
+          } > /tmp/fail-report.md
+          # Une seule issue ouverte « build-android failure report » réutilisée
+          EXISTING=$(gh issue list --label build-android-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file /tmp/fail-report.md
+          else
+            gh issue create \
+              --title "build-android failure report" \
+              --label "build-android-fail" \
+              --body-file /tmp/fail-report.md || \
+            gh issue create \
+              --title "build-android failure report" \
+              --body-file /tmp/fail-report.md
+          fi

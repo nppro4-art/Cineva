@@ -7,12 +7,15 @@ environment:
   sdk: '>=3.5.0 <4.0.0'
 
 dependencies:
+  flutter:
+    sdk: flutter
   equatable: ^2.0.5
   ffi: ^2.1.0
 
 dev_dependencies:
-  test: ^1.25.0
-  lints: ^5.0.0
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
 
 # Le worklet JS (pipeline miroir du cœur C) est bundlé comme asset Flutter :
 # toute app dépendant de ce package le sert sous
