@@ -10,6 +10,7 @@ import '../config/audio_engine_config.dart';
 import '../config/param_layout.dart';
 import '../dsp/dsp_pipeline.dart';
 import '../native/native_dsp.dart';
+import 'dart:typed_data';
 
 /// Métriques temps réel du moteur (pour l'UI / la télémétrie).
 class AudioEngineMetrics {

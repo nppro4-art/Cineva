@@ -1,4 +1,5 @@
 /// Cineva Audio Engine — API publique.
+
 ///
 /// Chaîne de traitement audio temps réel :
 /// ChannelMapper → Loudness → Dialogue → Bass → Spatial → EQ → DRC → Room

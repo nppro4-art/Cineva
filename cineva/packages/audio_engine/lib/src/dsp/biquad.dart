@@ -3,12 +3,17 @@
 library;
 
 import 'dart:math' as math;
+import 'math_ext.dart';
 
 const int bqLowShelf = 0;
 const int bqPeaking = 1;
 const int bqHighShelf = 2;
 const int bqLowPass = 3;
 const int bqHighPass = 4;
+
+/// Nombre maximal de canaux gérés par le moteur (miroir de
+/// `CINEVA_DSP_MAX_CHANNELS` dans `native/cineva_dsp/include/cineva_dsp.h`).
+const int maxChannels = 8;
 
 class Biquad {
   double b0 = 1, b1 = 0, b2 = 0, a1 = 0, a2 = 0;
@@ -40,9 +45,9 @@ class Biquad {
 
   void set(int type, double freqHz, double gainDb, double q, double sampleRate) {
     final double fs = sampleRate > 0 ? sampleRate : 48000;
-    double f0 = freqHz.clamp(10.0, fs * 0.49);
-    double qq = q.clamp(0.1, 20.0);
-    double gg = gainDb.clamp(-40.0, 40.0);
+    final double f0 = freqHz.clamp(10.0, fs * 0.49);
+    final double qq = q.clamp(0.1, 20.0);
+    final double gg = gainDb.clamp(-40.0, 40.0);
     final double a = math.pow(10.0, gg / 40.0).toDouble();
     final double w0 = 2 * math.pi * f0 / fs;
     final double cw = math.cos(w0);
@@ -128,7 +133,7 @@ double sanitizeD(double v) => (v.isFinite && v > -1e30 && v < 1e30) ? v : 0.0;
 
 double dbToLin(double db) => math.pow(10.0, db / 20.0).toDouble();
 
-double linToDb(double lin) => 20 * math.log10(lin > 1e-12 ? lin : 1e-12);
+double linToDb(double lin) => 20 * log10(lin > 1e-12 ? lin : 1e-12);
 
 double onepoleCoef(double sampleRate, double tauSeconds) {
   if (tauSeconds <= 0 || sampleRate <= 0) return 0;

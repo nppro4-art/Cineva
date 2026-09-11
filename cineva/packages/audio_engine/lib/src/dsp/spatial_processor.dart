@@ -6,6 +6,7 @@ import 'dart:math' as math;
 import 'biquad.dart' as dsp;
 import 'biquad.dart' show Biquad;
 import 'channel_mapper.dart' as mapper;
+import 'dart:typed_data';
 
 const int spatialModeOff = 0;
 const int spatialModeWidth = 1;
@@ -100,7 +101,6 @@ class SpatialProcessor {
 
   int _channels = 0;
   int _layout = -1;
-  double _widthCfg = -1;
   bool _dirty = true;
 
   void set(bool enable, int mode, double widthPercent, double crossfeedPercent,
@@ -114,7 +114,6 @@ class SpatialProcessor {
       this.mode = m;
       _dirty = true;
     }
-    _widthCfg = widthPercent;
     width = dsp.clampD(dsp.sanitizeD(widthPercent), 0, 150) / 100;
     crossfeed = dsp.clampD(dsp.sanitizeD(crossfeedPercent), 0, 100) / 100;
     binauralAmount = dsp.clampD(dsp.sanitizeD(binauralAmountPercent), 0, 100) / 100;

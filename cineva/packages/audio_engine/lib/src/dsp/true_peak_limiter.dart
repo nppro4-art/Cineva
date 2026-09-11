@@ -2,6 +2,7 @@
 library;
 
 import 'biquad.dart' as dsp;
+import 'dart:typed_data';
 
 const int _limiterMaxDelay = 4096;
 

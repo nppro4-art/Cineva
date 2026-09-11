@@ -1,10 +1,11 @@
 /// Bass Processor — miroir de `bass.c`.
 library;
 
-import 'dart:math' as math;
 
 import 'biquad.dart' as dsp;
 import 'biquad.dart' show Biquad;
+import 'dart:typed_data';
+import 'math_ext.dart';
 
 class BassProcessor {
   BassProcessor(this.sampleRate) {
@@ -101,7 +102,7 @@ class BassProcessor {
     final double rel = dsp.onepoleCoef(sampleRate, 0.020);
     final double lfeGain = lfe != null ? dsp.dbToLin(lfeGainDb) : 0;
     final double driveK = 1 + 2 * harmonicDrive;
-    final double driveNorm = math.tanh(driveK);
+    final double driveNorm = tanh(driveK);
 
     final List<double> low = <double>[0, 0];
     final List<double> high = <double>[0, 0];
@@ -128,7 +129,7 @@ class BassProcessor {
 
       if (harmonicDrive > 0) {
         for (int ch = 0; ch < 2; ch++) {
-          final double sat = math.tanh(low[ch] * driveK) / driveNorm;
+          final double sat = tanh(low[ch] * driveK) / driveNorm;
           double harm = sat - low[ch];
           harm = harmHp[ch].tick(harm, ramp);
           high[ch] += harm * harmonicDrive;

@@ -7,6 +7,7 @@ library;
 
 import 'dart:ffi';
 import 'dart:io' show Platform;
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart' as ffi;
 
@@ -75,7 +76,7 @@ class NativeDspCore {
   int setParams(Float64List values) {
     final _SetParamsDart fn =
         _lib.lookupFunction<_SetParamsC, _SetParamsDart>('cineva_dsp_set_params');
-    final ffi.Pointer<Double> ptr = ffi.malloc<Double>(values.length);
+    final Pointer<Double> ptr = ffi.malloc<Double>(values.length);
     try {
       ptr.asTypedList(values.length).setAll(0, values);
       return fn(_handle, ptr, values.length);
@@ -87,7 +88,7 @@ class NativeDspCore {
   Float64List getParams() {
     final _GetParamsDart fn =
         _lib.lookupFunction<_GetParamsC, _GetParamsDart>('cineva_dsp_get_params');
-    final ffi.Pointer<Double> ptr = ffi.malloc<Double>(128);
+    final Pointer<Double> ptr = ffi.malloc<Double>(128);
     try {
       fn(_handle, ptr, 128);
       return Float64List.fromList(ptr.asTypedList(128));
@@ -106,21 +107,21 @@ class NativeDspCore {
   ) {
     final _ProcessDart fn =
         _lib.lookupFunction<_ProcessC, _ProcessDart>('cineva_dsp_process');
-    final ffi.Pointer<Pointer<Float>> inPtrs =
+    final Pointer<Pointer<Float>> inPtrs =
         ffi.malloc<Pointer<Float>>(inChannels);
-    final ffi.Pointer<Pointer<Float>> outPtrs =
+    final Pointer<Pointer<Float>> outPtrs =
         ffi.malloc<Pointer<Float>>(outChannels);
-    final List<ffi.Pointer<Float>> inBufs = <ffi.Pointer<Float>>[];
-    final List<ffi.Pointer<Float>> outBufs = <ffi.Pointer<Float>>[];
+    final List<Pointer<Float>> inBufs = <Pointer<Float>>[];
+    final List<Pointer<Float>> outBufs = <Pointer<Float>>[];
     try {
       for (int ch = 0; ch < inChannels; ch++) {
-        final ffi.Pointer<Float> buf = ffi.malloc<Float>(frames);
+        final Pointer<Float> buf = ffi.malloc<Float>(frames);
         inBufs.add(buf);
         buf.asTypedList(frames).setAll(0, input[ch].sublist(0, frames));
         inPtrs[ch] = buf;
       }
       for (int ch = 0; ch < outChannels; ch++) {
-        final ffi.Pointer<Float> buf = ffi.malloc<Float>(frames);
+        final Pointer<Float> buf = ffi.malloc<Float>(frames);
         outBufs.add(buf);
         outPtrs[ch] = buf;
       }
@@ -134,10 +135,10 @@ class NativeDspCore {
       }
       return result;
     } finally {
-      for (final ffi.Pointer<Float> buf in inBufs) {
+      for (final Pointer<Float> buf in inBufs) {
         ffi.malloc.free(buf);
       }
-      for (final ffi.Pointer<Float> buf in outBufs) {
+      for (final Pointer<Float> buf in outBufs) {
         ffi.malloc.free(buf);
       }
       ffi.malloc.free(inPtrs);
@@ -154,7 +155,7 @@ class NativeDspCore {
   Float64List getMetrics() {
     final _GetMetricsDart fn =
         _lib.lookupFunction<_GetMetricsC, _GetMetricsDart>('cineva_dsp_get_metrics');
-    final ffi.Pointer<Double> ptr = ffi.malloc<Double>(16);
+    final Pointer<Double> ptr = ffi.malloc<Double>(16);
     try {
       fn(_handle, ptr, 16);
       return Float64List.fromList(ptr.asTypedList(16));

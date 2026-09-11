@@ -15,6 +15,7 @@ import 'parametric_eq.dart';
 import 'room_processor.dart';
 import 'spatial_processor.dart';
 import 'true_peak_limiter.dart';
+import 'dart:typed_data';
 
 class DartDspPipeline {
   DartDspPipeline({double sampleRate = 48000})

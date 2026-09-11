@@ -4,6 +4,7 @@ library;
 import 'dart:math' as math;
 
 import 'biquad.dart' as dsp;
+import 'dart:typed_data';
 
 class DynamicRangeCompressor {
   DynamicRangeCompressor(this.sampleRate) {

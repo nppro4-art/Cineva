@@ -4,6 +4,7 @@ library;
 import 'biquad.dart' as dsp;
 import 'biquad.dart' show Biquad;
 import 'channel_mapper.dart' show layout51;
+import 'dart:typed_data';
 
 class DialogueEnhancer {
   DialogueEnhancer(this.sampleRate) {

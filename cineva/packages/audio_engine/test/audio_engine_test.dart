@@ -74,7 +74,7 @@ void main() {
 
       // Profil original : sortie = entrée (tous modules désactivés).
       engine.process(<Float32List>[inL, inR], 2, <Float32List>[outL, outR], n);
-      double originalRms = rms(outL);
+      final double originalRms = rms(outL);
 
       // Profil night : traitement actif.
       engine.applyConfig(AudioEngineConfig.forProfile(CinevaAudioProfile.night));
@@ -97,7 +97,7 @@ void main() {
       ];
       for (int c = 0; c < 6; c++) {
         for (int i = 0; i < n; i++) {
-          in51[c][i] = 0.2 * sine(200 + 50 * c, 48000, i);
+          in51[c][i] = 0.2 * sine(200 + 50.0 * c, 48000, i);
         }
       }
       final Float32List outL = Float32List(n);

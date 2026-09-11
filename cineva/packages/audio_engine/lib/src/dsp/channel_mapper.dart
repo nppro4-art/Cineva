@@ -2,6 +2,7 @@
 library;
 
 import 'biquad.dart' as dsp;
+import 'dart:typed_data';
 
 const int layoutMono = 0;
 const int layoutStereo = 1;

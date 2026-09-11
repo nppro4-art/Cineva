@@ -3,6 +3,7 @@ library;
 
 import 'biquad.dart' as dsp;
 import 'biquad.dart' show Biquad;
+import 'dart:typed_data';
 
 const int eqBands = 6;
 

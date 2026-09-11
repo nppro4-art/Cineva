@@ -5,6 +5,7 @@ import 'dart:math' as math;
 
 import 'biquad.dart' as dsp;
 import 'biquad.dart' show Biquad;
+import 'dart:typed_data';
 
 const int _loudnessHops = 600;
 const int _loudnessSilenceBlocks = 10;

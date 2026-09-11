@@ -8,6 +8,7 @@ library;
 import 'package:equatable/equatable.dart';
 
 import 'param_layout.dart';
+import 'dart:typed_data';
 
 /// Profils du Cineva Audio Engine.
 enum CinevaAudioProfile { cinema, immersive, tv, night, original }
@@ -595,7 +596,7 @@ class AudioEngineConfig extends Equatable {
           'adaptRateDbPerSec': loudness.adaptRateDbPerSec,
         },
         'eq': <String, dynamic>{
-          'bands': bands
+          'bands': eq.bands
               .map((EqBandConfig b) => <String, dynamic>{
                     'type': b.type,
                     'freqHz': b.freqHz,

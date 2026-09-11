@@ -5,6 +5,8 @@
 /// réservé et doit valoir 0.
 library;
 
+import 'dart:typed_data';
+
 const int kDspParamVersion = 1;
 const int kDspParamCount = 128;
 const int kDspMetricCount = 16;

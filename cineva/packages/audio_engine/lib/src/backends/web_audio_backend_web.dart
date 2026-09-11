@@ -16,6 +16,7 @@ library;
 import 'dart:async';
 
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 
 import 'audio_backend.dart';
 
@@ -79,19 +80,19 @@ class WebAudioBackend implements CinevaAudioBackend {
     script.setProperty('type'.toJS, 'text/javascript'.toJS);
 
     final Completer<bool> completer = Completer<bool>();
-    script.setProperty<JSFunction>(
+    script.setProperty(
       'onload'.toJS,
       (() {
         if (!completer.isCompleted) completer.complete(true);
       }).toJS,
     );
-    script.setProperty<JSFunction>(
+    script.setProperty(
       'onerror'.toJS,
       (() {
         if (!completer.isCompleted) completer.complete(false);
       }).toJS,
     );
-    document.getProperty<JSObject>('head'.toJS).callMethod<JSVoid>(
+    document.getProperty<JSObject>('head'.toJS).callMethod<JSAny?>(
           'appendChild'.toJS,
           script,
         );
@@ -128,7 +129,7 @@ class WebAudioBackend implements CinevaAudioBackend {
     final JSObject? engine = _engine;
     if (engine != null) {
       try {
-        engine.callMethod<JSVoid>('detach'.toJS);
+        engine.callMethod<JSAny?>('detach'.toJS);
       } catch (_) {
         // déjà détaché
       }
@@ -145,7 +146,7 @@ class WebAudioBackend implements CinevaAudioBackend {
     try {
       // La glue bufferise : les params sont appliqués dès l'attach si
       // le nœud worklet n'existe pas encore.
-      engine.callMethod<JSVoid>('setParams'.toJS, jsParams);
+      engine.callMethod<JSAny?>('setParams'.toJS, jsParams);
     } catch (_) {
       // glue disparue entre-temps
     }
@@ -158,7 +159,7 @@ class WebAudioBackend implements CinevaAudioBackend {
     final JSObject? engine = _engine;
     if (engine == null || !_attached) return;
     try {
-      engine.callMethod<JSVoid>('requestMetrics'.toJS);
+      engine.callMethod<JSAny?>('requestMetrics'.toJS);
     } catch (_) {
       // nœud disparu
     }
@@ -171,7 +172,7 @@ class WebAudioBackend implements CinevaAudioBackend {
     try {
       final JSArray<JSNumber> arr =
           engine.callMethod<JSArray<JSNumber>>('getMetrics'.toJS);
-      return arr.toDart.map((JSNumber v) => v.toDart).toList();
+      return arr.toDart.map((JSNumber v) => v.toDartDouble).toList();
     } catch (_) {
       return const <double>[];
     }
@@ -188,7 +189,7 @@ class WebAudioBackend implements CinevaAudioBackend {
       return <String, Object?>{
         'attached': status.getProperty<JSBoolean>('attached'.toJS).toDart,
         'error': (err != null && err.isA<JSString>()) ? (err as JSString).toDart : null,
-        'sampleRate': (sr != null && sr.isA<JSNumber>()) ? (sr as JSNumber).toDart : 0,
+        'sampleRate': (sr != null && sr.isA<JSNumber>()) ? (sr as JSNumber).toDartDouble : 0,
       };
     } catch (_) {
       return const <String, Object>{};
