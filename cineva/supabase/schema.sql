@@ -317,7 +317,7 @@ begin
     new.id,
     coalesce(new.email, ''),
     coalesce(new.raw_user_meta_data ->> 'full_name', 'Utilisateur Cineva'),
-    coalesce(new.raw_user_meta_data ->> 'role', 'user'),
+    'user',
     'active',
     'fr',
     'auto',
@@ -726,54 +726,67 @@ begin
 end;
 $$;
 
+drop trigger if exists trg_profiles_updated_at on public.profiles;
 create trigger trg_profiles_updated_at
 before update on public.profiles
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_devices_updated_at on public.devices;
 create trigger trg_devices_updated_at
 before update on public.devices
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_subscriptions_updated_at on public.subscriptions;
 create trigger trg_subscriptions_updated_at
 before update on public.subscriptions
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_categories_updated_at on public.categories;
 create trigger trg_categories_updated_at
 before update on public.categories
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_movies_updated_at on public.movies;
 create trigger trg_movies_updated_at
 before update on public.movies
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_series_updated_at on public.series;
 create trigger trg_series_updated_at
 before update on public.series
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_seasons_updated_at on public.seasons;
 create trigger trg_seasons_updated_at
 before update on public.seasons
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_episodes_updated_at on public.episodes;
 create trigger trg_episodes_updated_at
 before update on public.episodes
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_home_sections_updated_at on public.home_sections;
 create trigger trg_home_sections_updated_at
 before update on public.home_sections
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_history_updated_at on public.history;
 create trigger trg_history_updated_at
 before update on public.history
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_downloads_updated_at on public.downloads;
 create trigger trg_downloads_updated_at
 before update on public.downloads
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_notifications_updated_at on public.notifications;
 create trigger trg_notifications_updated_at
 before update on public.notifications
 for each row execute function public.set_updated_at();
 
+drop trigger if exists trg_admin_notes_updated_at on public.admin_notes;
 create trigger trg_admin_notes_updated_at
 before update on public.admin_notes
 for each row execute function public.set_updated_at();
@@ -837,209 +850,247 @@ alter table public.notifications enable row level security;
 alter table public.admin_notes enable row level security;
 alter table public.watch_events enable row level security;
 
+drop policy if exists "app_settings_admin_only" on public.app_settings;
 create policy "app_settings_admin_only"
 on public.app_settings
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "profiles_select_self_or_admin" on public.profiles;
 create policy "profiles_select_self_or_admin"
 on public.profiles
 for select
 using (id = auth.uid() or public.is_admin());
 
+drop policy if exists "profiles_insert_self_or_admin" on public.profiles;
 create policy "profiles_insert_self_or_admin"
 on public.profiles
 for insert
 with check (id = auth.uid() or public.is_admin());
 
+drop policy if exists "profiles_update_self_or_admin" on public.profiles;
 create policy "profiles_update_self_or_admin"
 on public.profiles
 for update
 using (id = auth.uid() or public.is_admin())
 with check (id = auth.uid() or public.is_admin());
 
+drop policy if exists "devices_select_self_or_admin" on public.devices;
 create policy "devices_select_self_or_admin"
 on public.devices
 for select
 using (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "devices_insert_self_or_admin" on public.devices;
 create policy "devices_insert_self_or_admin"
 on public.devices
 for insert
 with check (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "devices_update_self_or_admin" on public.devices;
 create policy "devices_update_self_or_admin"
 on public.devices
 for update
 using (user_id = auth.uid() or public.is_admin())
 with check (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "devices_delete_self_or_admin" on public.devices;
 create policy "devices_delete_self_or_admin"
 on public.devices
 for delete
 using (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "subscriptions_select_self_or_admin" on public.subscriptions;
 create policy "subscriptions_select_self_or_admin"
 on public.subscriptions
 for select
 using (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "subscriptions_admin_write" on public.subscriptions;
 create policy "subscriptions_admin_write"
 on public.subscriptions
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "subscription_events_select_self_or_admin" on public.subscription_events;
 create policy "subscription_events_select_self_or_admin"
 on public.subscription_events
 for select
 using (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "subscription_events_admin_insert" on public.subscription_events;
 create policy "subscription_events_admin_insert"
 on public.subscription_events
 for insert
 with check (public.is_admin());
 
+drop policy if exists "categories_read_authenticated" on public.categories;
 create policy "categories_read_authenticated"
 on public.categories
 for select
 using (auth.uid() is not null);
 
+drop policy if exists "categories_admin_write" on public.categories;
 create policy "categories_admin_write"
 on public.categories
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "movies_read_published_or_admin" on public.movies;
 create policy "movies_read_published_or_admin"
 on public.movies
 for select
 using ((is_published = true and auth.uid() is not null) or public.is_admin());
 
+drop policy if exists "movies_admin_write" on public.movies;
 create policy "movies_admin_write"
 on public.movies
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "series_read_published_or_admin" on public.series;
 create policy "series_read_published_or_admin"
 on public.series
 for select
 using ((is_published = true and auth.uid() is not null) or public.is_admin());
 
+drop policy if exists "series_admin_write" on public.series;
 create policy "series_admin_write"
 on public.series
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "seasons_read_published_or_admin" on public.seasons;
 create policy "seasons_read_published_or_admin"
 on public.seasons
 for select
 using (auth.uid() is not null or public.is_admin());
 
+drop policy if exists "seasons_admin_write" on public.seasons;
 create policy "seasons_admin_write"
 on public.seasons
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "episodes_read_published_or_admin" on public.episodes;
 create policy "episodes_read_published_or_admin"
 on public.episodes
 for select
 using ((is_published = true and auth.uid() is not null) or public.is_admin());
 
+drop policy if exists "episodes_admin_write" on public.episodes;
 create policy "episodes_admin_write"
 on public.episodes
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "movie_categories_read_authenticated" on public.movie_categories;
 create policy "movie_categories_read_authenticated"
 on public.movie_categories
 for select
 using (auth.uid() is not null);
 
+drop policy if exists "movie_categories_admin_write" on public.movie_categories;
 create policy "movie_categories_admin_write"
 on public.movie_categories
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "series_categories_read_authenticated" on public.series_categories;
 create policy "series_categories_read_authenticated"
 on public.series_categories
 for select
 using (auth.uid() is not null);
 
+drop policy if exists "series_categories_admin_write" on public.series_categories;
 create policy "series_categories_admin_write"
 on public.series_categories
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "home_sections_read_enabled_or_admin" on public.home_sections;
 create policy "home_sections_read_enabled_or_admin"
 on public.home_sections
 for select
 using ((is_enabled = true and auth.uid() is not null) or public.is_admin());
 
+drop policy if exists "home_sections_admin_write" on public.home_sections;
 create policy "home_sections_admin_write"
 on public.home_sections
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "home_section_items_read_authenticated" on public.home_section_items;
 create policy "home_section_items_read_authenticated"
 on public.home_section_items
 for select
 using (auth.uid() is not null);
 
+drop policy if exists "home_section_items_admin_write" on public.home_section_items;
 create policy "home_section_items_admin_write"
 on public.home_section_items
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "favorites_self_or_admin" on public.favorites;
 create policy "favorites_self_or_admin"
 on public.favorites
 for all
 using (user_id = auth.uid() or public.is_admin())
 with check (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "history_self_or_admin" on public.history;
 create policy "history_self_or_admin"
 on public.history
 for all
 using (user_id = auth.uid() or public.is_admin())
 with check (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "downloads_self_or_admin" on public.downloads;
 create policy "downloads_self_or_admin"
 on public.downloads
 for all
 using (user_id = auth.uid() or public.is_admin())
 with check (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "notifications_select_self_or_admin_or_broadcast" on public.notifications;
 create policy "notifications_select_self_or_admin_or_broadcast"
 on public.notifications
 for select
 using (user_id = auth.uid() or user_id is null or public.is_admin());
 
+drop policy if exists "notifications_admin_write" on public.notifications;
 create policy "notifications_admin_write"
 on public.notifications
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "admin_notes_admin_only" on public.admin_notes;
 create policy "admin_notes_admin_only"
 on public.admin_notes
 for all
 using (public.is_admin())
 with check (public.is_admin());
 
+drop policy if exists "watch_events_insert_self_or_admin" on public.watch_events;
 create policy "watch_events_insert_self_or_admin"
 on public.watch_events
 for insert
 with check (user_id = auth.uid() or public.is_admin());
 
+drop policy if exists "watch_events_select_self_or_admin" on public.watch_events;
 create policy "watch_events_select_self_or_admin"
 on public.watch_events
 for select
@@ -1069,3 +1120,13 @@ commit;
 -- 1. Les buckets Storage doivent rester privés pour les médias sensibles.
 -- 2. Les URLs de streaming doivent être générées via une fonction serveur avec durée courte.
 -- 3. Pour une production exigeante, ajouter des migrations séparées, des seeds et des tests SQL.
+
+-- Droits d'accès pour les rôles applicatifs Supabase
+-- (la sécurité ligne par ligne reste assurée par le RLS et les policies)
+grant usage on schema public to anon, authenticated, service_role;
+grant select, insert, update, delete
+  on all tables in schema public
+  to anon, authenticated, service_role;
+grant execute
+  on all functions in schema public
+  to anon, authenticated, service_role;
