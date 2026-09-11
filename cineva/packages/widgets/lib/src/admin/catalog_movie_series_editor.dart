@@ -22,6 +22,12 @@ Future<void> _showCatalogEditor(
   final trailerController = TextEditingController(text: existing?.trailerPath ?? '');
   final videoController = TextEditingController(text: existing?.videoPath ?? '');
   final ratingController = TextEditingController(text: existing?.rating?.toString() ?? '');
+  final introController = TextEditingController(text: existing?.introEndSeconds?.toString() ?? '');
+  final creditsController = TextEditingController(text: existing?.creditsStartSeconds?.toString() ?? '');
+  final skipSegmentRows = <_SkipSegmentRow>[
+    for (final segment in (existing?.skipSegments ?? const <SkipSegment>[]))
+      _SkipSegmentRow(start: segment.startSeconds.toString(), end: segment.endSeconds.toString()),
+  ];
 
   final selectedCategoryIds = <String>{...(existing?.categoryIds ?? const <String>[])};
   bool isFeatured = existing?.isFeatured ?? false;
@@ -122,6 +128,43 @@ Future<void> _showCatalogEditor(
                     ),
                     const SizedBox(height: CinevaSpacing.md),
                     TextField(controller: ratingController, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Notation')),
+                    if (contentType == 'movie') ...<Widget>[
+                      const SizedBox(height: CinevaSpacing.md),
+                      const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text('Lecture — sauts de temps', style: TextStyle(fontWeight: FontWeight.w600)),
+                      ),
+                      const SizedBox(height: CinevaSpacing.sm),
+                      Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextField(
+                              controller: introController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(labelText: 'Fin d’intro (sec)'),
+                            ),
+                          ),
+                          const SizedBox(width: CinevaSpacing.md),
+                          Expanded(
+                            child: TextField(
+                              controller: creditsController,
+                              keyboardType: TextInputType.number,
+                              decoration: const InputDecoration(labelText: 'Début générique (sec)'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: CinevaSpacing.md),
+                      _SkipSegmentEditor(
+                        rows: skipSegmentRows,
+                        onAdd: () => setState(() => skipSegmentRows.add(_SkipSegmentRow())),
+                        onRemove: (index) => setState(() {
+                          if (index >= 0 && index < skipSegmentRows.length) {
+                            skipSegmentRows.removeAt(index).dispose();
+                          }
+                        }),
+                      ),
+                    ],
                     const SizedBox(height: CinevaSpacing.lg),
                     Align(
                       alignment: Alignment.centerLeft,
@@ -256,6 +299,9 @@ Future<void> _showCatalogEditor(
                     directorName: directorController.text.trim().isEmpty ? null : directorController.text.trim(),
                     countries: _splitCommaValues(countriesController.text),
                     rating: double.tryParse(ratingController.text.trim()),
+                    introEndSeconds: contentType == 'movie' ? int.tryParse(introController.text.trim()) : null,
+                    creditsStartSeconds: contentType == 'movie' ? int.tryParse(creditsController.text.trim()) : null,
+                    skipSegments: contentType == 'movie' ? _skipSegmentsFromRows(skipSegmentRows) : const <SkipSegment>[],
                   );
 
                   await _runCatalogAction(

@@ -60,6 +60,13 @@ class _MoviesTabState extends ConsumerState<_MoviesTab> {
               icon: const Icon(Icons.add_rounded),
               label: const Text('Ajouter un film'),
             );
+            final importButton = FilledButton.tonalIcon(
+              onPressed: categoriesAsync.hasValue
+                  ? () => _showTmdbImportDialog(context, ref, categoriesAsync.value ?? const <AdminCategoryModel>[], contentType: 'movie')
+                  : null,
+              icon: const Icon(Icons.link_rounded),
+              label: const Text('Importer (TMDB)'),
+            );
 
             if (compact) {
               return Column(
@@ -67,6 +74,8 @@ class _MoviesTabState extends ConsumerState<_MoviesTab> {
                 children: <Widget>[
                   searchField,
                   const SizedBox(height: CinevaSpacing.md),
+                  Align(alignment: Alignment.centerLeft, child: importButton),
+                  const SizedBox(height: CinevaSpacing.sm),
                   Align(alignment: Alignment.centerLeft, child: addButton),
                 ],
               );
@@ -75,6 +84,8 @@ class _MoviesTabState extends ConsumerState<_MoviesTab> {
             return Row(
               children: <Widget>[
                 Expanded(child: searchField),
+                const SizedBox(width: CinevaSpacing.md),
+                importButton,
                 const SizedBox(width: CinevaSpacing.md),
                 addButton,
               ],
@@ -173,6 +184,13 @@ class _SeriesTabState extends ConsumerState<_SeriesTab> {
               icon: const Icon(Icons.add_rounded),
               label: const Text('Ajouter une série'),
             );
+            final importButton = FilledButton.tonalIcon(
+              onPressed: categoriesAsync.hasValue
+                  ? () => _showTmdbImportDialog(context, ref, categoriesAsync.value ?? const <AdminCategoryModel>[], contentType: 'series')
+                  : null,
+              icon: const Icon(Icons.link_rounded),
+              label: const Text('Importer (TMDB)'),
+            );
 
             if (compact) {
               return Column(
@@ -180,6 +198,8 @@ class _SeriesTabState extends ConsumerState<_SeriesTab> {
                 children: <Widget>[
                   searchField,
                   const SizedBox(height: CinevaSpacing.md),
+                  Align(alignment: Alignment.centerLeft, child: importButton),
+                  const SizedBox(height: CinevaSpacing.sm),
                   Align(alignment: Alignment.centerLeft, child: addButton),
                 ],
               );
@@ -188,6 +208,8 @@ class _SeriesTabState extends ConsumerState<_SeriesTab> {
             return Row(
               children: <Widget>[
                 Expanded(child: searchField),
+                const SizedBox(width: CinevaSpacing.md),
+                importButton,
                 const SizedBox(width: CinevaSpacing.md),
                 addButton,
               ],

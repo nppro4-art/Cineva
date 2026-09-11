@@ -1,3 +1,4 @@
+import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_widgets/src/player/player_runtime_policy.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -65,6 +66,57 @@ void main() {
           deltaSeconds: -40,
         ),
         0,
+      );
+    });
+
+    test('finds the active skip segment at a position', () {
+      const segments = <SkipSegment>[
+        SkipSegment(startSeconds: 100, endSeconds: 130),
+        SkipSegment(startSeconds: 400, endSeconds: 420),
+      ];
+      expect(
+        PlayerRuntimePolicy.activeSkipSegment(positionSeconds: 99, segments: segments),
+        isNull,
+      );
+      expect(
+        PlayerRuntimePolicy.activeSkipSegment(positionSeconds: 110, segments: segments),
+        const SkipSegment(startSeconds: 100, endSeconds: 130),
+      );
+      expect(
+        PlayerRuntimePolicy.activeSkipSegment(positionSeconds: 410, segments: segments),
+        const SkipSegment(startSeconds: 400, endSeconds: 420),
+      );
+      expect(
+        PlayerRuntimePolicy.activeSkipSegment(positionSeconds: 420, segments: segments),
+        isNull,
+      );
+    });
+
+    test('resolveSeekTarget jumps to the end of a segment, then clamps', () {
+      const segments = <SkipSegment>[SkipSegment(startSeconds: 100, endSeconds: 130)];
+      expect(
+        PlayerRuntimePolicy.resolveSeekTarget(
+          targetSeconds: 110,
+          durationSeconds: 1000,
+          segments: segments,
+        ),
+        130,
+      );
+      expect(
+        PlayerRuntimePolicy.resolveSeekTarget(
+          targetSeconds: 500,
+          durationSeconds: 1000,
+          segments: segments,
+        ),
+        500,
+      );
+      expect(
+        PlayerRuntimePolicy.resolveSeekTarget(
+          targetSeconds: 5000,
+          durationSeconds: 1000,
+          segments: segments,
+        ),
+        1000,
       );
     });
   });

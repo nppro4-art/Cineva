@@ -14,6 +14,12 @@ class SupabaseCatalogMapper {
   ContentDetailModel movieToDetail(Map<String, dynamic> row) {
     final metadata = asJsonMap(row['metadata']) ?? <String, dynamic>{};
     return ContentDetailModel(
+      // Colonnes prioritaires ; repli metadata tant que la migration
+      // (intro_end_seconds / credits_start_seconds / skip_segments) n'a pas
+      // été appliquée sur la base.
+      introEndSeconds: (row['intro_end_seconds'] as num?)?.toInt() ?? (metadata['intro_end_seconds'] as num?)?.toInt(),
+      creditsStartSeconds: (row['credits_start_seconds'] as num?)?.toInt() ?? (metadata['credits_start_seconds'] as num?)?.toInt(),
+      skipSegments: asSkipSegments(row['skip_segments'] ?? metadata['skip_segments']),
       id: row['id'] as String,
       contentType: 'movie',
       title: row['title'] as String? ?? 'Film',
@@ -99,6 +105,7 @@ class SupabaseCatalogMapper {
       rating: (metadata['rating'] as num?)?.toDouble(),
       introEndSeconds: metadata['intro_end_seconds'] as int?,
       creditsStartSeconds: metadata['credits_start_seconds'] as int?,
+      skipSegments: asSkipSegments(row['skip_segments'] ?? metadata['skip_segments']),
       nextEpisodeId: metadata['next_episode_id'] as String?,
     );
   }
@@ -131,6 +138,7 @@ class SupabaseCatalogMapper {
       nextContentId: episode.nextEpisodeId,
       introEndSeconds: episode.introEndSeconds,
       creditsStartSeconds: episode.creditsStartSeconds,
+      skipSegments: episode.skipSegments,
     );
   }
 

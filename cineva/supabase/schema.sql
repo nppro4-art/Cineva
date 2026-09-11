@@ -118,6 +118,10 @@ create table if not exists public.movies (
   audio_languages text[] not null default '{}',
   subtitles jsonb not null default '[]'::jsonb,
   metadata jsonb not null default '{}'::jsonb,
+  -- Sauts de temps du lecteur (intro, générique, segments à passer).
+  intro_end_seconds integer,
+  credits_start_seconds integer,
+  skip_segments jsonb not null default '[]'::jsonb,
   is_featured boolean not null default false,
   is_published boolean not null default false,
   published_at timestamptz,
@@ -172,6 +176,8 @@ create table if not exists public.episodes (
   audio_languages text[] not null default '{}',
   subtitles jsonb not null default '[]'::jsonb,
   metadata jsonb not null default '{}'::jsonb,
+  -- Segments à passer pendant la lecture (intro/générique restent en metadata).
+  skip_segments jsonb not null default '[]'::jsonb,
   is_published boolean not null default false,
   published_at timestamptz,
   created_at timestamptz not null default now(),
@@ -1113,6 +1119,16 @@ comment on function public.suspend_user_subscription(uuid, text) is 'Suspend un 
 comment on function public.reactivate_user_subscription(uuid, text) is 'Réactive un abonnement utilisateur.';
 comment on function public.handle_new_auth_user() is 'Crée automatiquement le profil applicatif lors de la création d’un utilisateur Auth.';
 comment on function public.handle_auth_user_updated() is 'Synchronise les champs principaux du profil lors des mises à jour Auth.';
+
+-- Migration incrémentale (idempotente) pour les bases existantes :
+-- colonnes de sauts de temps du lecteur (intro / générique / segments).
+-- À exécuter dans le SQL Editor Supabase des projets antérieurs au schéma.
+alter table public.movies
+  add column if not exists intro_end_seconds int,
+  add column if not exists credits_start_seconds int,
+  add column if not exists skip_segments jsonb not null default '[]'::jsonb;
+alter table public.episodes
+  add column if not exists skip_segments jsonb not null default '[]'::jsonb;
 
 commit;
 

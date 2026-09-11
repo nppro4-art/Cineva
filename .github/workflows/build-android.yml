@@ -7,6 +7,8 @@ name: build-android
 # Prérequis (recommandé) : Settings → Secrets and variables → Actions :
 #   - SUPABASE_URL       ex. https://xxxxx.supabase.co
 #   - SUPABASE_ANON_KEY  la clé publique (anon/publishable) du projet
+#   - TMDB_API_KEY       (optionnel) clé développeur TMDB pour l'import
+#                        par lien dans la console d'administration
 #
 # Si les secrets sont absents, les valeurs projet fournies ci-dessous sont
 # utilisées (clé anon = publique par design Supabase ; pas de service_role).
@@ -71,6 +73,18 @@ jobs:
           fi
           echo "SUPABASE_URL=$URL" >> "$GITHUB_ENV"
           echo "SUPABASE_ANON_KEY=$KEY" >> "$GITHUB_ENV"
+
+      - name: Clé TMDB (import par lien dans l'admin)
+        env:
+          SECRET_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: |
+          # Secret prioritaire ; repli = clé développeur projet fournie.
+          KEY="${SECRET_KEY:-953735af94772da319cdbfdf861712a6}"
+          if [ -z "$KEY" ]; then
+            echo "::error::TMDB_API_KEY absente — l'import par lien serait inopérant."
+            exit 1
+          fi
+          echo "TMDB_API_KEY=$KEY" >> "$GITHUB_ENV"
 
       - name: Générer les châssis Android des deux applications
         run: |
@@ -141,6 +155,7 @@ jobs:
           flutter build apk --release \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=TMDB_API_KEY="$TMDB_API_KEY" \
             --dart-define=FIREBASE_ENABLED=false \
             2>&1 | tee /tmp/build-mobile.log
 
@@ -152,6 +167,7 @@ jobs:
           flutter build apk --release \
             --dart-define=SUPABASE_URL="$SUPABASE_URL" \
             --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=TMDB_API_KEY="$TMDB_API_KEY" \
             --dart-define=FIREBASE_ENABLED=false \
             2>&1 | tee /tmp/build-admin.log
 

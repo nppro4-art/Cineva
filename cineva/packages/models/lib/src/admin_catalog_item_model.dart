@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'skip_segment_model.dart';
+
 class AdminCatalogItemModel extends Equatable {
   const AdminCatalogItemModel({
     required this.id,
@@ -26,6 +28,9 @@ class AdminCatalogItemModel extends Equatable {
     this.countries = const <String>[],
     this.rating,
     this.pilotEpisodeId,
+    this.introEndSeconds,
+    this.creditsStartSeconds,
+    this.skipSegments = const <SkipSegment>[],
     this.metadata = const <String, dynamic>{},
   });
 
@@ -53,6 +58,16 @@ class AdminCatalogItemModel extends Equatable {
   final List<String> countries;
   final double? rating;
   final String? pilotEpisodeId;
+
+  /// Fin de l'intro, en secondes (film).
+  final int? introEndSeconds;
+
+  /// Début du générique, en secondes (film).
+  final int? creditsStartSeconds;
+
+  /// Segments à passer pendant la lecture (film).
+  final List<SkipSegment> skipSegments;
+
   final Map<String, dynamic> metadata;
 
   bool get isMovie => contentType == 'movie';
@@ -83,6 +98,9 @@ class AdminCatalogItemModel extends Equatable {
     List<String>? countries,
     double? rating,
     String? pilotEpisodeId,
+    int? introEndSeconds,
+    int? creditsStartSeconds,
+    List<SkipSegment>? skipSegments,
     Map<String, dynamic>? metadata,
   }) {
     return AdminCatalogItemModel(
@@ -110,6 +128,9 @@ class AdminCatalogItemModel extends Equatable {
       countries: countries ?? this.countries,
       rating: rating ?? this.rating,
       pilotEpisodeId: pilotEpisodeId ?? this.pilotEpisodeId,
+      introEndSeconds: introEndSeconds ?? this.introEndSeconds,
+      creditsStartSeconds: creditsStartSeconds ?? this.creditsStartSeconds,
+      skipSegments: skipSegments ?? this.skipSegments,
       metadata: metadata ?? this.metadata,
     );
   }
@@ -140,6 +161,9 @@ class AdminCatalogItemModel extends Equatable {
         countries,
         rating,
         pilotEpisodeId,
+        introEndSeconds,
+        creditsStartSeconds,
+        skipSegments,
         metadata,
       ];
 }

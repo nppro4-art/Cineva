@@ -11,6 +11,13 @@ List<String> asStringList(dynamic value, {List<String> fallback = const <String>
   return fallback;
 }
 
+/// Convertit une valeur `skip_segments` (colonne jsonb ou entrée de
+/// metadata) en segments valides. Les entrées illisibles sont ignorées.
+List<SkipSegment> asSkipSegments(dynamic value) {
+  if (value is! List) return const <SkipSegment>[];
+  return value.map(SkipSegment.fromJson).where((segment) => segment.isValid).toList();
+}
+
 List<String> asSubtitleLanguages(dynamic value) {
   if (value is List) {
     return value.map((entry) {

@@ -17,7 +17,13 @@ Future<void> _playerSeekToRatio(_PlayerScreenState state, double value) async {
   final player = state._controller;
   if (player == null || !player.value.isInitialized) return;
   final duration = player.value.duration.inSeconds;
-  await player.seekTo(Duration(seconds: (duration * value).round()));
+  final detail = state.ref.read(contentDetailProvider(state.widget.contentId)).valueOrNull;
+  final target = PlayerRuntimePolicy.resolveSeekTarget(
+    targetSeconds: (duration * value).round(),
+    durationSeconds: duration,
+    segments: detail?.skipSegments ?? const <SkipSegment>[],
+  );
+  await player.seekTo(Duration(seconds: target));
   state._scheduleHide();
   if (state.mounted) state.setState(() {});
 }
@@ -25,7 +31,14 @@ Future<void> _playerSeekToRatio(_PlayerScreenState state, double value) async {
 Future<void> _playerSeekToSeconds(_PlayerScreenState state, int seconds) async {
   final player = state._controller;
   if (player == null || !player.value.isInitialized) return;
-  final clamped = seconds.clamp(0, player.value.duration.inSeconds).toInt();
+  final duration = player.value.duration.inSeconds;
+  final detail = state.ref.read(contentDetailProvider(state.widget.contentId)).valueOrNull;
+  // Une cible tombant dans un segment à passer est avancée à la fin du segment.
+  final clamped = PlayerRuntimePolicy.resolveSeekTarget(
+    targetSeconds: seconds,
+    durationSeconds: duration,
+    segments: detail?.skipSegments ?? const <SkipSegment>[],
+  );
   await player.seekTo(Duration(seconds: clamped));
   await HapticFeedback.selectionClick();
   state._showGesture(PlayerFormatters.formatDuration(clamped));
@@ -155,6 +168,7 @@ Future<void> _playerChangeQuality(
     localFilePath: null,
     seekToSeconds: position,
     autoPlay: wasPlaying,
+    skipSegments: detail.skipSegments,
   );
   if (state.mounted && state._playbackError == null) {
     state._showGesture('Qualité ${preset.label}');
@@ -205,5 +219,6 @@ Future<void> _playerRetry(_PlayerScreenState state, ContentDetailModel detail) a
     localFilePath: null,
     seekToSeconds: currentPosition,
     autoPlay: true,
+    skipSegments: detail.skipSegments,
   );
 }

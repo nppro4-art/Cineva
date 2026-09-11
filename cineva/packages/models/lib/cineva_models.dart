@@ -22,3 +22,4 @@ export 'src/video_quality_option.dart';
 export 'src/search_result_model.dart';
 export 'src/search_suggestion_model.dart';
 export 'src/session_snapshot.dart';
+export 'src/skip_segment_model.dart';

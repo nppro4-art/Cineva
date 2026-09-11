@@ -106,23 +106,37 @@ class SupabaseAdminCatalogRepository {
       'duration_minutes': episode.durationMinutes,
       'audio_languages': episode.audioLanguages,
       'subtitles': episode.subtitleLanguages,
+      // Colonne skip_segments ; si la migration n'a pas encore été appliquée
+      // sur la base, le repli metadata prend le relais.
+      'skip_segments': _skipSegmentsJson(episode.skipSegments),
       'metadata': <String, dynamic>{
         'rating': episode.rating,
         'intro_end_seconds': episode.introEndSeconds,
         'credits_start_seconds': episode.creditsStartSeconds,
         'next_episode_id': episode.nextEpisodeId,
+        'skip_segments': _skipSegmentsJson(episode.skipSegments),
       },
       'is_published': true,
       'published_at': DateTime.now().toIso8601String(),
     }..removeWhere((key, value) => value == null);
 
-    final row = await client.from('episodes').upsert(payload).select().single();
-    return _mapEpisode(Map<String, dynamic>.from(row), seriesId: episode.seriesId);
+    final row = await _upsertWithSchemaFallback(
+      client,
+      table: 'episodes',
+      payload: payload,
+      columnKeys: const <String>['skip_segments'],
+    );
+    return _mapEpisode(row, seriesId: episode.seriesId);
   }
 
   Future<AdminCatalogItemModel> saveMovie(AdminCatalogItemModel movie) async {
     final client = await _gateway.client();
-    final metadata = Map<String, dynamic>.from(movie.metadata)..['rating'] = movie.rating;
+    final skipSegmentsJson = _skipSegmentsJson(movie.skipSegments);
+    final metadata = Map<String, dynamic>.from(movie.metadata)
+      ..['rating'] = movie.rating
+      ..['intro_end_seconds'] = movie.introEndSeconds
+      ..['credits_start_seconds'] = movie.creditsStartSeconds
+      ..['skip_segments'] = skipSegmentsJson;
     final payload = <String, dynamic>{
       if (movie.id.isNotEmpty) 'id': movie.id,
       'title': movie.title,
@@ -141,16 +155,26 @@ class SupabaseAdminCatalogRepository {
       'countries': movie.countries,
       'audio_languages': movie.audioLanguages,
       'subtitles': movie.subtitleLanguages,
+      // Colonnes de sauts de temps ; si la migration n'a pas encore été
+      // appliquée sur la base, le repli metadata prend le relais.
+      'intro_end_seconds': movie.introEndSeconds,
+      'credits_start_seconds': movie.creditsStartSeconds,
+      'skip_segments': skipSegmentsJson,
       'metadata': metadata,
       'is_featured': movie.isFeatured,
       'is_published': movie.isPublished,
       'published_at': movie.isPublished ? DateTime.now().toIso8601String() : null,
     }..removeWhere((key, value) => value == null);
 
-    final row = await client.from('movies').upsert(payload).select().single();
+    final row = await _upsertWithSchemaFallback(
+      client,
+      table: 'movies',
+      payload: payload,
+      columnKeys: const <String>['intro_end_seconds', 'credits_start_seconds', 'skip_segments'],
+    );
     final id = row['id'] as String;
     await _replaceCategoryLinks(client, table: 'movie_categories', foreignKey: 'movie_id', contentId: id, categoryIds: movie.categoryIds);
-    return _mapCatalogMovie(Map<String, dynamic>.from(row), movie.categoryIds);
+    return _mapCatalogMovie(row, movie.categoryIds);
   }
 
   Future<SeasonModel> saveSeason({String? id, required String seriesId, required int seasonNumber, required String title, String? synopsis, String? posterPath}) async {
@@ -305,6 +329,9 @@ class SupabaseAdminCatalogRepository {
       directorName: row['director_name'] as String?,
       countries: asStringList(row['countries']),
       rating: (metadata['rating'] as num?)?.toDouble(),
+      introEndSeconds: (row['intro_end_seconds'] as num?)?.toInt() ?? (metadata['intro_end_seconds'] as num?)?.toInt(),
+      creditsStartSeconds: (row['credits_start_seconds'] as num?)?.toInt() ?? (metadata['credits_start_seconds'] as num?)?.toInt(),
+      skipSegments: asSkipSegments(row['skip_segments'] ?? metadata['skip_segments']),
       metadata: metadata,
     );
   }
@@ -334,6 +361,9 @@ class SupabaseAdminCatalogRepository {
       countries: asStringList(row['countries']),
       rating: (metadata['rating'] as num?)?.toDouble(),
       pilotEpisodeId: metadata['pilot_episode_id'] as String?,
+      introEndSeconds: (row['intro_end_seconds'] as num?)?.toInt() ?? (metadata['intro_end_seconds'] as num?)?.toInt(),
+      creditsStartSeconds: (row['credits_start_seconds'] as num?)?.toInt() ?? (metadata['credits_start_seconds'] as num?)?.toInt(),
+      skipSegments: asSkipSegments(row['skip_segments'] ?? metadata['skip_segments']),
       metadata: metadata,
     );
   }
@@ -356,6 +386,7 @@ class SupabaseAdminCatalogRepository {
       rating: (metadata['rating'] as num?)?.toDouble(),
       introEndSeconds: metadata['intro_end_seconds'] as int?,
       creditsStartSeconds: metadata['credits_start_seconds'] as int?,
+      skipSegments: asSkipSegments(row['skip_segments'] ?? metadata['skip_segments']),
       nextEpisodeId: metadata['next_episode_id'] as String?,
     );
   }
@@ -363,4 +394,37 @@ class SupabaseAdminCatalogRepository {
   bool _looksLikeUuid(String value) => _uuidRegex.hasMatch(value);
 
   static final RegExp _uuidRegex = RegExp(r'^[0-9a-fA-F-]{36}$');
+
+  /// Sérialise les segments pour la colonne `skip_segments` (jsonb).
+  List<Map<String, dynamic>> _skipSegmentsJson(List<SkipSegment> segments) {
+    return segments.map((segment) => segment.toJson()).toList();
+  }
+
+  /// Upsert tolérant au schéma : si les colonnes cibles n'existent pas
+  /// encore dans la base (migration non appliquée), réessaye sans elles.
+  /// Les valeurs restent disponibles dans `metadata` (écriture double).
+  Future<Map<String, dynamic>> _upsertWithSchemaFallback(
+    SupabaseClient client, {
+    required String table,
+    required Map<String, dynamic> payload,
+    required List<String> columnKeys,
+  }) async {
+    try {
+      final row = await client.from(table).upsert(payload).select().single();
+      return Map<String, dynamic>.from(row as Map);
+    } on PostgrestException catch (error) {
+      if (!_isMissingColumn(error)) rethrow;
+      final fallback = Map<String, dynamic>.from(payload);
+      for (final key in columnKeys) {
+        fallback.remove(key);
+      }
+      final row = await client.from(table).upsert(fallback).select().single();
+      return Map<String, dynamic>.from(row as Map);
+    }
+  }
+
+  bool _isMissingColumn(PostgrestException error) {
+    final details = '${error.code} ${error.message} ${error.details} ${error.hint}';
+    return details.contains('42703') || details.contains('does not exist');
+  }
 }

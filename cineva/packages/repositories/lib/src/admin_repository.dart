@@ -2,6 +2,8 @@ import 'dart:typed_data';
 
 import 'package:cineva_models/cineva_models.dart';
 
+import 'tmdb/tmdb_client.dart';
+
 abstract interface class AdminRepository {
   Future<AdminDashboardSummary> fetchDashboardSummary();
 
@@ -126,4 +128,9 @@ abstract interface class AdminRepository {
     required String homeSectionId,
     required List<AdminHomeSectionItemModel> items,
   });
+
+  /// Récupère la fiche TMDB (métadonnées publiques) pour pré-remplir
+  /// l'éditeur de catalogue. Ne crée aucun enregistrement : l'administrateur
+  /// valide ensuite l'enregistrement dans l'éditeur.
+  Future<TmdbContentDraft> fetchTmdbDraft(TmdbReference reference);
 }

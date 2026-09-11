@@ -10,6 +10,7 @@ import 'admin_notifications_repository.dart';
 import 'admin_repository.dart';
 import 'admin_supabase_gateway.dart';
 import 'admin_users_repository.dart';
+import 'tmdb/tmdb_client.dart';
 
 class SupabaseAdminRepository implements AdminRepository {
   SupabaseAdminRepository(BackendService backendService)
@@ -27,6 +28,9 @@ class SupabaseAdminRepository implements AdminRepository {
   final SupabaseAdminNotificationsRepository _notificationsRepository;
   final SupabaseAdminCatalogRepository _catalogRepository;
   final SupabaseAdminHomeRepository _homeRepository;
+
+  /// Import TMDB (API publique, indépendante de Supabase).
+  final TmdbClient _tmdbClient = TmdbClient();
 
   @override
   Future<void> addMonths({required String userId, required int months, String? note}) {
@@ -109,6 +113,9 @@ class SupabaseAdminRepository implements AdminRepository {
 
   @override
   Future<List<AdminWatchStatModel>> fetchTopWatchStats() => _dashboardRepository.fetchTopWatchStats();
+
+  @override
+  Future<TmdbContentDraft> fetchTmdbDraft(TmdbReference reference) => _tmdbClient.fetch(reference);
 
   @override
   Future<List<DeviceModel>> fetchUserDevices(String userId) => _usersRepository.fetchUserDevices(userId);

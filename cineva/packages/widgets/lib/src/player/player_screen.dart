@@ -190,6 +190,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
           positionSeconds: position,
           creditsStartSeconds: detail.creditsStartSeconds,
         );
+        final activeSkipSegment = PlayerRuntimePolicy.activeSkipSegment(
+          positionSeconds: position,
+          segments: detail.skipSegments,
+        );
+        final skipSegmentRemaining = activeSkipSegment == null
+            ? 0
+            : (activeSkipSegment.endSeconds - position).clamp(0, activeSkipSegment.durationSeconds);
         final resolvedCurrentQuality = _resolveSelectedQualityOption(
           detail.availableQualities,
           _selectedQuality,
@@ -306,6 +313,16 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                                 title: 'Connexion instable',
                                 message: 'Le réseau semble indisponible et aucun fichier hors ligne n’est actuellement disponible pour ce contenu.',
                                 tone: CinevaBannerTone.warning,
+                              ),
+                            ),
+                          if (activeSkipSegment != null)
+                            Positioned(
+                              left: CinevaSpacing.lg,
+                              bottom: 64,
+                              child: ActionPill(
+                                icon: Icons.no_transfer_rounded,
+                                label: 'Passer ce segment • ${skipSegmentRemaining}s',
+                                onTap: () => _seekToSeconds(activeSkipSegment!.endSeconds),
                               ),
                             ),
                           if (showSkipIntro)
