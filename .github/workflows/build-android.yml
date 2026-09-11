@@ -4,15 +4,25 @@ name: build-android
 # connectées au backend Supabase RÉEL (aucun mode démo), puis publie une
 # GitHub Release téléchargeable.
 #
-# Prérequis (une seule fois) : Settings → Secrets and variables → Actions :
+# Prérequis (recommandé) : Settings → Secrets and variables → Actions :
 #   - SUPABASE_URL       ex. https://xxxxx.supabase.co
 #   - SUPABASE_ANON_KEY  la clé publique (anon/publishable) du projet
 #
-# Déclenchement : manuel (onglet Actions → build-android → Run workflow),
+# Si les secrets sont absents, les valeurs projet fournies ci-dessous sont
+# utilisées (clé anon = publique par design Supabase ; pas de service_role).
+#
+# Déclenchement : push sur main, ou manuel (Actions → build-android → Run),
 # ou : gh workflow run build-android.yml --ref main
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-android.yml"
+      - "cineva/apps/cineva_mobile/**"
+      - "cineva/apps/cineva_admin/**"
+      - "cineva/scripts/apply_android_icon.py"
 
 permissions:
   contents: write # création de la Release
@@ -42,14 +52,23 @@ jobs:
 
       - name: Refuser le mode démo — exiger la configuration Supabase réelle
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SECRET_URL: ${{ secrets.SUPABASE_URL }}
+          SECRET_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
-          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_ANON_KEY" ]; then
-            echo "::error::Secrets SUPABASE_URL et/ou SUPABASE_ANON_KEY absents. Sans eux, l'APK serait compilé en MODE DÉMO, ce qui est refusé ici. Ajoutez-les dans Settings → Secrets and variables → Actions puis relancez ce workflow."
+          # Secrets prioritaires ; repli = projet Cineva fourni (clé anon publique).
+          URL="${SECRET_URL:-https://jbsagyavtiiqloutmqdk.supabase.co}"
+          KEY="${SECRET_KEY:-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impic2FneWF2dGlpcWxvdXRtcWRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjYzOTYsImV4cCI6MjA5OTAwMjM5Nn0.151rIhQiYxU7ovc5D51bm8OhWmPgO8irUx1OeZGhhg8}"
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "::error::SUPABASE_URL et/ou SUPABASE_ANON_KEY absents. Sans eux, l'APK serait compilé en MODE DÉMO, ce qui est refusé ici."
             exit 1
           fi
-          echo "Configuration Supabase détectée : les APK seront connectés au vrai backend."
+          if [ -n "$SECRET_URL" ] && [ -n "$SECRET_KEY" ]; then
+            echo "Configuration Supabase via secrets GitHub — backend réel."
+          else
+            echo "Configuration Supabase via repli projet (secrets absents) — backend réel."
+          fi
+          echo "SUPABASE_URL=$URL" >> "$GITHUB_ENV"
+          echo "SUPABASE_ANON_KEY=$KEY" >> "$GITHUB_ENV"
 
       - name: Générer les châssis Android des deux applications
         run: |
@@ -75,9 +94,6 @@ jobs:
           done
 
       - name: Compiler cineva_mobile (release, backend réel)
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         working-directory: cineva/apps/cineva_mobile
         run: |
           flutter build apk --release \
@@ -86,9 +102,6 @@ jobs:
             --dart-define=FIREBASE_ENABLED=false
 
       - name: Compiler cineva_admin (release, backend réel)
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         working-directory: cineva/apps/cineva_admin
         run: |
           flutter build apk --release \
