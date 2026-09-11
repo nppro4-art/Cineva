@@ -4,7 +4,6 @@ import 'package:cineva_shared/cineva_shared.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'catalog_repository.dart';
-import 'supabase_support.dart';
 import 'user_library_json_codec.dart';
 import 'user_library_repository.dart';
 

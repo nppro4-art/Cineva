@@ -49,6 +49,7 @@ AppSettingsModel mapAppSettings(Map<String, dynamic> row) {
       optionsJson: asJsonMap(row['vision_options']),
       autoRecommended: asJsonMap(row['vision_options'])?['autoRecommended'] as bool?,
     ),
+    audioSettings: CinevaAudioSettings.fromJson(asJsonMap(row['audioSettings'])),
   );
 }
 

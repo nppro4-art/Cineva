@@ -82,7 +82,7 @@ abstract final class CinevaTheme {
         backgroundColor: Colors.transparent,
         foregroundColor: text,
       ),
-      cardTheme: CardThemeData(
+      cardTheme: CardTheme(
         margin: EdgeInsets.zero,
         color: surface,
         elevation: 0,
@@ -113,7 +113,7 @@ abstract final class CinevaTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: surface.withOpacity(isDark ? 0.94 : 0.98),
         indicatorColor: CinevaColors.accent.withOpacity(0.16),
-        labelTextStyle: MaterialStatePropertyAll(
+        labelTextStyle: WidgetStatePropertyAll(
           base.textTheme.labelMedium?.copyWith(
             color: text,
             fontWeight: FontWeight.w700,

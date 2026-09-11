@@ -1,9 +1,11 @@
+import 'package:cineva_audio_engine/cineva_audio_engine.dart';
 import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_repositories/cineva_repositories.dart';
 import 'package:cineva_services/cineva_services.dart';
 import 'package:cineva_shared/cineva_shared.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../audio/audio_engine_controller.dart';
 import '../auth/login_controller.dart';
 import '../library/library_controller.dart';
 import '../search/search_controller.dart';
@@ -145,6 +147,27 @@ final visionControllerProvider = StateNotifierProvider<VisionController, VisionS
 final settingsControllerProvider = StateNotifierProvider<SettingsController, AsyncValue<AppSettingsModel>>(
   (ref) => SettingsController(ref.watch(appSettingsRepositoryProvider)),
 );
+
+/// Backend audio réel de la plateforme (AudioWorklet sur web ; stub honnête
+/// ailleurs — jamais de faux « traitement actif »).
+final audioBackendProvider = Provider<CinevaAudioBackend>((ref) {
+  return WebAudioBackend();
+});
+
+final audioEngineControllerProvider =
+    StateNotifierProvider<AudioEngineController, AudioEngineUiState>((ref) {
+  final controller = AudioEngineController(
+    backend: ref.watch(audioBackendProvider),
+    persist: (settings) =>
+        ref.read(settingsControllerProvider.notifier).updateAudioSettings(settings),
+  );
+  ref.listen<AsyncValue<AppSettingsModel>>(settingsControllerProvider, (previous, next) {
+    controller.syncFromSettings(next.valueOrNull?.audioSettings);
+  });
+  controller.syncFromSettings(
+      ref.read(settingsControllerProvider).valueOrNull?.audioSettings);
+  return controller;
+});
 
 final searchControllerProvider = StateNotifierProvider.autoDispose<SearchController, SearchState>(
   (ref) => SearchController(

@@ -72,7 +72,7 @@ class ContentDetailModel extends Equatable {
         .where((option) => option.preset == preset)
         .where((option) => option.hasDedicatedStream)
         .map((option) => option.streamUrl)
-        .firstWhere((value) => value != null && value!.isNotEmpty, orElse: () => null);
+        .firstWhere((value) => value != null && value.isNotEmpty, orElse: () => null);
     return dedicated ?? videoUrl;
   }
 

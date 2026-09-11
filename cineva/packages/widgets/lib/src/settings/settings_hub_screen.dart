@@ -69,6 +69,12 @@ class SettingsHubScreen extends ConsumerWidget {
                 subtitle: settings.visionSettings.profile.label,
                 onTap: () => context.push('/settings/cineva-vision'),
               ),
+              _NavTile(
+                icon: Icons.graphic_eq_rounded,
+                title: 'Cineva Audio',
+                subtitle: '${settings.audioSettings.profile.label} • moteur ${settings.audioSettings.enabled ? 'activé' : 'désactivé'}',
+                onTap: () => context.push('/settings/audio'),
+              ),
             ],
           ),
         ),

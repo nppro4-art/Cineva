@@ -9,7 +9,7 @@ class AppEnv extends Equatable {
   });
 
   factory AppEnv.fromDartDefine() {
-    return AppEnv(
+    return const AppEnv(
       supabaseUrl: const String.fromEnvironment('SUPABASE_URL', defaultValue: ''),
       supabaseAnonKey: const String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: ''),
       firebaseEnabled: const bool.fromEnvironment('FIREBASE_ENABLED', defaultValue: true),

@@ -259,7 +259,7 @@ class _CategoriesTab extends ConsumerWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             final compact = constraints.maxWidth < 760;
-            final title = const Expanded(
+            const title = Expanded(
               child: CinevaSectionTitle(
                 title: 'Catégories',
                 actionLabel: 'Genres, recommandations éditoriales et sections d’accueil',

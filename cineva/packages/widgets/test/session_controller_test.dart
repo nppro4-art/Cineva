@@ -4,6 +4,7 @@ import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_repositories/cineva_repositories.dart';
 import 'package:cineva_shared/cineva_shared.dart';
 import 'package:cineva_widgets/src/app/session_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -70,7 +71,7 @@ class _FakeAuthRepository implements AuthRepository {
   bool signOutCalled = false;
 
   @override
-  Stream<void> authStateChanges() => Stream<void>.empty();
+  Stream<void> authStateChanges() => const Stream<void>.empty();
 
   @override
   Future<void> resetPassword({required String email}) async {}

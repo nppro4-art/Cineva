@@ -57,10 +57,10 @@ void main() {
     );
 
     final sanitized = service.sanitize(
-      CinevaVisionSettings(
+      const CinevaVisionSettings(
         profile: CinevaVisionProfile.aiBeta,
         autoRecommended: false,
-        options: const CinevaVisionOptions(
+        options: CinevaVisionOptions(
           smartSharpness: true,
           enhancedColors: true,
           dynamicContrast: true,

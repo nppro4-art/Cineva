@@ -24,6 +24,11 @@ class PlayerControls extends StatelessWidget {
     required this.onOpenSubtitles,
     required this.onOpenQuality,
     required this.onVolumeChanged,
+    this.audioEngineLabel,
+    this.audioProcessing = false,
+    this.audioAbCompare = false,
+    this.onOpenAudioSettings,
+    this.onToggleAudioAb,
   });
 
   final ContentDetailModel detail;
@@ -41,6 +46,14 @@ class PlayerControls extends StatelessWidget {
   final VoidCallback onOpenSubtitles;
   final VoidCallback onOpenQuality;
   final ValueChanged<double> onVolumeChanged;
+
+  /// État du Cineva Audio Engine (null → backend indisponible : pas de pill,
+  /// on n'affiche jamais un traitement qui n'existe pas).
+  final String? audioEngineLabel;
+  final bool audioProcessing;
+  final bool audioAbCompare;
+  final VoidCallback? onOpenAudioSettings;
+  final VoidCallback? onToggleAudioAb;
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +147,33 @@ class PlayerControls extends StatelessWidget {
                         icon: const Icon(Icons.high_quality_rounded),
                         label: Text(selectedQuality.preset.label),
                       ),
+                      if (audioEngineLabel != null && onOpenAudioSettings != null)
+                        Tooltip(
+                          message: 'Cineva Audio — ${audioAbCompare ? 'son d\'origine (B)' : (audioProcessing ? 'traitement actif' : 'en veille')}',
+                          child: OutlinedButton.icon(
+                            onPressed: onOpenAudioSettings,
+                            icon: Icon(
+                              audioAbCompare
+                                  ? Icons.hearing_rounded
+                                  : Icons.graphic_eq_rounded,
+                              color: audioAbCompare || audioProcessing
+                                  ? CinevaColors.accentSoft
+                                  : null,
+                            ),
+                            label: Text(audioAbCompare ? 'A/B' : audioEngineLabel!),
+                          ),
+                        ),
+                      if (audioEngineLabel != null && onToggleAudioAb != null)
+                        IconButton.filledTonal(
+                          tooltip: audioAbCompare
+                              ? 'Revenir au son Cineva (A)'
+                              : 'Comparer avec le son d\'origine (B)',
+                          onPressed: onToggleAudioAb,
+                          icon: Icon(
+                            audioAbCompare ? Icons.toggle_on_rounded : Icons.toggle_off_rounded,
+                            color: audioAbCompare ? CinevaColors.accentSoft : null,
+                          ),
+                        ),
                       SizedBox(
                         width: 240,
                         child: Row(

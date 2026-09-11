@@ -26,13 +26,13 @@ void main() {
   });
 
   test('serializes and hydrates download state consistently', () {
-    final item = DownloadItemModel(
+    const item = DownloadItemModel(
       contentId: 'movie_1',
       contentType: 'movie',
       progressPercent: 0.5,
       sizeMb: 800,
       status: DownloadStatus.paused,
-      content: const ContentTileModel(
+      content: ContentTileModel(
         id: 'movie_1',
         title: 'Movie',
         subtitle: 'Film',

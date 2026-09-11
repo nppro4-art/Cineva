@@ -38,20 +38,20 @@ void main() {
   });
 
   test('maps episode into standalone content detail preserving parent metadata', () {
-    final parent = ContentDetailModel(
+    const parent = ContentDetailModel(
       id: 'series_1',
       contentType: 'series',
       title: 'Orbit',
       subtitle: 'Series',
       synopsis: 'Parent synopsis',
       badge: 'Series',
-      genres: const <String>['Sci-Fi'],
-      castNames: const <String>['Lead'],
-      audioLanguages: const <String>['Français'],
-      subtitleLanguages: const <String>['Français'],
+      genres: <String>['Sci-Fi'],
+      castNames: <String>['Lead'],
+      audioLanguages: <String>['Français'],
+      subtitleLanguages: <String>['Français'],
       directorName: 'Ava Stone',
       downloadSizeMb: 900,
-      availableQualities: const <VideoQualityOption>[],
+      availableQualities: <VideoQualityOption>[],
       year: 2026,
     );
     const episode = EpisodeModel(

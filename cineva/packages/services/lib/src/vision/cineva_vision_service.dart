@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:cineva_models/cineva_models.dart';
 import 'package:device_info_plus/device_info_plus.dart';

@@ -1,12 +1,17 @@
 import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_repositories/cineva_repositories.dart';
+import 'package:cineva_services/cineva_services.dart';
 import 'package:cineva_widgets/src/library/library_controller.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('LibraryController toggles favorite state', () async {
     final repository = _FakeUserLibraryRepository();
-    final controller = LibraryController(repository);
+    final controller = LibraryController(
+      repository: repository,
+      catalogRepository: _StubCatalogRepository(),
+      mediaDownloadService: _FakeMediaDownloadService(),
+    );
 
     await Future<void>.delayed(Duration.zero);
     await controller.toggleFavorite(
@@ -24,7 +29,11 @@ void main() {
 
   test('LibraryController saves progress into continue watching', () async {
     final repository = _FakeUserLibraryRepository();
-    final controller = LibraryController(repository);
+    final controller = LibraryController(
+      repository: repository,
+      catalogRepository: _StubCatalogRepository(),
+      mediaDownloadService: _FakeMediaDownloadService(),
+    );
 
     await Future<void>.delayed(Duration.zero);
     await controller.saveProgress(
@@ -107,4 +116,27 @@ class _FakeUserLibraryRepository implements UserLibraryRepository {
 
   @override
   Future<void> updateDownload(DownloadItemModel item) async {}
+}
+
+
+/// CatalogRepository factice : aucune méthode n'est appelée dans ces tests
+/// (aucun téléchargement à reprendre au démarrage).
+class _StubCatalogRepository implements CatalogRepository {
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError('${invocation.memberName}');
+}
+
+/// MediaDownloadService factice : aucun fichier local, aucun flux de mise à
+/// jour (le contrôleur doit simplement ne rien avoir à reprendre).
+class _FakeMediaDownloadService implements MediaDownloadService {
+  @override
+  Stream<DownloadItemModel> get updates => const Stream.empty();
+
+  @override
+  Future<bool> fileExists(String? path) async => false;
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError('${invocation.memberName}');
 }

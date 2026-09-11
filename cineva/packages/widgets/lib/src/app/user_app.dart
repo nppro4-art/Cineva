@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../audio/audio_settings_screen.dart';
+import '../audio/advanced_audio_screen.dart';
 import '../auth/login_screen.dart';
 import '../player/player_screen.dart';
 import '../user/account_screen.dart';
@@ -150,6 +152,20 @@ final _userRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _fadePage(
           state: state,
           child: const CinevaVisionSettingsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/settings/audio',
+        pageBuilder: (context, state) => _fadePage(
+          state: state,
+          child: const AudioSettingsScreen(),
+        ),
+      ),
+      GoRoute(
+        path: '/settings/audio/advanced',
+        pageBuilder: (context, state) => _fadePage(
+          state: state,
+          child: const AdvancedAudioScreen(),
         ),
       ),
     ],

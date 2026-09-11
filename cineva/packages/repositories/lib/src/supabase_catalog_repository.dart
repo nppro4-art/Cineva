@@ -1,6 +1,5 @@
 import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_services/cineva_services.dart';
-import 'package:cineva_shared/cineva_shared.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'catalog_repository.dart';

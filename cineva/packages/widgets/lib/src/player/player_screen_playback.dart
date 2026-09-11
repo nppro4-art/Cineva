@@ -64,6 +64,7 @@ Future<void> _playerInitializeController(
       await controller.play();
     }
     controller.addListener(state._videoListener);
+    state._attachAudioEngine();
     state._saveTimer = Timer.periodic(
       const Duration(seconds: 5),
       (_) => state._persistProgress(),
@@ -91,6 +92,7 @@ Future<void> _playerInitializeController(
           await fallbackController.play();
         }
         fallbackController.addListener(state._videoListener);
+        state._attachAudioEngine();
         state._saveTimer = Timer.periodic(
           const Duration(seconds: 5),
           (_) => state._persistProgress(),
@@ -195,4 +197,18 @@ Future<void> _playerPersistProgress(_PlayerScreenState state, {bool forceComplet
         positionSeconds: position,
         durationSeconds: duration,
       );
+}
+
+extension _PlayerAudioEngineX on _PlayerScreenState {
+  /// Branche le Cineva Audio Engine au média dès que le lecteur démarre
+  /// (web : AudioWorklet sur l'élément <video> ; ailleurs : no-op honnête).
+  void _attachAudioEngine() {
+    try {
+      unawaited(
+        ref.read(audioEngineControllerProvider.notifier).ensureAttached(),
+      );
+    } catch (_) {
+      // provider indisponible pendant une transition de page
+    }
+  }
 }

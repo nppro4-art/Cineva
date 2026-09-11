@@ -182,7 +182,7 @@ class MediaDownloadService {
       );
 
       if (existingBytes > 0 && response.statusCode != 206) {
-        await tempFile.delete().catchError((_) {});
+        await tempFile.delete().catchError((_) => tempFile);
         existingBytes = 0;
         response = await _dio.get<ResponseBody>(
           request.url,
