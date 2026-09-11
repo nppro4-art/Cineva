@@ -14,6 +14,10 @@ Future<void> _showEpisodeEditor(BuildContext context, WidgetRef ref, String seri
   final introController = TextEditingController(text: episode?.introEndSeconds?.toString() ?? '');
   final creditsController = TextEditingController(text: episode?.creditsStartSeconds?.toString() ?? '');
   final nextEpisodeController = TextEditingController(text: episode?.nextEpisodeId ?? '');
+  final skipSegmentRows = <_SkipSegmentRow>[
+    for (final segment in (episode?.skipSegments ?? const <SkipSegment>[]))
+      _SkipSegmentRow(start: segment.startSeconds.toString(), end: segment.endSeconds.toString()),
+  ];
 
   await showDialog<void>(
     context: context,
@@ -114,6 +118,21 @@ Future<void> _showEpisodeEditor(BuildContext context, WidgetRef ref, String seri
                       ],
                     ),
                     const SizedBox(height: CinevaSpacing.md),
+                    const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text('Segments à passer', style: TextStyle(fontWeight: FontWeight.w600)),
+                    ),
+                    const SizedBox(height: CinevaSpacing.sm),
+                    _SkipSegmentEditor(
+                      rows: skipSegmentRows,
+                      onAdd: () => setState(() => skipSegmentRows.add(_SkipSegmentRow())),
+                      onRemove: (index) => setState(() {
+                        if (index >= 0 && index < skipSegmentRows.length) {
+                          skipSegmentRows.removeAt(index).dispose();
+                        }
+                      }),
+                    ),
+                    const SizedBox(height: CinevaSpacing.md),
                     TextField(controller: nextEpisodeController, decoration: const InputDecoration(labelText: 'ID épisode suivant (optionnel)')),
                     const SizedBox(height: CinevaSpacing.md),
                     _MediaPickerCard(
@@ -161,6 +180,7 @@ Future<void> _showEpisodeEditor(BuildContext context, WidgetRef ref, String seri
                             rating: double.tryParse(ratingController.text.trim()),
                             introEndSeconds: int.tryParse(introController.text.trim()),
                             creditsStartSeconds: int.tryParse(creditsController.text.trim()),
+                            skipSegments: _skipSegmentsFromRows(skipSegmentRows),
                             nextEpisodeId: nextEpisodeController.text.trim().isEmpty ? null : nextEpisodeController.text.trim(),
                           ),
                         ),

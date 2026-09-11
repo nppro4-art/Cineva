@@ -30,6 +30,7 @@ void _playerEnsureController(
       localFilePath: localPath,
       seekToSeconds: progress?.positionSeconds ?? 0,
       autoPlay: true,
+      skipSegments: detail.skipSegments,
     ),
   );
 }
@@ -40,6 +41,7 @@ Future<void> _playerInitializeController(
   required String? localFilePath,
   required int seekToSeconds,
   required bool autoPlay,
+  required List<SkipSegment> skipSegments,
 }) async {
   final oldController = state._controller;
   oldController?.removeListener(state._videoListener);
@@ -57,7 +59,9 @@ Future<void> _playerInitializeController(
   try {
     await controller.initialize();
     if (seekToSeconds > 0) {
-      await controller.seekTo(Duration(seconds: seekToSeconds));
+      await controller.seekTo(
+        Duration(seconds: _playerResumeTarget(controller, seekToSeconds, skipSegments)),
+      );
     }
     await controller.setVolume(state._volume);
     if (autoPlay) {
@@ -85,7 +89,9 @@ Future<void> _playerInitializeController(
         state._controller = fallbackController;
         await fallbackController.initialize();
         if (seekToSeconds > 0) {
-          await fallbackController.seekTo(Duration(seconds: seekToSeconds));
+          await fallbackController.seekTo(
+            Duration(seconds: _playerResumeTarget(fallbackController, seekToSeconds, skipSegments)),
+          );
         }
         await fallbackController.setVolume(state._volume);
         if (autoPlay) {
@@ -152,6 +158,20 @@ void _playerVideoListener(_PlayerScreenState state) {
   if (player.value.position >= player.value.duration && player.value.duration > Duration.zero) {
     _playerPersistProgress(state, forceComplete: true);
   }
+}
+
+/// Position de reprise : si la position sauvegardée tombe dans un segment à
+/// passer (ex. pause en plein générique), la reprise démarre à la fin du segment.
+int _playerResumeTarget(
+  VideoPlayerController controller,
+  int seekToSeconds,
+  List<SkipSegment> skipSegments,
+) {
+  return PlayerRuntimePolicy.resolveSeekTarget(
+    targetSeconds: seekToSeconds,
+    durationSeconds: controller.value.duration.inSeconds,
+    segments: skipSegments,
+  );
 }
 
 void _playerStartNextEpisodeCountdown(_PlayerScreenState state, String nextId) {

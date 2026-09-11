@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:cineva_models/cineva_models.dart';
+import 'package:cineva_repositories/cineva_repositories.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
 import 'package:file_picker/file_picker.dart';
@@ -19,6 +20,8 @@ part 'catalog_screen_series_manager.dart';
 part 'catalog_season_editor.dart';
 part 'catalog_episode_editor.dart';
 part 'catalog_screen_helpers.dart';
+part 'catalog_skip_segment_editor.dart';
+part 'catalog_tmdb_import.dart';
 
 class AdminCatalogScreen extends StatelessWidget {
   const AdminCatalogScreen({super.key});

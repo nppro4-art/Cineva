@@ -5,6 +5,7 @@ export 'src/catalog_repository.dart';
 export 'src/demo_catalog_source.dart';
 export 'src/session_repository.dart';
 export 'src/supabase_admin_repository.dart';
+export 'src/tmdb/tmdb_client.dart';
 export 'src/supabase_app_settings_repository.dart';
 export 'src/supabase_auth_repository.dart';
 export 'src/supabase_catalog_repository.dart';

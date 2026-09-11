@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import 'content_tile_model.dart';
 import 'season_model.dart';
+import 'skip_segment_model.dart';
 import 'video_quality_option.dart';
 
 class ContentDetailModel extends Equatable {
@@ -33,6 +34,7 @@ class ContentDetailModel extends Equatable {
     this.nextContentId,
     this.introEndSeconds,
     this.creditsStartSeconds,
+    this.skipSegments = const <SkipSegment>[],
   });
 
   final String id;
@@ -62,6 +64,9 @@ class ContentDetailModel extends Equatable {
   final String? nextContentId;
   final int? introEndSeconds;
   final int? creditsStartSeconds;
+
+  /// Segments à passer pendant la lecture (génériques, pubs…).
+  final List<SkipSegment> skipSegments;
 
   bool get isSeries => contentType == 'series';
   bool get isEpisode => contentType == 'episode';
@@ -149,5 +154,6 @@ class ContentDetailModel extends Equatable {
         nextContentId,
         introEndSeconds,
         creditsStartSeconds,
+        skipSegments,
       ];
 }

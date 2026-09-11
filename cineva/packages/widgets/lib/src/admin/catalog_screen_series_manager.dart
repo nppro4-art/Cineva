@@ -50,6 +50,7 @@ Future<void> _showSeriesStructureManager(BuildContext context, WidgetRef ref, Ad
                   rating: episodes[i].rating,
                   introEndSeconds: episodes[i].introEndSeconds,
                   creditsStartSeconds: episodes[i].creditsStartSeconds,
+                  skipSegments: episodes[i].skipSegments,
                   nextEpisodeId: episodes[i].nextEpisodeId,
                 ),
               );

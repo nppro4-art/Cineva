@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import 'skip_segment_model.dart';
+
 class EpisodeModel extends Equatable {
   const EpisodeModel({
     required this.id,
@@ -17,6 +19,7 @@ class EpisodeModel extends Equatable {
     this.rating,
     this.introEndSeconds,
     this.creditsStartSeconds,
+    this.skipSegments = const <SkipSegment>[],
     this.nextEpisodeId,
   });
 
@@ -35,6 +38,7 @@ class EpisodeModel extends Equatable {
   final double? rating;
   final int? introEndSeconds;
   final int? creditsStartSeconds;
+  final List<SkipSegment> skipSegments;
   final String? nextEpisodeId;
 
   String get label => 'S$seasonNumber:E$episodeNumber';
@@ -56,6 +60,7 @@ class EpisodeModel extends Equatable {
         rating,
         introEndSeconds,
         creditsStartSeconds,
+        skipSegments,
         nextEpisodeId,
       ];
 }
