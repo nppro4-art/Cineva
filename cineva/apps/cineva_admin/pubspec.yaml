@@ -11,6 +11,9 @@ dependencies:
     sdk: flutter
   cineva_widgets:
     path: ../../packages/widgets
+  # Pin : app_links ≥6.4 casse AGP avec Flutter 3.24.5
+  # (« Could not get unknown property 'flutter' for extension 'android' »)
+  app_links: 6.3.3
 
 dev_dependencies:
   flutter_test:

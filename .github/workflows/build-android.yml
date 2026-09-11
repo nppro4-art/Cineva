@@ -80,25 +80,41 @@ jobs:
             (cd "cineva/apps/$app" && flutter create --no-pub --platforms=android --org com.cineva --project-name "$app" .)
           done
 
-      - name: Noms affichés sous les icônes + minSdk 24
+      - name: Noms affichés sous les icônes + AGP/minSdk compat Flutter 3.24
         run: |
           sed -i 's/android:label="cineva_mobile"/android:label="Cineva"/' \
             cineva/apps/cineva_mobile/android/app/src/main/AndroidManifest.xml
           sed -i 's/android:label="cineva_admin"/android:label="Cineva Admin"/' \
             cineva/apps/cineva_admin/android/app/src/main/AndroidManifest.xml
-          # Plugins modernes (video_player, file_picker, firebase_*) exigent minSdk ≥ 21 ;
-          # on force 24 pour une surface d'API stable.
           for app in cineva_mobile cineva_admin; do
-            gradle="cineva/apps/$app/android/app/build.gradle"
-            if [ -f "$gradle" ]; then
-              sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/' "$gradle" || true
-              sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' "$gradle" || true
-              # Kotlin build.gradle.kts variants
-              if [ -f "cineva/apps/$app/android/app/build.gradle.kts" ]; then
-                sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' \
-                  "cineva/apps/$app/android/app/build.gradle.kts" || true
-              fi
-            fi
+            root="cineva/apps/$app/android"
+            # minSdk 24 (plugins modernes)
+            for f in "$root/app/build.gradle" "$root/app/build.gradle.kts"; do
+              [ -f "$f" ] || continue
+              sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/' "$f" || true
+              sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' "$f" || true
+              sed -i 's/minSdkVersion [0-9]\+/minSdkVersion 24/' "$f" || true
+            done
+            # AGP 8.x + settings.gradle : forcer versions stables pour Flutter 3.24.5
+            for f in "$root/settings.gradle" "$root/settings.gradle.kts"; do
+              [ -f "$f" ] || continue
+              # Pin AGP 8.1.0 + Kotlin 1.8.22 (combo validée Flutter 3.24)
+              sed -i 's/id "com.android.application" version "[^"]*"/id "com.android.application" version "8.1.0"/' "$f" || true
+              sed -i 's/id "org.jetbrains.kotlin.android" version "[^"]*"/id "org.jetbrains.kotlin.android" version "1.8.22"/' "$f" || true
+              sed -i 's/id("com.android.application") version "[^"]*"/id("com.android.application") version "8.1.0"/' "$f" || true
+              sed -i 's/id("org.jetbrains.kotlin.android") version "[^"]*"/id("org.jetbrains.kotlin.android") version "1.8.22"/' "$f" || true
+            done
+            # Java 17 toolchain
+            for f in "$root/app/build.gradle" "$root/app/build.gradle.kts"; do
+              [ -f "$f" ] || continue
+              sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' "$f" || true
+              sed -i 's/jvmTarget = "1.8"/jvmTarget = "17"/g' "$f" || true
+              sed -i "s/jvmTarget = '1.8'/jvmTarget = '17'/g" "$f" || true
+            done
+            echo "── android config : $app"
+            rg -n "minSdk|com.android.application|kotlin.android|JavaVersion|jvmTarget" \
+              "$root/settings.gradle" "$root/settings.gradle.kts" \
+              "$root/app/build.gradle" "$root/app/build.gradle.kts" 2>/dev/null || true
           done
 
       - name: Icônes de lancement Cineva
