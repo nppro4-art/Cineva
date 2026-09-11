@@ -12,7 +12,8 @@ void main() {
 
     expect(metrics.progressPercent, 0.6);
     expect(metrics.transferSpeedMbps, closeTo(0.0008, 0.00001));
-    expect(metrics.estimatedRemainingSeconds, 2);
+    // Vitesse = (600 - 100) / 5 s = 100 o/s ; reste 400 o → ETA = 4 s.
+    expect(metrics.estimatedRemainingSeconds, 4);
   });
 
   test('keeps eta null when speed cannot be estimated yet', () {

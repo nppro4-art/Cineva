@@ -42,7 +42,7 @@ class BackendService {
         if (_client == null) {
           await Supabase.initialize(
             url: _environment.supabaseUrl,
-            anonKey: _environment.supabaseAnonKey,
+            publishableKey: _environment.supabaseAnonKey,
           );
         }
         _client = Supabase.instance.client;

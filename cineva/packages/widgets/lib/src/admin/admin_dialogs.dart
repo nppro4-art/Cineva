@@ -1,4 +1,3 @@
-import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -164,7 +164,7 @@ class PlayerControls extends StatelessWidget {
                           ),
                         ),
                       if (audioEngineLabel != null && onToggleAudioAb != null)
-                        IconButton.tonal(
+                        IconButton.filledTonal(
                           tooltip: audioAbCompare
                               ? 'Revenir au son Cineva (A)'
                               : 'Comparer avec le son d\'origine (B)',

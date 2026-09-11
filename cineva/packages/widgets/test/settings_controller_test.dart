@@ -1,6 +1,7 @@
 import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_repositories/cineva_repositories.dart';
 import 'package:cineva_widgets/src/settings/settings_controller.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

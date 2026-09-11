@@ -49,6 +49,7 @@ class FakeHomeRepository implements HomeRepository {
         title: 'Cineva $suffix ${index + 1}',
         subtitle: index.isEven ? 'Film premium' : 'Série premium',
         badge: index.isEven ? '4K' : 'HDR',
+        contentType: index.isEven ? 'movie' : 'series',
       ),
     );
   }

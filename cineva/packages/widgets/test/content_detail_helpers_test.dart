@@ -5,7 +5,7 @@ import 'package:cineva_widgets/src/user/content_detail_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  final episodeOne = const EpisodeModel(
+  const episodeOne = EpisodeModel(
     id: 'ep_1',
     seriesId: 'series_1',
     seasonId: 'season_1',
@@ -16,7 +16,7 @@ void main() {
     durationMinutes: 50,
     videoUrl: 'https://example.com/1.mp4',
   );
-  final episodeTwo = const EpisodeModel(
+  const episodeTwo = EpisodeModel(
     id: 'ep_2',
     seriesId: 'series_1',
     seasonId: 'season_1',
@@ -27,20 +27,20 @@ void main() {
     durationMinutes: 50,
     videoUrl: 'https://example.com/2.mp4',
   );
-  final detail = ContentDetailModel(
+  const detail = ContentDetailModel(
     id: 'series_1',
     contentType: 'series',
     title: 'Series',
     subtitle: 'Drama',
     synopsis: 'Synopsis',
     badge: 'Series',
-    genres: const <String>['Drama'],
-    castNames: const <String>['Lead'],
-    audioLanguages: const <String>['Français'],
-    subtitleLanguages: const <String>['Français'],
+    genres: <String>['Drama'],
+    castNames: <String>['Lead'],
+    audioLanguages: <String>['Français'],
+    subtitleLanguages: <String>['Français'],
     directorName: 'Director',
     downloadSizeMb: 900,
-    availableQualities: const <VideoQualityOption>[],
+    availableQualities: <VideoQualityOption>[],
     seasons: <SeasonModel>[
       SeasonModel(
         id: 'season_1',
@@ -91,18 +91,18 @@ void main() {
   });
 
   test('returns a random episode when series contains episodes', () {
-    final episode = ContentDetailHelpers.pickRandomEpisode(detail, random: _FakeRandom(1));
+    final episode = ContentDetailHelpers.pickRandomEpisode(detail, random: const _FakeRandom(1));
     expect(episode?.id, episodeTwo.id);
   });
 
   test('maps download labels and icons from status', () {
-    final item = DownloadItemModel(
+    const item = DownloadItemModel(
       contentId: 'movie_1',
       contentType: 'movie',
       progressPercent: 0.42,
       sizeMb: 10,
       status: DownloadStatus.downloading,
-      content: const ContentTileModel(
+      content: ContentTileModel(
         id: 'movie_1',
         title: 'Movie',
         subtitle: 'Film',
@@ -129,5 +129,5 @@ class _FakeRandom implements Random {
   double nextDouble() => 0;
 
   @override
-  int nextInt(int max) => _value.clamp(0, max - 1) as int;
+  int nextInt(int max) => _value.clamp(0, max - 1);
 }

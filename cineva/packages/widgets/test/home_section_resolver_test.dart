@@ -67,7 +67,7 @@ void main() {
   });
 
   test('keeps default section items when favorites cannot be resolved from catalog payload', () {
-    final section = const HomeSectionModel(
+    const section = HomeSectionModel(
       key: 'my_list',
       title: 'Ma liste',
       items: <ContentTileModel>[heroTile],

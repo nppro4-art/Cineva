@@ -195,12 +195,12 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
           _selectedQuality,
         );
 
-        return WillPopScope(
-          onWillPop: () async {
-            if (mounted) {
+        return PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, Object? result) {
+            if (!didPop && mounted) {
               context.go('/content/${Uri.encodeComponent(detail.seriesId ?? detail.id)}');
             }
-            return false;
           },
           child: FocusTraversalGroup(
             policy: OrderedTraversalPolicy(),

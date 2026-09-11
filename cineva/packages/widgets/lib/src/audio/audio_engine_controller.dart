@@ -281,7 +281,7 @@ class AudioEngineController extends StateNotifier<AudioEngineUiState> {
   void _refreshSampleRate() {
     if (_backend is engine.WebAudioBackend) {
       final Map<String, Object?> status =
-          (_backend as engine.WebAudioBackend).getStatus();
+          _backend.getStatus();
       final Object? sr = status['sampleRate'];
       if (sr is num && sr > 0) {
         _sampleRate = sr.toDouble();
@@ -292,8 +292,8 @@ class AudioEngineController extends StateNotifier<AudioEngineUiState> {
   /// Métriques brutes du worklet (16 doubles) si le backend web est actif.
   List<double> readMetrics() {
     if (_backend is engine.WebAudioBackend) {
-      (_backend as engine.WebAudioBackend).requestMetrics();
-      return (_backend as engine.WebAudioBackend).getMetrics();
+      _backend.requestMetrics();
+      return _backend.getMetrics();
     }
     return const <double>[];
   }

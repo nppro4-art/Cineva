@@ -4,13 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('normalizeLocalAvailability marks missing offline file as failed', () {
-    final item = DownloadItemModel(
+    const item = DownloadItemModel(
       contentId: 'movie_1',
       contentType: 'movie',
       progressPercent: 1,
       sizeMb: 1500,
       status: DownloadStatus.completed,
-      content: const ContentTileModel(
+      content: ContentTileModel(
         id: 'movie_1',
         title: 'Radiant City',
         subtitle: 'Film',
@@ -27,7 +27,7 @@ void main() {
   });
 
   test('shouldResumeOnStartup only for queued and downloading items', () {
-    final base = const ContentTileModel(
+    const base = ContentTileModel(
       id: 'movie_1',
       title: 'Radiant City',
       subtitle: 'Film',
@@ -37,19 +37,19 @@ void main() {
 
     expect(
       DownloadRuntimePolicy.shouldResumeOnStartup(
-        DownloadItemModel(contentId: '1', contentType: 'movie', progressPercent: 0, sizeMb: 1, status: DownloadStatus.queued, content: base),
+        const DownloadItemModel(contentId: '1', contentType: 'movie', progressPercent: 0, sizeMb: 1, status: DownloadStatus.queued, content: base),
       ),
       isTrue,
     );
     expect(
       DownloadRuntimePolicy.shouldResumeOnStartup(
-        DownloadItemModel(contentId: '1', contentType: 'movie', progressPercent: .5, sizeMb: 1, status: DownloadStatus.downloading, content: base),
+        const DownloadItemModel(contentId: '1', contentType: 'movie', progressPercent: .5, sizeMb: 1, status: DownloadStatus.downloading, content: base),
       ),
       isTrue,
     );
     expect(
       DownloadRuntimePolicy.shouldResumeOnStartup(
-        DownloadItemModel(contentId: '1', contentType: 'movie', progressPercent: 1, sizeMb: 1, status: DownloadStatus.completed, content: base),
+        const DownloadItemModel(contentId: '1', contentType: 'movie', progressPercent: 1, sizeMb: 1, status: DownloadStatus.completed, content: base),
       ),
       isFalse,
     );

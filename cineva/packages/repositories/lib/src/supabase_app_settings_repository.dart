@@ -6,7 +6,6 @@ import 'package:cineva_shared/cineva_shared.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app_settings_repository.dart';
-import 'supabase_support.dart';
 
 class SupabaseAppSettingsRepository implements AppSettingsRepository {
   SupabaseAppSettingsRepository({

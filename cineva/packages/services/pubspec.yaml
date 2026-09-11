@@ -26,6 +26,7 @@ dependencies:
   supabase_flutter: ^2.8.0
   universal_io: ^2.2.2
 
+  equatable: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

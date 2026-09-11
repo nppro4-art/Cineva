@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 
 import '../app/providers.dart';
 import '../cineva_empty_state_card.dart';
-import '../search/search_controller.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});

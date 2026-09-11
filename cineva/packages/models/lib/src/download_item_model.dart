@@ -47,6 +47,10 @@ class DownloadItemModel extends Equatable {
   bool get isPaused => status == DownloadStatus.paused;
   bool get canPlayOffline => isCompleted && localFilePath != null && localFilePath!.isNotEmpty;
 
+  /// Sentinelle distinguant « paramètre absent » de « paramètre null explicite »
+  /// dans [copyWith] (permet d'effacer [localFilePath] avec `localFilePath: null`).
+  static const Object _unset = Object();
+
   DownloadItemModel copyWith({
     double? progressPercent,
     double? sizeMb,
@@ -58,7 +62,7 @@ class DownloadItemModel extends Equatable {
     int? totalBytes,
     double? transferSpeedMbps,
     int? estimatedRemainingSeconds,
-    String? localFilePath,
+    Object? localFilePath = _unset,
     bool clearError = false,
   }) {
     return DownloadItemModel(
@@ -74,7 +78,9 @@ class DownloadItemModel extends Equatable {
       totalBytes: totalBytes ?? this.totalBytes,
       transferSpeedMbps: transferSpeedMbps ?? this.transferSpeedMbps,
       estimatedRemainingSeconds: estimatedRemainingSeconds ?? this.estimatedRemainingSeconds,
-      localFilePath: localFilePath ?? this.localFilePath,
+      localFilePath: identical(localFilePath, _unset)
+          ? this.localFilePath
+          : localFilePath as String?,
     );
   }
 
