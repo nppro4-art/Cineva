@@ -16,9 +16,6 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0
-  # Les tests du cœur Dart (config, DSP, pipeline) utilisent l'API `test` pure,
-  # sans binding Flutter : la dépendance doit être déclarée explicitement.
-  test: ^1.25.8
 
 # Le worklet JS (pipeline miroir du cœur C) est bundlé comme asset Flutter :
 # toute app dépendant de ce package le sert sous

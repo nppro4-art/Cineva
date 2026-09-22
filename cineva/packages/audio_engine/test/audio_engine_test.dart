@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:cineva_audio_engine/cineva_audio_engine.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 double sine(double freq, double sampleRate, int i) =>
     math.sin(2 * math.pi * freq * i / sampleRate);

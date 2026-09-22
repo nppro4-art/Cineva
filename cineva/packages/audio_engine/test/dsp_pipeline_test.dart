@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:cineva_audio_engine/cineva_audio_engine.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 /// Générateur pseudo-aléatoire déterministe (xorshift64) — identique au C.
 class Rng {

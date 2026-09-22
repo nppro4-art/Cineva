@@ -1,5 +1,5 @@
 import 'package:cineva_audio_engine/cineva_audio_engine.dart';
-import 'package:test/test.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('AudioEngineConfig', () {
