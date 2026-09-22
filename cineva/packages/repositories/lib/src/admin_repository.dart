@@ -133,4 +133,15 @@ abstract interface class AdminRepository {
   /// l'éditeur de catalogue. Ne crée aucun enregistrement : l'administrateur
   /// valide ensuite l'enregistrement dans l'éditeur.
   Future<TmdbContentDraft> fetchTmdbDraft(TmdbReference reference);
+
+  /// Cherche des titres TMDB correspondant à [query] (films par défaut).
+  ///
+  /// Sert à l'import par URL vidéo : le nom du fichier donne la piste de
+  /// recherche, l'administrateur choisit la fiche parmi les candidats.
+  Future<List<TmdbSearchHit>> searchTmdbTitles({
+    required String query,
+    TmdbMediaType mediaType = TmdbMediaType.movie,
+    int? year,
+    int limit = 12,
+  });
 }

@@ -67,6 +67,23 @@ class _MoviesTabState extends ConsumerState<_MoviesTab> {
               icon: const Icon(Icons.link_rounded),
               label: const Text('Importer (TMDB)'),
             );
+            // Import par URL vidéo : le fichier est fourni par l'administrateur
+            // (droits détenus), TMDB n'apporte que les métadonnées publiques.
+            final mediaUrlButton = OutlinedButton.icon(
+              onPressed: categoriesAsync.hasValue
+                  ? () => _showMediaUrlImportDialog(context, ref, categoriesAsync.value ?? const <AdminCategoryModel>[], contentType: 'movie')
+                  : null,
+              icon: const Icon(Icons.smart_display_rounded),
+              label: const Text('Importer une URL vidéo'),
+            );
+            // Import en masse depuis Internet Archive (films du domaine public).
+            final archiveButton = OutlinedButton.icon(
+              onPressed: categoriesAsync.hasValue
+                  ? () => _showArchiveImportDialog(context, ref, categoriesAsync.value ?? const <AdminCategoryModel>[])
+                  : null,
+              icon: const Icon(Icons.travel_explore_rounded),
+              label: const Text('Importer (Archive.org)'),
+            );
 
             if (compact) {
               return Column(
@@ -74,20 +91,30 @@ class _MoviesTabState extends ConsumerState<_MoviesTab> {
                 children: <Widget>[
                   searchField,
                   const SizedBox(height: CinevaSpacing.md),
-                  Align(alignment: Alignment.centerLeft, child: importButton),
+                  mediaUrlButton,
                   const SizedBox(height: CinevaSpacing.sm),
-                  Align(alignment: Alignment.centerLeft, child: addButton),
+                  importButton,
+                  const SizedBox(height: CinevaSpacing.sm),
+                  archiveButton,
+                  const SizedBox(height: CinevaSpacing.sm),
+                  addButton,
                 ],
               );
             }
 
             return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(child: searchField),
                 const SizedBox(width: CinevaSpacing.md),
-                importButton,
-                const SizedBox(width: CinevaSpacing.md),
-                addButton,
+                Flexible(
+                  child: Wrap(
+                    spacing: CinevaSpacing.sm,
+                    runSpacing: CinevaSpacing.sm,
+                    alignment: WrapAlignment.end,
+                    children: <Widget>[mediaUrlButton, importButton, archiveButton, addButton],
+                  ),
+                ),
               ],
             );
           },
@@ -191,6 +218,15 @@ class _SeriesTabState extends ConsumerState<_SeriesTab> {
               icon: const Icon(Icons.link_rounded),
               label: const Text('Importer (TMDB)'),
             );
+            // Import par URL vidéo : le fichier est fourni par l'administrateur
+            // (droits détenus), TMDB n'apporte que les métadonnées publiques.
+            final mediaUrlButton = OutlinedButton.icon(
+              onPressed: categoriesAsync.hasValue
+                  ? () => _showMediaUrlImportDialog(context, ref, categoriesAsync.value ?? const <AdminCategoryModel>[], contentType: 'series')
+                  : null,
+              icon: const Icon(Icons.smart_display_rounded),
+              label: const Text('Importer une URL vidéo'),
+            );
 
             if (compact) {
               return Column(
@@ -198,20 +234,28 @@ class _SeriesTabState extends ConsumerState<_SeriesTab> {
                 children: <Widget>[
                   searchField,
                   const SizedBox(height: CinevaSpacing.md),
-                  Align(alignment: Alignment.centerLeft, child: importButton),
+                  mediaUrlButton,
                   const SizedBox(height: CinevaSpacing.sm),
-                  Align(alignment: Alignment.centerLeft, child: addButton),
+                  importButton,
+                  const SizedBox(height: CinevaSpacing.sm),
+                  addButton,
                 ],
               );
             }
 
             return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Expanded(child: searchField),
                 const SizedBox(width: CinevaSpacing.md),
-                importButton,
-                const SizedBox(width: CinevaSpacing.md),
-                addButton,
+                Flexible(
+                  child: Wrap(
+                    spacing: CinevaSpacing.sm,
+                    runSpacing: CinevaSpacing.sm,
+                    alignment: WrapAlignment.end,
+                    children: <Widget>[mediaUrlButton, importButton, addButton],
+                  ),
+                ),
               ],
             );
           },

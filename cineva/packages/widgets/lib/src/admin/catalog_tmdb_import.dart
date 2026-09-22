@@ -125,7 +125,7 @@ Future<void> _showTmdbImportDialog(
 
 /// Convertit la fiche TMDB en élément de catalogue (brouillon non publié,
 /// sans chemin vidéo : à compléter par l'administrateur).
-AdminCatalogItemModel _tmdbDraftToCatalogItem(TmdbContentDraft draft) {
+AdminCatalogItemModel _tmdbDraftToCatalogItem(TmdbContentDraft draft, {String? videoPath}) {
   return AdminCatalogItemModel(
     id: '',
     contentType: draft.mediaType == TmdbMediaType.movie ? 'movie' : 'series',
@@ -142,7 +142,7 @@ AdminCatalogItemModel _tmdbDraftToCatalogItem(TmdbContentDraft draft) {
     posterPath: draft.posterPath,
     backdropPath: draft.backdropPath,
     trailerPath: draft.trailerUrl.isEmpty ? null : draft.trailerUrl,
-    videoPath: null,
+    videoPath: videoPath,
     releaseYear: draft.releaseYear,
     durationMinutes: draft.durationMinutes,
     ageRating: draft.ageRating,

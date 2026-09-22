@@ -123,7 +123,19 @@ Future<void> _showCatalogEditor(
                       children: <Widget>[
                         Expanded(child: TextField(controller: trailerController, decoration: const InputDecoration(labelText: 'URL / chemin bande-annonce'))),
                         const SizedBox(width: CinevaSpacing.md),
-                        Expanded(child: TextField(controller: videoController, decoration: InputDecoration(labelText: contentType == 'movie' ? 'Chemin vidéo' : 'Chemin teaser / vidéo'))),
+                        Expanded(
+                          child: TextField(
+                            controller: videoController,
+                            keyboardType: TextInputType.url,
+                            decoration: InputDecoration(
+                              labelText: contentType == 'movie' ? 'Chemin vidéo' : 'Chemin teaser / vidéo',
+                              hintText: 'https://cdn.mon-site.fr/films/inception.2010.1080p.mp4',
+                              helperText: 'URL du fichier dont vous détenez les droits (MP4/H.264, HLS). '
+                                  'Renseignée automatiquement par « Importer une URL vidéo ».',
+                              helperMaxLines: 3,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: CinevaSpacing.md),

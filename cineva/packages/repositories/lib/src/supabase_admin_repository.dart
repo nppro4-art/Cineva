@@ -118,6 +118,15 @@ class SupabaseAdminRepository implements AdminRepository {
   Future<TmdbContentDraft> fetchTmdbDraft(TmdbReference reference) => _tmdbClient.fetch(reference);
 
   @override
+  Future<List<TmdbSearchHit>> searchTmdbTitles({
+    required String query,
+    TmdbMediaType mediaType = TmdbMediaType.movie,
+    int? year,
+    int limit = 12,
+  }) =>
+      _tmdbClient.searchTitles(query: query, mediaType: mediaType, year: year, limit: limit);
+
+  @override
   Future<List<DeviceModel>> fetchUserDevices(String userId) => _usersRepository.fetchUserDevices(userId);
 
   @override

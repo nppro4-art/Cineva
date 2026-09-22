@@ -39,6 +39,10 @@ final pushNotificationServiceProvider = Provider<PushNotificationService>((ref) 
 });
 final cinevaVisionServiceProvider = Provider<CinevaVisionService>((ref) => CinevaVisionService());
 
+/// Client Internet Archive (import en masse de films du domaine public dans la
+/// console d'administration). APIs publiques, aucune clé requise.
+final archiveOrgClientProvider = Provider<ArchiveOrgClient>((ref) => ArchiveOrgClient());
+
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => SupabaseAuthRepository(ref.watch(backendServiceProvider)),
 );

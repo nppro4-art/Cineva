@@ -77,6 +77,37 @@ class TmdbContentDraft {
   final double? rating;
 }
 
+/// Résultat de recherche TMDB : assez léger pour une liste de candidats, avec
+/// de quoi le convertir en [TmdbReference] pour charger la fiche complète.
+class TmdbSearchHit {
+  const TmdbSearchHit({
+    required this.id,
+    required this.mediaType,
+    required this.title,
+    required this.originalTitle,
+    this.posterUrl,
+    this.releaseYear,
+    this.overview = '',
+    this.rating,
+  });
+
+  final String id;
+  final TmdbMediaType mediaType;
+  final String title;
+  final String originalTitle;
+
+  /// Affiche w185 : suffisant pour une liste de candidats.
+  final String? posterUrl;
+
+  final int? releaseYear;
+  final String overview;
+  final double? rating;
+
+  String get yearLabel => releaseYear?.toString() ?? 'année inconnue';
+
+  TmdbReference toReference() => TmdbReference(mediaType: mediaType, id: id);
+}
+
 /// Client API TMDB (v3) : récupère les métadonnées publiques d'un film ou
 /// d'une série pour l'import par lien dans la console d'administration.
 ///
@@ -88,7 +119,9 @@ class TmdbClient {
         _dio = dio ??
             Dio(
               BaseOptions(
-                baseUrl: 'https://api.themoviedb.org/3',
+                // Barre finale : dio concatène `baseUrl + path` (les chemins
+                // d'appel sont relatifs, ex. `movie/603`).
+                baseUrl: 'https://api.themoviedb.org/3/',
                 connectTimeout: const Duration(seconds: 15),
                 receiveTimeout: const Duration(seconds: 15),
               ),
@@ -143,6 +176,95 @@ class TmdbClient {
     }
     final cause = error.message ?? 'erreur réseau';
     return AppFailure('Import TMDB impossible : $cause', code: 'TMDB_ERROR');
+  }
+
+  /// Cherche des titres correspondant à [query].
+  ///
+  /// Utilisé par l'import « URL vidéo » : le nom du fichier donne une piste de
+  /// recherche, l'administrateur choisit ensuite la bonne fiche parmi les
+  /// candidats renvoyés. Aucun choix automatique.
+  Future<List<TmdbSearchHit>> searchTitles({
+    required String query,
+    TmdbMediaType mediaType = TmdbMediaType.movie,
+    int? year,
+    int limit = 12,
+  }) async {
+    final trimmed = query.trim();
+    if (trimmed.isEmpty) return const <TmdbSearchHit>[];
+
+    late final Response<dynamic> response;
+    try {
+      response = await _dio.get<dynamic>(
+        mediaType == TmdbMediaType.movie ? 'search/movie' : 'search/tv',
+        queryParameters: <String, dynamic>{
+          'api_key': _apiKey,
+          'language': 'fr-FR',
+          'query': trimmed,
+          'include_adult': false,
+          if (year != null)
+            (mediaType == TmdbMediaType.movie ? 'year' : 'first_air_date_year'): year,
+        },
+      );
+    } on DioException catch (error) {
+      throw _failureFrom(error, id: trimmed);
+    }
+
+    final hits = parseSearchResults(response.data, mediaType);
+    if (limit <= 0 || hits.length <= limit) return hits;
+    return hits.sublist(0, limit);
+  }
+
+  /// Analyse la réponse de `search/movie` ou `search/tv`.
+  static List<TmdbSearchHit> parseSearchResults(dynamic json, TmdbMediaType mediaType) {
+    if (json is! Map) return const <TmdbSearchHit>[];
+    final results = json['results'];
+    if (results is! List) return const <TmdbSearchHit>[];
+
+    final hits = <TmdbSearchHit>[];
+    for (final entry in results) {
+      if (entry is! Map) continue;
+      final rawId = entry['id'];
+      final id = rawId is num ? rawId.toInt() : int.tryParse('$rawId');
+      if (id == null) continue;
+
+      final rawTitle = entry['title'] ?? entry['name'];
+      final title = rawTitle is String ? rawTitle.trim() : '';
+      if (title.isEmpty) continue;
+
+      final rawOriginal = entry['original_title'] ?? entry['original_name'];
+      final originalTitle = rawOriginal is String && rawOriginal.trim().isNotEmpty
+          ? rawOriginal.trim()
+          : title;
+
+      final posterPath = entry['poster_path'];
+      final overview = entry['overview'];
+      final rating = entry['vote_average'];
+
+      hits.add(
+        TmdbSearchHit(
+          id: id.toString(),
+          mediaType: mediaType,
+          title: title,
+          originalTitle: originalTitle,
+          posterUrl: posterPath is String && posterPath.startsWith('/')
+              ? 'https://image.tmdb.org/t/p/w185$posterPath'
+              : null,
+          releaseYear: _yearOfDate(entry['release_date'] ?? entry['first_air_date']),
+          overview: overview is String ? overview.trim() : '',
+          rating: rating is num ? rating.toDouble() : null,
+        ),
+      );
+    }
+    return hits;
+  }
+
+  static int? _yearOfDate(dynamic value) {
+    if (value is! String) return null;
+    final match = RegExp(r'(?:19|20|21)\d{2}').firstMatch(value);
+    if (match == null) return null;
+    final year = int.tryParse(match.group(0)!);
+    if (year == null || year < 1870 || year > 2100) return null;
+    return year;
   }
 
   TmdbContentDraft _mapDraft(TmdbMediaType mediaType, Map<String, dynamic> data) {
