@@ -51,7 +51,7 @@ bootstrap_app() {
 require_flutter
 
 bootstrap_app cineva_mobile android,ios
-bootstrap_app cineva_admin windows,macos,web
+bootstrap_app cineva_admin android,windows,macos,web
 bootstrap_app cineva_windows windows
 bootstrap_app cineva_macos macos
 bootstrap_app cineva_android_tv android

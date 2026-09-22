@@ -1,0 +1,394 @@
+name: build-artifacts
+
+# Produit les trois binaires demandés en un seul run, connectés au backend
+# Supabase RÉEL (aucun mode démo) :
+#
+#   1. Cineva-User.apk          — application abonné  (apps/cineva_mobile, Android)
+#   2. Cineva-Admin.apk         — console admin       (apps/cineva_admin,  Android)
+#   3. Cineva-User-Windows.zip  — application abonné  (apps/cineva_windows, Windows x64)
+#
+# Un job d'analyse statique (flutter analyze + tests) tourne AVANT les builds :
+# il échoue vite et publie son log en artefact, ce qui évite de brûler 20 minutes
+# de compilation sur une erreur de Dart.
+#
+# Déclenchement :
+#   - push sur une branche arena/**  (branches de travail)
+#   - manuel : gh workflow run build-artifacts.yml --ref <branche>
+#
+# Sur `main`, c'est le workflow historique `build-android.yml` qui reste actif ;
+# celui-ci peut y être lancé à la demande pour obtenir aussi le .exe Windows.
+#
+# Secrets optionnels (Settings → Secrets and variables → Actions) :
+#   SUPABASE_URL, SUPABASE_ANON_KEY, TMDB_API_KEY.
+# À défaut, les valeurs projet (clé anon publique par design Supabase) sont utilisées.
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip_tests:
+        description: "Ne pas exécuter les tests (analyse seule)"
+        type: boolean
+        default: false
+  push:
+    branches:
+      - "arena/**"
+    paths:
+      - ".github/workflows/build-artifacts.yml"
+      - "cineva/apps/**"
+      - "cineva/packages/**"
+      - "cineva/scripts/apply_android_icon.py"
+
+permissions:
+  contents: write # publication de la Release
+  issues: write # rapport d'échec lisible
+
+concurrency:
+  group: build-artifacts-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.24.5" # version validée du projet (Dart 3.5.4)
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://jbsagyavtiiqloutmqdk.supabase.co' }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impic2FneWF2dGlpcWxvdG1xZGsiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4MzQyNjM5NiwiZXhwIjoyMDk5MDI2Mzk2fQ.151rIhQiYxU7ovc5D51bm8OhWmPgO8irUx1OeZGhhg8' }}
+  TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '953735af94772da319cdbfdf861712a6' }}
+
+jobs:
+  # ─────────────────────────────────────────────────────────────── analyse
+  analyze:
+    name: Analyse + tests (15 packages)
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Résoudre les dépendances
+        run: |
+          set -e
+          for f in cineva/packages/*/pubspec.yaml cineva/apps/*/pubspec.yaml; do
+            d=$(dirname "$f")
+            echo "── pub get : $d"
+            (cd "$d" && flutter pub get)
+          done
+
+      - name: flutter analyze
+        run: |
+          set -o pipefail
+          : > /tmp/analyze.log
+          for f in cineva/packages/*/pubspec.yaml cineva/apps/*/pubspec.yaml; do
+            d=$(dirname "$f")
+            echo "════ analyze : $d" | tee -a /tmp/analyze.log
+            (cd "$d" && flutter analyze --no-fatal-infos 2>&1 | tee -a /tmp/analyze.log) || true
+          done
+          echo "── synthèse"
+          grep -E "^[[:space:]]*error|issues? found|No issues found" /tmp/analyze.log | tail -40
+          # Échec dur si une seule erreur de compilation subsiste (formats
+          # « error • … » et « error - … » de flutter analyze / dart analyze).
+          if grep -qE "^[[:space:]]*error([[:space:]]|$)" /tmp/analyze.log; then
+            echo "::error::Des erreurs d'analyse bloquent le build — voir l'artefact analyze-log."
+            grep -E "^[[:space:]]*error([[:space:]]|$)" /tmp/analyze.log | head -100
+            exit 1
+          fi
+
+      - name: Tests
+        if: ${{ !inputs.skip_tests }}
+        run: |
+          set -o pipefail
+          : > /tmp/test.log
+          for f in cineva/packages/*/pubspec.yaml; do
+            d=$(dirname "$f")
+            [ -d "$d/test" ] || continue
+            echo "════ test : $d" | tee -a /tmp/test.log
+            if grep -q "sdk: flutter" "$f"; then
+              (cd "$d" && flutter test 2>&1 | tee -a /tmp/test.log) || exit 1
+            else
+              (cd "$d" && dart test 2>&1 | tee -a /tmp/test.log) || exit 1
+            fi
+          done
+          tail -20 /tmp/test.log
+
+      - name: Publier les logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: analyze-log
+          path: |
+            /tmp/analyze.log
+            /tmp/test.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # ─────────────────────────────────────────────────────────────── Android
+  apk:
+    name: APK release (User + Admin)
+    needs: analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Générer les châssis Android
+        run: |
+          set -e
+          for app in cineva_mobile cineva_admin; do
+            echo "── flutter create : $app"
+            (cd "cineva/apps/$app" && flutter create --no-pub --platforms=android --org com.cineva --project-name "$app" .)
+          done
+
+      - name: Noms affichés + AGP/minSdk/Java 17
+        run: |
+          sed -i 's/android:label="cineva_mobile"/android:label="Cineva"/' \
+            cineva/apps/cineva_mobile/android/app/src/main/AndroidManifest.xml
+          sed -i 's/android:label="cineva_admin"/android:label="Cineva Admin"/' \
+            cineva/apps/cineva_admin/android/app/src/main/AndroidManifest.xml
+          for app in cineva_mobile cineva_admin; do
+            root="cineva/apps/$app/android"
+            for f in "$root/app/build.gradle" "$root/app/build.gradle.kts"; do
+              [ -f "$f" ] || continue
+              sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 24/' "$f" || true
+              sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 24/' "$f" || true
+              sed -i 's/minSdkVersion [0-9]\+/minSdkVersion 24/' "$f" || true
+              sed -i 's/JavaVersion.VERSION_1_8/JavaVersion.VERSION_17/g' "$f" || true
+              sed -i 's/jvmTarget = "1.8"/jvmTarget = "17"/g' "$f" || true
+              sed -i "s/jvmTarget = '1.8'/jvmTarget = '17'/g" "$f" || true
+            done
+            for f in "$root/settings.gradle" "$root/settings.gradle.kts"; do
+              [ -f "$f" ] || continue
+              sed -i 's/id "com.android.application" version "[^"]*"/id "com.android.application" version "8.1.0"/' "$f" || true
+              sed -i 's/id "org.jetbrains.kotlin.android" version "[^"]*"/id "org.jetbrains.kotlin.android" version "1.8.22"/' "$f" || true
+              sed -i 's/id("com.android.application") version "[^"]*"/id("com.android.application") version "8.1.0"/' "$f" || true
+              sed -i 's/id("org.jetbrains.kotlin.android") version "[^"]*"/id("org.jetbrains.kotlin.android") version "1.8.22"/' "$f" || true
+            done
+            echo "── config android : $app"
+            grep -rnE "minSdk|com.android.application|kotlin.android|JavaVersion|jvmTarget" \
+              "$root/settings.gradle" "$root/settings.gradle.kts" \
+              "$root/app/build.gradle" "$root/app/build.gradle.kts" 2>/dev/null || true
+          done
+
+      - name: Icônes de lancement Cineva
+        run: |
+          python3 -m pip install --user --quiet pillow
+          for app in cineva_mobile cineva_admin; do
+            echo "── icônes : $app"
+            python3 cineva/scripts/apply_android_icon.py "cineva/apps/$app"
+          done
+
+      - name: Compiler cineva_mobile (User)
+        working-directory: cineva/apps/cineva_mobile
+        run: |
+          set -o pipefail
+          flutter pub get
+          flutter build apk --release \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=TMDB_API_KEY="$TMDB_API_KEY" \
+            --dart-define=FIREBASE_ENABLED=false \
+            2>&1 | tee /tmp/build-mobile.log
+
+      - name: Compiler cineva_admin (Admin)
+        working-directory: cineva/apps/cineva_admin
+        run: |
+          set -o pipefail
+          flutter pub get
+          flutter build apk --release \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=TMDB_API_KEY="$TMDB_API_KEY" \
+            --dart-define=FIREBASE_ENABLED=false \
+            2>&1 | tee /tmp/build-admin.log
+
+      - name: Préparer les APK
+        run: |
+          mkdir -p dist
+          cp cineva/apps/cineva_mobile/build/app/outputs/flutter-apk/app-release.apk dist/Cineva-User.apk
+          cp cineva/apps/cineva_admin/build/app/outputs/flutter-apk/app-release.apk dist/Cineva-Admin.apk
+          ls -lh dist/
+
+      - name: Artefact APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apks
+          path: dist/*.apk
+          retention-days: 14
+
+      - name: Logs de build
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: apk-build-logs
+          path: |
+            /tmp/build-mobile.log
+            /tmp/build-admin.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # ─────────────────────────────────────────────────────────────── Windows
+  windows:
+    name: EXE release (User, Windows x64)
+    needs: analyze
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Flutter ${{ env.FLUTTER_VERSION }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - name: Générer le châssis Windows
+        shell: bash
+        run: |
+          set -e
+          cd cineva/apps/cineva_windows
+          flutter create --no-pub --platforms=windows --org com.cineva --project-name cineva_windows .
+
+      - name: Compiler cineva_windows (release)
+        shell: bash
+        working-directory: cineva/apps/cineva_windows
+        run: |
+          set -o pipefail
+          flutter pub get
+          flutter build windows --release \
+            --dart-define=SUPABASE_URL="$SUPABASE_URL" \
+            --dart-define=SUPABASE_ANON_KEY="$SUPABASE_ANON_KEY" \
+            --dart-define=TMDB_API_KEY="$TMDB_API_KEY" \
+            --dart-define=FIREBASE_ENABLED=false \
+            2>&1 | tee build-windows.log
+
+      - name: Empaqueter le .exe
+        shell: pwsh
+        run: |
+          $rel = "cineva/apps/cineva_windows/build/windows/x64/runner/Release"
+          if (-not (Test-Path $rel)) { throw "Dossier Release introuvable : $rel" }
+          if (Test-Path "$rel/cineva_windows.exe") {
+            Rename-Item "$rel/cineva_windows.exe" "Cineva.exe"
+          }
+          Get-ChildItem $rel | Select-Object Name, Length | Format-Table -AutoSize
+          Compress-Archive -Path "$rel/*" -DestinationPath "Cineva-User-Windows.zip" -Force
+          Get-Item Cineva-User-Windows.zip | Select-Object Name, Length
+
+      - name: Artefact Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-exe
+          path: Cineva-User-Windows.zip
+          retention-days: 14
+
+      - name: Log de build Windows
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-build-log
+          path: cineva/apps/cineva_windows/build-windows.log
+          if-no-files-found: ignore
+          retention-days: 14
+
+  # ─────────────────────────────────────────────────────────────── Release
+  release:
+    name: Publier les binaires
+    needs: [apk, windows]
+    if: ${{ always() && (needs.apk.result == 'success' || needs.windows.result == 'success') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Récupérer les binaires
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      - name: GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          FILES=$(find dist -type f \( -name '*.apk' -o -name '*.zip' \) | sort)
+          if [ -z "$FILES" ]; then echo "::error::Aucun binaire produit."; exit 1; fi
+          (cd dist && find . -type f \( -name '*.apk' -o -name '*.zip' \) -exec sha256sum {} \; | sort -k2 > SHA256SUMS.txt)
+          TAG="binaries-${GITHUB_RUN_NUMBER}"
+          {
+            echo "Binaires Cineva compilés depuis la branche \`$GITHUB_REF_NAME\` (commit \`${GITHUB_SHA::7}\`)."
+            echo ""
+            echo "| Fichier | Cible | Installation |"
+            echo "| --- | --- | --- |"
+            echo "| **Cineva-User.apk** | Android — application abonné (\`com.cineva.cineva_mobile\`) | Transférer sur le téléphone, autoriser les « sources inconnues », ouvrir le fichier |"
+            echo "| **Cineva-Admin.apk** | Android — console d'administration (\`com.cineva.cineva_admin\`) | idem |"
+            echo "| **Cineva-User-Windows.zip** | Windows x64 — application abonné | Dézipper puis lancer \`Cineva.exe\` (aucun installateur requis) |"
+            echo ""
+            echo "Connectés au **backend Supabase réel** (configuration injectée à la compilation)."
+            echo "Notifications push désactivées (FCM non configuré)."
+            echo ""
+            echo "**Signature Android** : clé de debug — installable directement sur appareil,"
+            echo "mais refusée par le Play Store. Pour une publication, renseigner un keystore"
+            echo "(voir \`cineva/docs/08_build_release.md\`)."
+            echo ""
+            echo "Empreintes SHA-256 dans \`SHA256SUMS.txt\`."
+          } > notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" $FILES dist/SHA256SUMS.txt --clobber
+          else
+            gh release create "$TAG" $FILES dist/SHA256SUMS.txt \
+              --title "Cineva — binaires (APK User, APK Admin, EXE Windows) #${GITHUB_RUN_NUMBER}" \
+              --notes-file notes.md
+          fi
+          echo "Release publiée : $TAG"
+          gh release view "$TAG" --json url --jq .url
+
+  # ─────────────────────────────────────────────────────────────── échec
+  report:
+    name: Rapport d'échec
+    needs: [analyze, apk, windows]
+    if: ${{ !cancelled() && (needs.analyze.result == 'failure' || needs.apk.result == 'failure' || needs.windows.result == 'failure') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ouvrir / compléter l'issue de suivi
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "## build-artifacts en échec — run ${GITHUB_RUN_NUMBER}"
+            echo ""
+            echo "Branche : \`${GITHUB_REF_NAME}\` · commit \`${GITHUB_SHA::7}\`"
+            echo "Run : https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+            echo ""
+            echo "Jobs : analyze=${{ needs.analyze.result }} · apk=${{ needs.apk.result }} · windows=${{ needs.windows.result }}"
+            echo ""
+            echo "Logs utiles : artefacts \`analyze-log\`, \`apk-build-logs\`, \`windows-build-log\`."
+            echo ""
+            echo "```bash"
+            echo "gh run download ${GITHUB_RUN_ID} --name analyze-log"
+            echo "gh run view ${GITHUB_RUN_ID} --log-failed"
+            echo "```"
+          } > /tmp/fail-report.md
+          EXISTING=$(gh issue list --label build-artifacts-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file /tmp/fail-report.md
+          else
+            gh issue create --title "build-artifacts failure report" \
+              --label "build-artifacts-fail" --body-file /tmp/fail-report.md 2>/dev/null ||
+            gh issue create --title "build-artifacts failure report" --body-file /tmp/fail-report.md
+          fi
