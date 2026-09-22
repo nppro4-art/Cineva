@@ -91,9 +91,9 @@ class ProfileScreen extends ConsumerWidget {
                       CinevaListTile(
                         icon: Icons.playlist_add_check_rounded,
                         title: 'Ma liste',
-                        subtitle: library.favorites.isEmpty
+                        subtitle: library.favoriteIds.isEmpty
                             ? 'Aucun titre enregistré'
-                            : '${library.favorites.length} titre(s)',
+                            : '${library.favoriteIds.length} titre(s)',
                         onTap: () => context.go('/library'),
                       ),
                       CinevaListTile(

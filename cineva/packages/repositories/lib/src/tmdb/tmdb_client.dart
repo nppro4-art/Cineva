@@ -147,7 +147,9 @@ class TmdbClient {
 
   TmdbContentDraft _mapDraft(TmdbMediaType mediaType, Map<String, dynamic> data) {
     final title = data['title'] as String? ?? data['name'] as String? ?? 'Sans titre';
-    final originalTitle = data['original_title'] as String? ?? data['original_name'] as String?;
+    final originalTitle = data['original_title'] as String? ??
+        data['original_name'] as String? ??
+        title;
     final posterPath = _imageUrl(data['poster_path'] as String?, width: 500);
     final backdropPath = _imageUrl(data['backdrop_path'] as String?, width: 1280);
 

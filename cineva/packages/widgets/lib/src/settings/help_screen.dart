@@ -54,7 +54,8 @@ class HelpScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: CinevaSpacing.xl),
                   const CinevaSectionHeader(title: 'Questions fréquentes'),
-                  ..._faq.map((MapEntry<String, String> entry) => _FaqItem(entry: entry)),
+                  ..._faq.entries
+                      .map((MapEntry<String, String> entry) => _FaqItem(entry: entry)),
                   const SizedBox(height: CinevaSpacing.lg),
                   const CinevaSectionHeader(title: 'Contact'),
                   SettingsGroup(

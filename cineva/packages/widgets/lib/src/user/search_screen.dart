@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
-import 'package:flutter/material.dart';
+// `SearchController` existe aussi dans Material (SearchAnchor) : on masque le
+// symbole Flutter au profit du contrôleur Cineva.
+import 'package:flutter/material.dart' hide SearchController;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -525,6 +527,8 @@ class _ResultRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Les champs ne sont pas promus non-null : copie locale pour le ternaire.
+    final ContentTileModel? artwork = tile;
     final List<String> genres = result.genres.take(2).toList();
     final String meta = <String>[
       if (result.year != null) '${result.year}',
@@ -552,9 +556,9 @@ class _ResultRow extends StatelessWidget {
                   aspectRatio: 2 / 3,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(CinevaRadii.small),
-                    child: tile == null
+                    child: artwork == null
                         ? CinevaArtworkImage(path: null, seed: result.id)
-                        : CinevaArtworkImage.forTile(tile),
+                        : CinevaArtworkImage.forTile(artwork),
                   ),
                 ),
               ),

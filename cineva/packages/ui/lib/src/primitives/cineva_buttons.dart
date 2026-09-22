@@ -156,7 +156,7 @@ class _CinevaPlayButtonState extends State<CinevaPlayButton>
                     color: enabled ? CinevaColors.textOnLight : CinevaColors.textFaint,
                     size: 22,
                   ),
-                  child: child,
+                  child: child ?? const SizedBox.shrink(),
                 ),
               ),
             );

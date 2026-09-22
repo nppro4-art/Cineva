@@ -138,13 +138,20 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
-      - name: Publier les erreurs dans une issue
-        if: failure()
+      - name: Publier le diagnostic dans une issue
+        if: ${{ !cancelled() }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          WARN_TOTAL=$(awk '/^════ analyze : /{pkg=$4} /^[[:space:]]*warning/{print pkg}' \
+            /tmp/analyze.log 2>/dev/null | wc -l)
+          ERR_TOTAL=$(wc -l < /tmp/errors.log 2>/dev/null || echo 0)
+          if [ "$ERR_TOTAL" -eq 0 ] && [ "$WARN_TOTAL" -eq 0 ]; then
+            echo "Analyse clean : aucun commentaire publié."
+            exit 0
+          fi
           {
-            echo "## analyze / tests en échec — run ${GITHUB_RUN_NUMBER}"
+            echo "## analyze / tests — run ${GITHUB_RUN_NUMBER} (${ERR_TOTAL} erreur(s), ${WARN_TOTAL} avertissement(s))"
             echo ""
             echo "Branche \`${GITHUB_REF_NAME}\` · commit \`${GITHUB_SHA::7}\` ·"
             echo "[run](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
@@ -170,9 +177,21 @@ jobs:
               /tmp/errors.log 2>/dev/null | head -300
             echo '```'
             echo ""
-            echo "### Avertissements par paquet"
+            echo "### Avertissements par paquet (${WARN_TOTAL} au total)"
             echo '```'
             awk '/^════ analyze : /{pkg=$4} /^[[:space:]]*warning/{print pkg}' /tmp/analyze.log 2>/dev/null \
+              | sort | uniq -c | sort -rn | head -30
+            echo '```'
+            echo ""
+            echo "### Avertissements (25 premiers par paquet)"
+            echo '```'
+            awk '/^════ analyze : /{pkg=$4} /^[[:space:]]*warning/{ if (c[pkg]++ < 25) print pkg "  ->  " $0 }' \
+              /tmp/analyze.log 2>/dev/null | head -200
+            echo '```'
+            echo ""
+            echo "### Infos (compte par paquet)"
+            echo '```'
+            awk '/^════ analyze : /{pkg=$4} /^[[:space:]]*info/{print pkg}' /tmp/analyze.log 2>/dev/null \
               | sort | uniq -c | sort -rn | head -30
             echo '```'
             echo ""
@@ -478,43 +497,3 @@ jobs:
           fi
           echo "Release publiée : $TAG"
           gh release view "$TAG" --json url --jq .url
-
-  # ─────────────────────────────────────────────────────────────── échec
-  report:
-    name: Rapport d'échec
-    needs: [analyze, apk, windows]
-    if: ${{ !cancelled() && (needs.analyze.result == 'failure' || needs.apk.result == 'failure' || needs.windows.result == 'failure') }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Ouvrir / compléter l'issue de suivi
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          {
-            echo "## build-artifacts en échec — run ${GITHUB_RUN_NUMBER}"
-            echo ""
-            echo "Branche : \`${GITHUB_REF_NAME}\` · commit \`${GITHUB_SHA::7}\`"
-            echo "Run : https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-            echo ""
-            echo "Jobs : analyze=${{ needs.analyze.result }} · apk=${{ needs.apk.result }} · windows=${{ needs.windows.result }}"
-            echo ""
-            echo "Détails postés par les jobs eux-mêmes dans cette issue (les logs bruts"
-            echo "sont sur Azure Blob, injoignable hors GitHub) : erreurs \`flutter analyze\`,"
-            echo "tails de compilation APK et Windows."
-            echo ""
-            echo "Artéfacts du run (rétention 14 j) : \`analyze-log\`, \`apk-build-logs\`,"
-            echo "\`windows-build-log\`."
-            echo ""
-            echo "```bash"
-            echo "gh run download ${GITHUB_RUN_ID} --name analyze-log --dir ./logs"
-            echo "```"
-          } > /tmp/fail-report.md
-          EXISTING=$(gh issue list --label build-artifacts-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
-          if [ -n "$EXISTING" ]; then
-            gh issue comment "$EXISTING" --body-file /tmp/fail-report.md
-          else
-            gh issue create --title "build-artifacts failure report" \
-              --label "build-artifacts-fail" --body-file /tmp/fail-report.md 2>/dev/null ||
-            gh issue create --title "build-artifacts failure report" --body-file /tmp/fail-report.md
-          fi

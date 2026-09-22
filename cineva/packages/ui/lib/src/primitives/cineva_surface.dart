@@ -1,5 +1,6 @@
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Fond d'écran Cineva : noir profond, jamais #000000 pur, avec un très léger
 /// voile vertical pour éviter un aplat totalement mort.

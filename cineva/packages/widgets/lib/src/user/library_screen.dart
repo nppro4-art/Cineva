@@ -43,7 +43,8 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   Widget build(BuildContext context) {
     final LibraryState library = ref.watch(libraryControllerProvider);
     final CinevaMetrics metrics = CinevaMetrics.of(context);
-    final List<ContentTileModel> favorites = _filtered(library.favorites);
+    final List<ContentTileModel> saved = _favoriteTiles(library);
+    final List<ContentTileModel> favorites = _filtered(saved);
     final List<PlaybackProgressModel> resume =
         _inProgress(library.continueWatching);
 
@@ -66,7 +67,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               child: CinevaScreenTitle(
                 title: 'Bibliothèque',
                 padding: EdgeInsets.zero,
-                subtitle: _subtitle(library),
+                subtitle: _subtitle(library, saved.length),
               ),
             ),
           ),
@@ -79,13 +80,13 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
               ),
               child: LibraryTabs(
                 tab: _tab,
-                listCount: library.favorites.length,
+                listCount: saved.length,
                 resumeCount: library.continueWatching.length,
                 onChanged: (LibraryTab value) => setState(() => _tab = value),
               ),
             ),
           ),
-          ..._tabSlivers(context, library, favorites, resume, metrics),
+          ..._tabSlivers(context, library, saved, favorites, resume, metrics),
           SliverToBoxAdapter(
             child: SizedBox(
               height: CinevaBottomNavigation.clearance(
@@ -103,6 +104,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
   List<Widget> _tabSlivers(
     BuildContext context,
     LibraryState library,
+    List<ContentTileModel> saved,
     List<ContentTileModel> favorites,
     List<PlaybackProgressModel> resume,
     CinevaMetrics metrics,
@@ -120,7 +122,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
       return <Widget>[_resumeSliver(context, resume, metrics)];
     }
 
-    if (library.favorites.isEmpty) {
+    if (saved.isEmpty) {
       return <Widget>[_emptySliver(metrics, _emptyTitle, _emptyMessage)];
     }
 
@@ -276,8 +278,7 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     );
   }
 
-  String _subtitle(LibraryState library) {
-    final int count = library.favorites.length;
+  String _subtitle(LibraryState library, int count) {
     final String label = switch (count) {
       0 => 'Rien de sauvegardé pour l’instant',
       1 => '1 titre dans Ma liste',
@@ -287,6 +288,38 @@ class _LibraryScreenState extends ConsumerState<LibraryScreen> {
     return resumeCount == 0
         ? label
         : '$label · $resumeCount à reprendre';
+  }
+
+  /// Résout les favoris en tuiles réelles.
+  ///
+  /// [LibraryController] ne conserve que les identifiants synchronisés avec le
+  /// dépôt (`favoriteIds`) : les tuiles sont reprises du catalogue déjà chargé
+  /// (sections d'accueil), complété par les lectures en cours et les
+  /// téléchargements, qui embarquent leur [ContentTileModel]. Aucune donnée
+  /// n'est inventée — un favori absent du catalogue chargé n'est simplement pas
+  /// affichable tant que sa tuile n'a pas été vue.
+  List<ContentTileModel> _favoriteTiles(LibraryState library) {
+    if (library.favoriteIds.isEmpty) return const <ContentTileModel>[];
+
+    final Map<String, ContentTileModel> tiles = <String, ContentTileModel>{};
+    final List<HomeSectionModel> sections =
+        ref.watch(homeSectionsProvider).valueOrNull ?? const <HomeSectionModel>[];
+    for (final HomeSectionModel section in sections) {
+      for (final ContentTileModel item in section.items) {
+        tiles[item.id] ??= item;
+      }
+    }
+    for (final PlaybackProgressModel progress in library.continueWatching) {
+      tiles[progress.content.id] ??= progress.content;
+    }
+    for (final DownloadItemModel download in library.downloads) {
+      tiles[download.content.id] ??= download.content;
+    }
+
+    return library.favoriteIds
+        .map((String id) => tiles[id])
+        .whereType<ContentTileModel>()
+        .toList();
   }
 
   List<ContentTileModel> _filtered(List<ContentTileModel> favorites) {
