@@ -70,12 +70,19 @@ jobs:
 
       - name: Résoudre les dépendances
         run: |
-          set -e
+          set -o pipefail
+          : > /tmp/pubget.log
+          fail=0
           for f in cineva/packages/*/pubspec.yaml cineva/apps/*/pubspec.yaml; do
             d=$(dirname "$f")
-            echo "── pub get : $d"
-            (cd "$d" && flutter pub get)
+            echo "════ pub get : $d" | tee -a /tmp/pubget.log
+            (cd "$d" && flutter pub get 2>&1 | tee -a /tmp/pubget.log) || fail=1
           done
+          if [ $fail -ne 0 ]; then
+            echo "::error::flutter pub get en échec sur au moins un paquet — voir /tmp/pubget.log ci-dessous."
+            tail -n 60 /tmp/pubget.log
+            exit 1
+          fi
 
       - name: flutter analyze
         run: |
@@ -119,10 +126,57 @@ jobs:
         with:
           name: analyze-log
           path: |
+            /tmp/pubget.log
             /tmp/analyze.log
             /tmp/test.log
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Publier les erreurs dans une issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "## analyze / tests en échec — run ${GITHUB_RUN_NUMBER}"
+            echo ""
+            echo "Branche \`${GITHUB_REF_NAME}\` · commit \`${GITHUB_SHA::7}\` ·"
+            echo "[run](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+            echo ""
+            echo "### pub get (tail 40)"
+            echo '```'
+            tail -n 40 /tmp/pubget.log 2>/dev/null || echo "(pas de log pub get)"
+            echo '```'
+            echo ""
+            echo "### Synthèse par paquet"
+            echo '```'
+            grep -E "════|issues? found|No issues found" /tmp/analyze.log 2>/dev/null | head -60
+            echo '```'
+            echo ""
+            echo "### Erreurs Dart (200 premières)"
+            echo '```'
+            grep -E "^[[:space:]]*error" /tmp/analyze.log 2>/dev/null | head -200
+            echo '```'
+            echo ""
+            echo "### Avertissements (80 premiers)"
+            echo '```'
+            grep -E "^[[:space:]]*warning" /tmp/analyze.log 2>/dev/null | head -80
+            echo '```'
+            echo ""
+            echo "### Tests (tail)"
+            echo '```'
+            tail -n 60 /tmp/test.log 2>/dev/null || echo "(pas de log de test)"
+            echo '```'
+          } > /tmp/analyze-report.md
+          head -c 60000 /tmp/analyze-report.md > /tmp/analyze-report-trunc.md
+          EXISTING=$(gh issue list --label build-artifacts-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file /tmp/analyze-report-trunc.md
+          else
+            gh issue create --title "build-artifacts failure report" \
+              --label "build-artifacts-fail" --body-file /tmp/analyze-report-trunc.md 2>/dev/null ||
+            gh issue create --title "build-artifacts failure report" --body-file /tmp/analyze-report-trunc.md
+          fi
 
   # ─────────────────────────────────────────────────────────────── Android
   apk:
@@ -241,6 +295,35 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+      - name: Publier l'échec APK dans une issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "## build APK en échec — run ${GITHUB_RUN_NUMBER}"
+            echo ""
+            echo "[run](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+            echo ""
+            echo "### cineva_mobile (tail 120)"
+            echo '```'
+            tail -n 120 /tmp/build-mobile.log 2>/dev/null || echo "(pas de log mobile)"
+            echo '```'
+            echo "### cineva_admin (tail 120)"
+            echo '```'
+            tail -n 120 /tmp/build-admin.log 2>/dev/null || echo "(pas de log admin)"
+            echo '```'
+          } > /tmp/apk-report.md
+          head -c 60000 /tmp/apk-report.md > /tmp/apk-report-trunc.md
+          EXISTING=$(gh issue list --label build-artifacts-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file /tmp/apk-report-trunc.md
+          else
+            gh issue create --title "build-artifacts failure report" \
+              --label "build-artifacts-fail" --body-file /tmp/apk-report-trunc.md 2>/dev/null ||
+            gh issue create --title "build-artifacts failure report" --body-file /tmp/apk-report-trunc.md
+          fi
+
   # ─────────────────────────────────────────────────────────────── Windows
   windows:
     name: EXE release (User, Windows x64)
@@ -304,6 +387,32 @@ jobs:
           path: cineva/apps/cineva_windows/build-windows.log
           if-no-files-found: ignore
           retention-days: 14
+
+      - name: Publier l'échec Windows dans une issue
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          {
+            echo "## build Windows en échec — run ${GITHUB_RUN_NUMBER}"
+            echo ""
+            echo "[run](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
+            echo ""
+            echo "### cineva_windows (tail 150)"
+            echo '```'
+            tail -n 150 cineva/apps/cineva_windows/build-windows.log 2>/dev/null || echo "(pas de log)"
+            echo '```'
+          } > /tmp/win-report.md
+          head -c 60000 /tmp/win-report.md > /tmp/win-report-trunc.md
+          EXISTING=$(gh issue list --label build-artifacts-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
+          if [ -n "$EXISTING" ]; then
+            gh issue comment "$EXISTING" --body-file /tmp/win-report-trunc.md
+          else
+            gh issue create --title "build-artifacts failure report" \
+              --label "build-artifacts-fail" --body-file /tmp/win-report-trunc.md 2>/dev/null ||
+            gh issue create --title "build-artifacts failure report" --body-file /tmp/win-report-trunc.md
+          fi
 
   # ─────────────────────────────────────────────────────────────── Release
   release:
@@ -377,11 +486,15 @@ jobs:
             echo ""
             echo "Jobs : analyze=${{ needs.analyze.result }} · apk=${{ needs.apk.result }} · windows=${{ needs.windows.result }}"
             echo ""
-            echo "Logs utiles : artefacts \`analyze-log\`, \`apk-build-logs\`, \`windows-build-log\`."
+            echo "Détails postés par les jobs eux-mêmes dans cette issue (les logs bruts"
+            echo "sont sur Azure Blob, injoignable hors GitHub) : erreurs \`flutter analyze\`,"
+            echo "tails de compilation APK et Windows."
+            echo ""
+            echo "Artéfacts du run (rétention 14 j) : \`analyze-log\`, \`apk-build-logs\`,"
+            echo "\`windows-build-log\`."
             echo ""
             echo "```bash"
-            echo "gh run download ${GITHUB_RUN_ID} --name analyze-log"
-            echo "gh run view ${GITHUB_RUN_ID} --log-failed"
+            echo "gh run download ${GITHUB_RUN_ID} --name analyze-log --dir ./logs"
             echo "```"
           } > /tmp/fail-report.md
           EXISTING=$(gh issue list --label build-artifacts-fail --state open --json number --jq '.[0].number' 2>/dev/null || true)
