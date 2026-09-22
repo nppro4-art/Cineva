@@ -21,6 +21,13 @@ name: build-artifacts
 # Secrets optionnels (Settings → Secrets and variables → Actions) :
 #   SUPABASE_URL, SUPABASE_ANON_KEY, TMDB_API_KEY.
 # À défaut, les valeurs projet (clé anon publique par design Supabase) sont utilisées.
+#
+# ⚠️ Les valeurs de repli ci-dessous sont recopiées mécaniquement depuis
+# `build-android.yml` (workflow validé). Ne JAMAIS les ressaisir à la main : une
+# seule lettre divergente dans le JWT invalide la signature et Supabase répond
+# « 401 Invalid API key » dans l'application compilée. L'étape « Vérifier la
+# configuration backend injectée » compare le `ref` du JWT au sous-domaine de
+# SUPABASE_URL et fait échouer le build avant compilation en cas de divergence.
 
 on:
   workflow_dispatch:
@@ -49,7 +56,7 @@ concurrency:
 env:
   FLUTTER_VERSION: "3.24.5" # version validée du projet (Dart 3.5.4)
   SUPABASE_URL: ${{ secrets.SUPABASE_URL || 'https://jbsagyavtiiqloutmqdk.supabase.co' }}
-  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impic2FneWF2dGlpcWxvdG1xZGsiLCJyb2xlIjoiYW5vbiIsImlhdCI6MTc4MzQyNjM5NiwiZXhwIjoyMDk5MDI2Mzk2fQ.151rIhQiYxU7ovc5D51bm8OhWmPgO8irUx1OeZGhhg8' }}
+  SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impic2FneWF2dGlpcWxvdXRtcWRrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM0MjYzOTYsImV4cCI6MjA5OTAwMjM5Nn0.151rIhQiYxU7ovc5D51bm8OhWmPgO8irUx1OeZGhhg8' }}
   TMDB_API_KEY: ${{ secrets.TMDB_API_KEY || '953735af94772da319cdbfdf861712a6' }}
 
 jobs:
@@ -232,6 +239,36 @@ jobs:
           channel: stable
           cache: true
 
+      - name: Vérifier la configuration backend injectée
+        shell: bash
+        run: |
+          set -e
+          payload=$(printf '%s' "$SUPABASE_ANON_KEY" | cut -d. -f2)
+          pad=$(( (4 - ${#payload} % 4) % 4 ))
+          if [ "$pad" -gt 0 ]; then
+            payload="$payload$(printf '=%.0s' $(seq 1 "$pad"))"
+          fi
+          json=$(printf '%s' "$payload" | tr '_-' '/+' | base64 -d 2>/dev/null || true)
+          ref=$(printf '%s' "$json" | sed -n 's/.*"ref":"\([^"]*\)".*/\1/p')
+          role=$(printf '%s' "$json" | sed -n 's/.*"role":"\([^"]*\)".*/\1/p')
+          host=$(printf '%s' "$SUPABASE_URL" | sed -E 's#https?://([^./]+).*#\1#')
+          echo "SUPABASE_URL = $SUPABASE_URL"
+          echo "clé anon     = …$(printf '%s' "$SUPABASE_ANON_KEY" | tail -c 12) (longueur ${#SUPABASE_ANON_KEY})"
+          echo "JWT          : ref=$ref role=$role"
+          if [ -z "$json" ] || [ -z "$ref" ]; then
+            echo "::error::SUPABASE_ANON_KEY illisible : le JWT n'est pas décodable (clé tronquée ou corrompue)."
+            exit 1
+          fi
+          if [ "$ref" != "$host" ]; then
+            echo "::error::Incohérence URL/clé : SUPABASE_URL pointe vers « $host » mais la clé anon est émise pour « $ref ». Supabase répondrait 401 Invalid API key."
+            exit 1
+          fi
+          if [ "$role" != "anon" ]; then
+            echo "::error::La clé fournie n'est pas une clé anon (role=$role) — ne jamais embarquer une clé service_role."
+            exit 1
+          fi
+          echo "Configuration backend cohérente (ref=$ref, role=anon)."
+
       - name: Générer les châssis Android
         run: |
           set -e
@@ -375,6 +412,36 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
           cache: true
+
+      - name: Vérifier la configuration backend injectée
+        shell: bash
+        run: |
+          set -e
+          payload=$(printf '%s' "$SUPABASE_ANON_KEY" | cut -d. -f2)
+          pad=$(( (4 - ${#payload} % 4) % 4 ))
+          if [ "$pad" -gt 0 ]; then
+            payload="$payload$(printf '=%.0s' $(seq 1 "$pad"))"
+          fi
+          json=$(printf '%s' "$payload" | tr '_-' '/+' | base64 -d 2>/dev/null || true)
+          ref=$(printf '%s' "$json" | sed -n 's/.*"ref":"\([^"]*\)".*/\1/p')
+          role=$(printf '%s' "$json" | sed -n 's/.*"role":"\([^"]*\)".*/\1/p')
+          host=$(printf '%s' "$SUPABASE_URL" | sed -E 's#https?://([^./]+).*#\1#')
+          echo "SUPABASE_URL = $SUPABASE_URL"
+          echo "clé anon     = …$(printf '%s' "$SUPABASE_ANON_KEY" | tail -c 12) (longueur ${#SUPABASE_ANON_KEY})"
+          echo "JWT          : ref=$ref role=$role"
+          if [ -z "$json" ] || [ -z "$ref" ]; then
+            echo "::error::SUPABASE_ANON_KEY illisible : le JWT n'est pas décodable (clé tronquée ou corrompue)."
+            exit 1
+          fi
+          if [ "$ref" != "$host" ]; then
+            echo "::error::Incohérence URL/clé : SUPABASE_URL pointe vers « $host » mais la clé anon est émise pour « $ref ». Supabase répondrait 401 Invalid API key."
+            exit 1
+          fi
+          if [ "$role" != "anon" ]; then
+            echo "::error::La clé fournie n'est pas une clé anon (role=$role) — ne jamais embarquer une clé service_role."
+            exit 1
+          fi
+          echo "Configuration backend cohérente (ref=$ref, role=anon)."
 
       - name: Vérifier le toolchain Windows (VS 2022 requis)
         shell: pwsh
