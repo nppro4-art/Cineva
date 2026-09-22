@@ -57,9 +57,13 @@ Future<void> _playerInitializeController(
     state.setState(() => state._playbackError = null);
   }
 
-  final controller = (localFilePath != null && localFilePath.isNotEmpty)
-      ? VideoPlayerController.contentUri(Uri.file(localFilePath))
-      : VideoPlayerController.networkUrl(Uri.parse(url!));
+  // Le moteur est choisi par l'application (video_player sur mobile/web,
+  // media_kit sur desktop) : le lecteur ne connaît que le contrat.
+  final bool fromDisk = localFilePath != null && localFilePath.isNotEmpty;
+  final controller = CinevaVideoControllers.open(
+    url: fromDisk ? localFilePath : url!,
+    isLocal: fromDisk,
+  );
   state._controller = controller;
 
   try {
@@ -91,7 +95,7 @@ Future<void> _playerInitializeController(
     await controller.dispose();
     if (localFilePath != null && localFilePath.isNotEmpty && url != null && url.isNotEmpty) {
       try {
-        final fallbackController = VideoPlayerController.networkUrl(Uri.parse(url));
+        final fallbackController = CinevaVideoControllers.open(url: url, isLocal: false);
         state._controller = fallbackController;
         await fallbackController.initialize();
         if (seekToSeconds > 0) {
@@ -172,7 +176,7 @@ void _playerVideoListener(_PlayerScreenState state) {
 /// Position de reprise : si la position sauvegardée tombe dans un segment à
 /// passer (ex. pause en plein générique), la reprise démarre à la fin du segment.
 int _playerResumeTarget(
-  VideoPlayerController controller,
+  CinevaVideoController controller,
   int seekToSeconds,
   List<SkipSegment> skipSegments,
 ) {

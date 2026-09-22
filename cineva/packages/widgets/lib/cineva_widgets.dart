@@ -4,7 +4,8 @@
 /// * `src/user/` : écrans de l'application abonné (accueil, recherche,
 ///   bibliothèque, téléchargements, fiche contenu, profil, appareils) ;
 /// * `src/settings/` : écrans de réglages et scaffolding commun ;
-/// * `src/player/` : lecteur vidéo (paysage immersif) ;
+/// * `src/player/` : lecteur vidéo (paysage immersif) et contrat de lecture
+///   [CinevaVideoController], injectable par cible ;
 /// * `src/audio/`, `src/vision/`, `src/library/`, `src/search/`,
 ///   `src/session/` : contrôleurs et couches techniques ;
 /// * `src/admin/` : console d'administration.
@@ -27,6 +28,12 @@ export 'src/user/home_skeleton.dart';
 export 'src/user/library_screen.dart';
 export 'src/user/profile_screen.dart';
 export 'src/user/search_screen.dart';
+
+// ---------------------------------------------------------------- lecteur
+// Contrat de lecture vidéo : public afin qu'une cible desktop puisse injecter
+// son propre moteur (paquet `cineva_desktop_video`) sans que `cineva_widgets`
+// ne dépende de media_kit — les APK mobiles n'embarquent aucune lib desktop.
+export 'src/player/cineva_video_controller.dart';
 
 // --------------------------------------------------------------- héritage
 export 'src/cineva_empty_state_card.dart';

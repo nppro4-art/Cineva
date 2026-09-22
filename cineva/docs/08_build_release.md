@@ -21,14 +21,15 @@ Trois binaires sont produits :
 
 Le workflow `.github/workflows/build-artifacts.yml` enchaîne :
 
-1. **`analyze`** — `flutter pub get` sur les 15 paquets, `flutter analyze`, puis les tests.
+1. **`analyze`** — `flutter pub get` sur les 16 paquets, `flutter analyze`, puis les tests.
    Ce job échoue vite et publie `analyze-log` en artefact : c'est le premier réflexe en cas
    d'échec, bien avant les logs de compilation.
 2. **`apk`** — génère les châssis Android, applique libellés (`Cineva`, `Cineva Admin`),
    minSdk 24, AGP 8.1.0 + Kotlin 1.8.22, Java 17, icônes via
    `scripts/apply_android_icon.py`, puis `flutter build apk --release` pour les deux apps.
-3. **`windows`** — sur runner `windows-latest` : châssis Windows, `flutter build windows
-   --release`, renommage en `Cineva.exe`, zip du dossier `Release`.
+3. **`windows`** — sur runner **`windows-2022`** (VS 2022 requis, cf. §E) : châssis Windows,
+   `flutter build windows --release`, renommage en `Cineva.exe`, zip du dossier `Release`
+   (libmpv compris, cf. §Lecture vidéo desktop).
 4. **`release`** — publie une GitHub Release `binaries-<n>` contenant les binaires
    disponibles + `SHA256SUMS.txt`.
 
@@ -67,15 +68,39 @@ gh run download <run-id> --name windows-build-log --dir ./logs
 Le workflow historique `build-android.yml` (push sur `main`, release `apk-<n>`) reste
 actif et ne produit que les deux APK.
 
-### Limite connue de la cible Windows
+### Lecture vidéo desktop (media_kit) — limite levée
 
-Le lecteur s'appuie sur `video_player`, qui ne fournit aucune implémentation Windows
-(la résolution ne remonte que `video_player_android`, `video_player_avfoundation` et
-`video_player_web`). Le `.exe` exécute donc toute l'interface — navigation, catalogue,
-recherche, fiches, bibliothèque, réglages, profil — mais la lecture vidéo échoue.
-Une cible desktop complète suppose un lecteur compatible Windows (`media_kit`, par
-exemple) branché derrière la même interface de contrôleur. Les APK Android ne sont pas
-concernés.
+`video_player` ne fournit **aucune implémentation Windows ni Linux** (la résolution ne
+remonte que `video_player_android`, `video_player_avfoundation` et `video_player_web`) :
+le `.exe` exécutait toute l'interface mais ne pouvait lire aucune vidéo.
+
+Le lecteur n'a pas été dupliqué : il consomme désormais le contrat
+`CinevaVideoController` (`packages/widgets/lib/src/player/cineva_video_controller.dart`)
+et le **moteur est injecté au démarrage de l'application**.
+
+| Cible | Moteur | Paquet |
+| --- | --- | --- |
+| Android (`cineva_mobile`, `cineva_admin`), iOS, web | `video_player` (fabrique par défaut) | `cineva_widgets` |
+| Windows, Linux, macOS | `media_kit` (libmpv) | `packages/desktop_video` |
+
+`apps/cineva_windows/lib/main.dart` (et `apps/cineva_macos`) appelle
+`installDesktopVideoPlayback()` avant `runApp` : chargement des bibliothèques natives
+puis remplacement de la fabrique de `CinevaVideoControllers`. L'appel est sans effet sur
+une cible non desktop.
+
+Conséquences pratiques :
+
+- **les APK ne changent pas** : `cineva_desktop_video` n'est référencé que par les apps
+  desktop, aucune bibliothèque native supplémentaire n'est embarquée sur mobile ;
+- **le zip Windows grossit** : libmpv (`libmpv-2.dll` et dépendances) est copié dans le
+  dossier `Release` par `media_kit_libs_windows_video`, donc inclus dans
+  `Cineva-User-Windows.zip`. Le dossier dézippé doit rester intact ;
+- **comportement identique** : contrôles Cineva (barre dorée, gestes, feuilles
+  qualité/audio/sous-titres, Cineva Vision), reprise hors segment à sauter, sauvegarde
+  de progression, épisode suivant — la surface media_kit est créée avec
+  `controls: NoVideoControls`, le lecteur dessine les siens ;
+- **macOS local** : si vous générez le châssis macOS, la cible CocoaPods doit être
+  `platform :osx, '10.15'` au minimum (exigence media_kit). La CI ne compile pas macOS.
 
 ### Installation
 

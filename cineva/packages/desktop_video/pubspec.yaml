@@ -1,0 +1,31 @@
+name: cineva_desktop_video
+description: >-
+  Lecture vidéo desktop de Cineva (Windows, Linux, macOS) — adapteur media_kit
+  branché derrière le contrat CinevaVideoController de cineva_widgets.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: '>=3.5.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cineva_widgets:
+    path: ../widgets
+  # media_kit apporte libmpv : seul paquet du monorepo à embarquer un décodeur
+  # desktop. `video_player` n'a aucune implémentation Windows ni Linux.
+  # Versions vérifiées contre les docs pub.dev « latest » (media_kit 1.2.6,
+  # media_kit_video 2.0.1) : contraintes SDK `>=3.1.0 <4.0.0` et
+  # `flutter: >=3.7.0`, donc compatibles Flutter 3.24.5 / Dart 3.5.4.
+  media_kit: ^1.2.3
+  media_kit_video: ^2.0.1
+  # Bibliothèques natives desktop uniquement (Windows/Linux/macOS) : ce paquet
+  # n'est référencé que par les apps desktop, jamais par cineva_mobile ni
+  # cineva_admin — les APK ne changent donc pas de taille.
+  media_kit_libs_video: ^1.0.7
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+  flutter_test:
+    sdk: flutter

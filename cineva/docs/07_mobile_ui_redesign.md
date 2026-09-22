@@ -63,7 +63,8 @@ la refonte ne les touche pas, elle se branche dessus.
 
 ## D. Système de player actuel
 
-`video_player` 2.9 + `CinevaVisionLayer` (profil de rendu) + `AudioEngineController`.
+`CinevaVideoController` (contrat injectable : `video_player` 2.9 sur mobile/web,
+`media_kit` sur desktop) + `CinevaVisionLayer` (profil de rendu) + `AudioEngineController`.
 Fonctionnalités **à préserver intégralement** :
 
 - reprise de position (`PlaybackProgressModel`) + sauvegarde périodique (5 s) + `dispose` ;
@@ -304,8 +305,8 @@ GitHub : la validation a donc été déportée dans GitHub Actions
 
 | Étape | Résultat |
 | --- | --- |
-| `flutter pub get` sur les 15 paquets | ✅ |
-| `flutter analyze` (15 paquets) | ✅ **0 erreur** — 29 avertissements restants, dont 21 pré-existants (`setState` appelé depuis les `part`-files du lecteur) |
+| `flutter pub get` sur les paquets du monorepo | ✅ |
+| `flutter analyze` (tous paquets + apps) | ✅ **0 erreur** — 29 avertissements restants, dont 21 pré-existants (`setState` appelé depuis les `part`-files du lecteur) |
 | Tests (`flutter test` / `dart test`) | ✅ **57 tests verts** : 13 (`theme`) + 13 (`ui`) + 31 (`widgets`), dont les 3 fichiers ajoutés par la refonte |
 | Build `cineva_mobile` (APK release) | ✅ `Cineva-User.apk` |
 | Build `cineva_admin` (APK release) | ✅ `Cineva-Admin.apk` |
@@ -345,11 +346,12 @@ symboles et des getters de modèles, préservation des API sous test).
 
 - **Validation sur appareil** : encoche / Dynamic Island, densités d'écran, thèmes
   Clair & Noir, TalkBack, lecteur en paysage, comportement réseau dégradé.
-- **Lecture vidéo sur Windows** : le lecteur s'appuie sur `video_player`, qui n'a
-  **aucune implémentation Windows** (la résolution de dépendances ne remonte que
-  `video_player_android`, `video_player_avfoundation`, `video_player_web`). Le `.exe`
-  exécute toute l'interface mais ne peut pas lire de vidéo ; une cible desktop complète
-  exige un lecteur compatible (`media_kit` par exemple). Android n'est pas concerné.
+- ~~**Lecture vidéo sur Windows**~~ — **résolu** : le lecteur consomme le contrat
+  `CinevaVideoController` et le moteur est injecté au démarrage. `packages/desktop_video`
+  fournit l'adapteur `media_kit` (libmpv), installé par `installDesktopVideoPlayback()`
+  dans `apps/cineva_windows` et `apps/cineva_macos`. Les cibles mobiles gardent
+  `video_player` (ExoPlayer / AVPlayer) : les APK n'embarquent rien de plus.
+  Détail dans `08_build_release.md` §Lecture vidéo desktop.
 - **Signature release Android** : les APK sont signés avec la clé de debug (installation
   directe possible, Play Store refusé). Procédure keystore dans `08_build_release.md` §D.
 - **Notifications push** : `FIREBASE_ENABLED=false` à la compilation tant que FCM n'est

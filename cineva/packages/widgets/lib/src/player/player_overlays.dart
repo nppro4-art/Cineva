@@ -2,8 +2,8 @@ import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
+import 'cineva_video_controller.dart';
 import 'player_formatters.dart';
 
 /// Contrôles du lecteur : paysage immersif, trois zones (haut, centre, bas)
@@ -38,7 +38,7 @@ class PlayerControls extends StatelessWidget {
   });
 
   final ContentDetailModel detail;
-  final VideoPlayerController? controller;
+  final CinevaVideoController? controller;
   final double volume;
   final String selectedAudio;
   final String selectedSubtitle;
@@ -70,8 +70,8 @@ class PlayerControls extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final VideoPlayerController? player = controller;
-    final VideoPlayerController? activePlayer =
+    final CinevaVideoController? player = controller;
+    final CinevaVideoController? activePlayer =
         player != null && player.value.isInitialized ? player : null;
     final bool initialized = activePlayer != null;
     final bool playing = activePlayer?.value.isPlaying ?? false;
@@ -331,12 +331,12 @@ class PlayerControls extends StatelessWidget {
 
   /// Fraction déjà mise en mémoire tampon (jamais inventée : dérivée des
   /// plages réellement rapportées par le lecteur).
-  double _bufferedFraction(VideoPlayerController? player, int durationSeconds) {
+  double _bufferedFraction(CinevaVideoController? player, int durationSeconds) {
     if (player == null || durationSeconds <= 0) return 0;
-    final List<DurationRange> ranges = player.value.buffered;
+    final List<CinevaVideoBufferRange> ranges = player.value.buffered;
     if (ranges.isEmpty) return 0;
     int best = 0;
-    for (final DurationRange range in ranges) {
+    for (final CinevaVideoBufferRange range in ranges) {
       final int end = range.end.inSeconds;
       if (end > best) best = end;
     }

@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Lecture vidéo desktop (media_kit) : absent des APK mobiles, qui continuent
+  # d'utiliser `video_player`.
+  cineva_desktop_video:
+    path: ../../packages/desktop_video
   cineva_shared:
     path: ../../packages/shared
   cineva_widgets:

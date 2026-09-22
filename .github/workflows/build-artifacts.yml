@@ -62,7 +62,7 @@ env:
 jobs:
   # ─────────────────────────────────────────────────────────────── analyse
   analyze:
-    name: Analyse + tests (15 packages)
+    name: Analyse + tests (16 packages)
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:

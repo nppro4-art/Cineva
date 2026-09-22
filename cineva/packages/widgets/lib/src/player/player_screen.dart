@@ -8,10 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:video_player/video_player.dart';
 
 import '../app/providers.dart';
 import '../vision/cineva_vision_layer.dart';
+import 'cineva_video_controller.dart';
 import 'player_formatters.dart';
 import 'player_overlays.dart';
 import 'player_runtime_policy.dart';
@@ -60,7 +60,7 @@ class PlayerScreen extends ConsumerStatefulWidget {
 }
 
 class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBindingObserver {
-  VideoPlayerController? _controller;
+  CinevaVideoController? _controller;
   Timer? _hideTimer;
   Timer? _saveTimer;
   Timer? _gestureTimer;
@@ -129,7 +129,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
     _gestureTimer?.cancel();
     _nextEpisodeTimer?.cancel();
     _persistProgress();
-    _controller?.dispose();
+    // Libération asynchrone du moteur (media_kit ferme libmpv, video_player
+    // libère son canal) : la page se démonte sans l'attendre.
+    unawaited(_controller?.dispose());
     try {
       ref.read(audioEngineControllerProvider.notifier).detach();
     } catch (_) {
@@ -317,10 +319,10 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                                       child: AspectRatio(
                                         aspectRatio: _immersive ? MediaQuery.of(context).size.aspectRatio : activePlayer.value.aspectRatio,
                                         child: renderProfile == null
-                                            ? VideoPlayer(activePlayer)
+                                            ? activePlayer.buildVideo()
                                             : CinevaVisionLayer(
                                                 renderProfile: renderProfile,
-                                                child: VideoPlayer(activePlayer),
+                                                child: activePlayer.buildVideo(),
                                               ),
                                       ),
                                     )
