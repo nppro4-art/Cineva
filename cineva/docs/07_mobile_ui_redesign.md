@@ -294,25 +294,63 @@ les routes historiques redirigent.
   supporte pas** (`capabilities.*Supported`), chips des réglages appliqués et synthèse de
   l'analyse matérielle. `VisionController` inchangé.
 
-### Vérifications effectuées sans SDK
+### Validation réelle par la CI (compilation effective)
 
-Le sandbox de travail ne contient ni Flutter ni Dart et n'a pas d'accès réseau :
-`melos run analyze`, `melos run test` et le build APK n'ont pas pu être exécutés.
-Des contrôles statiques ont été menés à la place sur les 71 fichiers modifiés ou créés :
+Le sandbox de travail ne contient ni Flutter ni Dart et n'a pas d'accès réseau hors
+GitHub : la validation a donc été déportée dans GitHub Actions
+(`.github/workflows/build-artifacts.yml`, Flutter 3.24.5 / Dart 3.5.4).
 
-1. **Structure** : équilibre accolades/parenthèses en ignorant chaînes, échappements,
-   interpolations `${}` et commentaires — 0 anomalie sur les 270 fichiers Dart du monorepo.
-2. **Imports** : chaque symbole `package:` utilisé est exporté par un package déclaré dans
-   le `pubspec` du paquet ; aucun import manquant, aucun `part` / `part of` orphelin.
-3. **API** : tous les constructeurs Cineva sont appelés avec des paramètres nommés
-   existants ; tous les membres statiques référencés existent ; tous les getters de modèles
-   utilisés existent. Corrections apportées en cours de route : `ContentTileModel` n'expose
-   pas `isMovie` / `isSeries` (remplacé par `contentType ==`), `resolveDownloadUrl` accepte
-   une qualité optionnelle, `resolvePlaybackUrl` exige une qualité.
-4. **API sous test** : les classes couvertes par les tests existants (`HomeSectionResolver`,
-   `HomeScreenLayout`, `ContentDetailHelpers`, `ContentDetailLayout`, `CinevaArtworkPalette`,
-   `PlayerFormatters`, `PlayerRuntimePolicy`, `DownloadProgressMetrics`) sont intactes.
+**Résultat du run de référence (branche `arena/01a0a0f7-cineva`, release `binaries-6`)** :
 
-**Reste à faire dans un environnement outillé** : `melos bootstrap` → `melos run analyze` →
-`melos run test` → build APK debug, puis validation sur appareil (encoche / Dynamic Island,
-densités d'écran, thèmes Clair & Noir, TalkBack, lecteur en paysage).
+| Étape | Résultat |
+| --- | --- |
+| `flutter pub get` sur les 15 paquets | ✅ |
+| `flutter analyze` (15 paquets) | ✅ **0 erreur** — 29 avertissements restants, dont 21 pré-existants (`setState` appelé depuis les `part`-files du lecteur) |
+| Tests (`flutter test` / `dart test`) | ✅ **57 tests verts** : 13 (`theme`) + 13 (`ui`) + 31 (`widgets`), dont les 3 fichiers ajoutés par la refonte |
+| Build `cineva_mobile` (APK release) | ✅ `Cineva-User.apk` |
+| Build `cineva_admin` (APK release) | ✅ `Cineva-Admin.apk` |
+| Build `cineva_windows` (EXE release x64) | ✅ `Cineva-User-Windows.zip` → `Cineva.exe` |
+
+Les **20 erreurs de compilation** révélées par le premier `analyze` réel ont toutes été
+corrigées (commit `a52814d`) :
+
+- `packages/ui` : `AnimatedBuilder` livre un `child` nullable (repli `SizedBox.shrink`) ;
+  imports manquants `cineva_buttons.dart` (`CinevaIconButton`) et `flutter/services.dart`
+  (`SystemUiOverlayStyle`).
+- `packages/repositories` : `TmdbContentDraft.originalTitle` est non nullable alors que
+  TMDB ne renvoie `original_title`/`original_name` que pour certains médias → repli sur le
+  titre résolu.
+- `packages/widgets` : `Map.map` → `Map.entries.map` (`help_screen`) ; import manquant de
+  `library_controller.dart` (`adaptive_user_shell`) ; `LibraryState` expose `favoriteIds`
+  et non `favorites` (`profile_screen`, `library_screen`) ; `SearchController` Cineva en
+  conflit avec le symbole Material homonyme (`search_screen`) ; champ non promouvable
+  `tile` copié en local avant le ternaire d'artwork.
+- **Ma liste** : `LibraryController` ne persiste que les identifiants de favoris. L'écran
+  Bibliothèque résout désormais ces identifiants en tuiles réelles — catalogue chargé
+  (`homeSectionsProvider`) complété par les lectures en cours et les téléchargements, qui
+  embarquent leur `ContentTileModel`. Aucun favori n'est simulé ; un identifiant dont la
+  tuile n'a jamais été chargée n'est simplement pas affichable.
+- `packages/audio_engine` (pré-existant sur `main`) : les 3 fichiers de test importaient
+  `package:test` sans déclaration, ce qui produisait ~200 erreurs. Ajouté à `pubspec.yaml`,
+  ce paquet entrait en conflit avec les versions de `test_api`/`matcher` épinglées par
+  `flutter_test` dans le SDK → les tests passent par `package:flutter_test/flutter_test.dart`,
+  qui ré-exporte toute l'API employée (`group`, `test`, `expect`, `isTrue`, `isFalse`,
+  `closeTo`, `isEmpty`, `inInclusiveRange`, `lessThanOrEqualTo`, `greaterThanOrEqualTo`).
+
+Les contrôles statiques menés en amont dans le sandbox restent valables comme filet
+(structure des 270 fichiers Dart, cohérence des imports et des `part`, existence des
+symboles et des getters de modèles, préservation des API sous test).
+
+### Ce qui reste
+
+- **Validation sur appareil** : encoche / Dynamic Island, densités d'écran, thèmes
+  Clair & Noir, TalkBack, lecteur en paysage, comportement réseau dégradé.
+- **Lecture vidéo sur Windows** : le lecteur s'appuie sur `video_player`, qui n'a
+  **aucune implémentation Windows** (la résolution de dépendances ne remonte que
+  `video_player_android`, `video_player_avfoundation`, `video_player_web`). Le `.exe`
+  exécute toute l'interface mais ne peut pas lire de vidéo ; une cible desktop complète
+  exige un lecteur compatible (`media_kit` par exemple). Android n'est pas concerné.
+- **Signature release Android** : les APK sont signés avec la clé de debug (installation
+  directe possible, Play Store refusé). Procédure keystore dans `08_build_release.md` §D.
+- **Notifications push** : `FIREBASE_ENABLED=false` à la compilation tant que FCM n'est
+  pas configuré côté projet.

@@ -67,6 +67,16 @@ gh run download <run-id> --name windows-build-log --dir ./logs
 Le workflow historique `build-android.yml` (push sur `main`, release `apk-<n>`) reste
 actif et ne produit que les deux APK.
 
+### Limite connue de la cible Windows
+
+Le lecteur s'appuie sur `video_player`, qui ne fournit aucune implémentation Windows
+(la résolution ne remonte que `video_player_android`, `video_player_avfoundation` et
+`video_player_web`). Le `.exe` exécute donc toute l'interface — navigation, catalogue,
+recherche, fiches, bibliothèque, réglages, profil — mais la lecture vidéo échoue.
+Une cible desktop complète suppose un lecteur compatible Windows (`media_kit`, par
+exemple) branché derrière la même interface de contrôleur. Les APK Android ne sont pas
+concernés.
+
 ### Installation
 
 - **Android** : copier l'APK sur l'appareil, autoriser « Sources inconnues », ouvrir le
@@ -216,7 +226,8 @@ Pour le Play Store, préférer l'AAB : `flutter build appbundle --release`.
 | `No Android project found` / `flutter build apk` refuse | châssis natif absent → `flutter create --platforms=android .` dans l'app, ou `scripts/bootstrap_flutter_targets.sh` |
 | `Could not get unknown property 'flutter' for extension 'android'` | `app_links` ≥ 6.4 incompatible AGP Flutter 3.24.5 → le pin `app_links: 6.3.3` est déjà dans les `pubspec.yaml`, ne pas le lever |
 | `Unsupported class file major version` / erreurs Kotlin | JDK ≠ 17 ou AGP/Kotlin non alignés → la CI force AGP 8.1.0 + Kotlin 1.8.22 + Java 17 |
-| Build Windows sur Linux/macOS | impossible : MSVC requis → runner `windows-latest` ou machine Windows |
+| Build Windows sur Linux/macOS | impossible : MSVC requis → runner Windows ou machine Windows |
+| `CMake Error … Generator "Visual Studio 16 2019" could not find any instance of Visual Studio` | Flutter 3.24.5 ne mappe que VS **17** sur le générateur `Visual Studio 17 2022` et retombe sinon sur VS 2019 (`packages/flutter_tools/lib/src/windows/visual_studio.dart`). Or `windows-latest` / `windows-2025` embarquent **Visual Studio 2026** depuis juin 2026. Corrigé dans la CI par `runs-on: windows-2022` ; en local, installer VS 2022 avec la charge « Desktop development with C++ » |
 | L'app démarre mais affiche le catalogue de démonstration | defines Supabase absents à la compilation (voir §C) |
 | `flutter analyze` plante silencieusement (sandbox sans SDK) | utiliser `$FLUTTER_ROOT/bin/cache/dart-sdk/bin/dart analyze` |
 | Échec CI | artefact `analyze-log` d'abord, puis `apk-build-logs` / `windows-build-log` ; une issue `build-artifacts failure report` est ouverte automatiquement |
