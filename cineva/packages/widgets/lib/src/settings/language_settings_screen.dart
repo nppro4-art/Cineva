@@ -4,48 +4,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app/providers.dart';
+import 'settings_scaffold.dart';
 
+/// Langue de l'interface et des métadonnées.
 class LanguageSettingsScreen extends ConsumerWidget {
   const LanguageSettingsScreen({super.key});
 
-  static const options = <MapEntry<String, String>>[
-    MapEntry('fr', 'Français'),
-    MapEntry('en', 'English'),
-    MapEntry('es', 'Español'),
-    MapEntry('ar', 'العربية'),
+  static const List<MapEntry<String, String>> options = <MapEntry<String, String>>[
+    MapEntry<String, String>('fr', 'Français'),
+    MapEntry<String, String>('en', 'English'),
+    MapEntry<String, String>('es', 'Español'),
+    MapEntry<String, String>('ar', 'العربية'),
   ];
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsControllerProvider).valueOrNull;
-    final current = settings?.language ?? 'fr';
+    final String current =
+        ref.watch(settingsControllerProvider).valueOrNull?.language ?? 'fr';
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Langue')),
-      body: CinevaScaffoldContainer(
-        child: ListView(
+    return SettingsScreenScaffold(
+      title: 'Langue',
+      subtitle: 'S’applique à l’interface et aux libellés du catalogue.',
+      children: <Widget>[
+        SettingsGroup(
           children: options
               .map(
-                (option) => Padding(
-                  padding: const EdgeInsets.only(bottom: CinevaSpacing.md),
-                  child: RadioListTile<String>(
-                    value: option.key,
-                    groupValue: current,
-                    onChanged: (value) {
-                      if (value != null) {
-                        ref.read(settingsControllerProvider.notifier).updateLanguage(value);
-                      }
-                    },
-                    title: Text(option.value),
-                    subtitle: Text(option.key.toUpperCase()),
-                    tileColor: CinevaColors.surface,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(CinevaRadii.medium)),
-                  ),
+                (MapEntry<String, String> option) => SettingsOption<String>(
+                  value: option.key,
+                  label: option.value,
+                  subtitle: option.key.toUpperCase(),
+                  selected: option.key == current,
+                  onSelected: (String value) => ref
+                      .read(settingsControllerProvider.notifier)
+                      .updateLanguage(value),
                 ),
               )
               .toList(),
         ),
-      ),
+      ],
     );
   }
 }

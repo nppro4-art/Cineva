@@ -5,40 +5,51 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app/providers.dart';
+import 'settings_scaffold.dart';
 
+/// Apparence : sombre (par défaut), clair ou aligné sur le système.
 class ThemeSettingsScreen extends ConsumerWidget {
   const ThemeSettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settings = ref.watch(settingsControllerProvider).valueOrNull;
-    final current = settings?.themeMode ?? AppThemeMode.dark;
+    final AppThemeMode current =
+        ref.watch(settingsControllerProvider).valueOrNull?.themeMode ??
+            AppThemeMode.dark;
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Thème')),
-      body: CinevaScaffoldContainer(
-        child: ListView(
+    return SettingsScreenScaffold(
+      title: 'Apparence',
+      subtitle: 'Cineva est conçu pour le mode sombre ; le mode clair reste disponible.',
+      children: <Widget>[
+        SettingsGroup(
           children: AppThemeMode.values
               .map(
-                (mode) => Padding(
-                  padding: const EdgeInsets.only(bottom: CinevaSpacing.md),
-                  child: RadioListTile<AppThemeMode>(
-                    value: mode,
-                    groupValue: current,
-                    onChanged: (value) {
-                      if (value != null) {
-                        ref.read(settingsControllerProvider.notifier).updateTheme(value);
-                      }
-                    },
-                    title: Text(mode.label),
-                    tileColor: CinevaColors.surface,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(CinevaRadii.medium)),
-                  ),
+                (AppThemeMode mode) => SettingsOption<AppThemeMode>(
+                  value: mode,
+                  label: mode.label,
+                  subtitle: _description(mode),
+                  icon: _icon(mode),
+                  selected: mode == current,
+                  onSelected: (AppThemeMode value) => ref
+                      .read(settingsControllerProvider.notifier)
+                      .updateTheme(value),
                 ),
               )
               .toList(),
         ),
-      ),
+      ],
     );
   }
+
+  static IconData _icon(AppThemeMode mode) => switch (mode) {
+        AppThemeMode.dark => Icons.nightlight_round,
+        AppThemeMode.light => Icons.light_mode_rounded,
+        AppThemeMode.system => Icons.brightness_auto_rounded,
+      };
+
+  static String _description(AppThemeMode mode) => switch (mode) {
+        AppThemeMode.dark => 'Noir profond, surfaces étagées, accents dorés.',
+        AppThemeMode.light => 'Fond clair pour un usage en pleine journée.',
+        AppThemeMode.system => 'Suit le réglage de votre appareil.',
+      };
 }

@@ -102,36 +102,46 @@ Future<void> _playerPickSubtitles(_PlayerScreenState state, ContentDetailModel d
 }
 
 Future<void> _playerOpenQualitySheet(_PlayerScreenState state, ContentDetailModel detail) async {
-  final selection = await showModalBottomSheet<VideoQualityPreset>(
+  final selection = await showCinevaSheet<VideoQualityPreset>(
     context: state.context,
-    backgroundColor: CinevaColors.surface,
-    showDragHandle: true,
-    builder: (context) {
+    builder: (BuildContext sheetContext) {
       final resolvedCurrent = _resolveSelectedQualityOption(
         detail.availableQualities,
         state._selectedQuality,
       );
-      return SafeArea(
+      final List<String> flags = <String>[
+        if (resolvedCurrent.hdr) 'HDR',
+        if (resolvedCurrent.dolbyVision) 'Dolby Vision',
+        if (resolvedCurrent.dolbyAtmos) 'Dolby Atmos',
+      ];
+
+      return CinevaSheetContainer(
+        title: 'Qualité vidéo',
+        subtitle: 'Flux actuel : ${resolvedCurrent.resolutionLabel} · '
+            '${_mbps(resolvedCurrent.bitrateMbps)} Mb/s'
+            '${flags.isEmpty ? '' : ' · ${flags.join(' · ')}'}',
         child: ListView(
           shrinkWrap: true,
-          padding: const EdgeInsets.all(CinevaSpacing.lg),
+          padding: EdgeInsets.zero,
           children: <Widget>[
-            Text('Qualité vidéo', style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: CinevaSpacing.sm),
-            CinevaStatusBanner(
-              title: 'Flux actuel',
-              message:
-                  'Qualité : ${resolvedCurrent.preset.label} • Débit : ${resolvedCurrent.bitrateMbps.toStringAsFixed(1)} Mb/s • Résolution : ${resolvedCurrent.resolutionLabel} • HDR : ${resolvedCurrent.hdr ? 'Oui' : 'Non'} • Dolby Vision : ${resolvedCurrent.dolbyVision ? 'Oui' : 'Non'} • Dolby Atmos : ${resolvedCurrent.dolbyAtmos ? 'Oui' : 'Non'}',
-            ),
-            const SizedBox(height: CinevaSpacing.lg),
             ...detail.availableQualities.map(
-              (option) => ListTile(
-                title: Text(option.preset.label),
-                subtitle: Text('${option.resolutionLabel} • ${option.bitrateMbps.toStringAsFixed(1)} Mb/s • HDR ${option.hdr ? 'Oui' : 'Non'}'),
-                trailing: option.preset == state._selectedQuality ? const Icon(Icons.check_rounded) : null,
-                onTap: option.available ? () => Navigator.of(context).pop(option.preset) : null,
+              (VideoQualityOption option) => CinevaSheetOption<VideoQualityPreset>(
+                value: option.preset,
+                label: option.preset.label,
+                subtitle: '${option.resolutionLabel} · ${_mbps(option.bitrateMbps)} Mb/s'
+                    '${option.hdr ? ' · HDR' : ''}'
+                    '${option.dolbyVision ? ' · Dolby Vision' : ''}'
+                    '${option.dolbyAtmos ? ' · Atmos' : ''}',
+                selected: option.preset == state._selectedQuality,
+                enabled: option.available,
+                trailing: option.available
+                    ? null
+                    : const Text('Indisponible', style: CinevaTypography.meta),
+                onSelected: (VideoQualityPreset preset) =>
+                    Navigator.of(sheetContext).pop(preset),
               ),
             ),
+            const SizedBox(height: CinevaSpacing.sm),
           ],
         ),
       );
@@ -142,6 +152,9 @@ Future<void> _playerOpenQualitySheet(_PlayerScreenState state, ContentDetailMode
     await _playerChangeQuality(state, detail, selection);
   }
 }
+
+/// Débit formaté à la française (« 8,5 »).
+String _mbps(double value) => value.toStringAsFixed(1).replaceAll('.', ',');
 
 Future<void> _playerChangeQuality(
   _PlayerScreenState state,
@@ -181,30 +194,26 @@ Future<String?> _playerPickOption(
   required List<String> options,
   required String selected,
 }) {
-  return showModalBottomSheet<String>(
+  return showCinevaSheet<String>(
     context: state.context,
-    backgroundColor: CinevaColors.surface,
-    showDragHandle: true,
-    builder: (context) {
-      return SafeArea(
-        child: ListView(
-          shrinkWrap: true,
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(CinevaSpacing.lg),
-              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
+    builder: (BuildContext sheetContext) => CinevaSheetContainer(
+      title: title,
+      child: ListView(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        children: <Widget>[
+          ...options.map(
+            (String option) => CinevaSheetOption<String>(
+              value: option,
+              label: option,
+              selected: option == selected,
+              onSelected: (String value) => Navigator.of(sheetContext).pop(value),
             ),
-            ...options.map(
-              (option) => ListTile(
-                title: Text(option),
-                trailing: option == selected ? const Icon(Icons.check_rounded) : null,
-                onTap: () => Navigator.of(context).pop(option),
-              ),
-            ),
-          ],
-        ),
-      );
-    },
+          ),
+          const SizedBox(height: CinevaSpacing.sm),
+        ],
+      ),
+    ),
   );
 }
 

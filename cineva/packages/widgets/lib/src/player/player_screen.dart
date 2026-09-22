@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cineva_models/cineva_models.dart';
+import 'package:cineva_shared/cineva_shared.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +43,17 @@ VideoQualityOption _resolveSelectedQualityOption(
 }
 
 class PlayerScreen extends ConsumerStatefulWidget {
-  const PlayerScreen({super.key, required this.contentId});
+  const PlayerScreen({
+    super.key,
+    required this.contentId,
+    this.playTrailer = false,
+  });
 
   final String contentId;
+
+  /// Lit la bande-annonce ([ContentDetailModel.trailerUrl]) au lieu du film.
+  /// Aucune progression n'est enregistrée dans ce mode.
+  final bool playTrailer;
 
   @override
   ConsumerState<PlayerScreen> createState() => _PlayerScreenState();
@@ -74,16 +83,47 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
   String? _nextEpisodeId;
   int _nextEpisodeCountdown = 0;
   String? _activeContentId;
+  late final AppTarget _target = ref.read(appTargetProvider);
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _enterImmersiveLandscape();
+  }
+
+  /// Le lecteur est la seule page paysage de l'application mobile : il
+  /// bascule l'appareil, masque les barres système, puis rend la main au
+  /// portrait verrouillé en quittant la page.
+  void _enterImmersiveLandscape() {
+    unawaited(
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky),
+    );
+    if (_target.isMobileLike) {
+      unawaited(
+        SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]),
+      );
+    }
+  }
+
+  void _restorePortrait() {
+    unawaited(SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge));
+    if (_target.isMobileLike) {
+      unawaited(
+        SystemChrome.setPreferredOrientations(<DeviceOrientation>[
+          DeviceOrientation.portraitUp,
+        ]),
+      );
+    }
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _restorePortrait();
     _hideTimer?.cancel();
     _saveTimer?.cancel();
     _gestureTimer?.cancel();
@@ -182,18 +222,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
 
         final position = activePlayer?.value.position.inSeconds ?? 0;
         final duration = activePlayer?.value.duration.inSeconds ?? 0;
-        final showSkipIntro = PlayerRuntimePolicy.shouldShowSkipIntro(
-          positionSeconds: position,
-          introEndSeconds: detail.introEndSeconds,
-        );
-        final showSkipCredits = PlayerRuntimePolicy.shouldShowSkipCredits(
-          positionSeconds: position,
-          creditsStartSeconds: detail.creditsStartSeconds,
-        );
-        final activeSkipSegment = PlayerRuntimePolicy.activeSkipSegment(
-          positionSeconds: position,
-          segments: detail.skipSegments,
-        );
+        final bool trailer = widget.playTrailer &&
+            (detail.trailerUrl ?? '').trim().isNotEmpty;
+        final showSkipIntro = trailer
+            ? false
+            : PlayerRuntimePolicy.shouldShowSkipIntro(
+                positionSeconds: position,
+                introEndSeconds: detail.introEndSeconds,
+              );
+        final showSkipCredits = trailer
+            ? false
+            : PlayerRuntimePolicy.shouldShowSkipCredits(
+                positionSeconds: position,
+                creditsStartSeconds: detail.creditsStartSeconds,
+              );
+        final activeSkipSegment = trailer
+            ? null
+            : PlayerRuntimePolicy.activeSkipSegment(
+                positionSeconds: position,
+                segments: detail.skipSegments,
+              );
         final skipSegmentRemaining = activeSkipSegment == null
             ? 0
             : (activeSkipSegment.endSeconds - position).clamp(0, activeSkipSegment.durationSeconds);
@@ -248,7 +296,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                     backgroundColor: Colors.black,
                     body: GestureDetector(
                       behavior: HitTestBehavior.opaque,
-                      onTap: _controlsLocked ? null : _toggleControls,
+                      onTap: _toggleControls,
                       onDoubleTapDown: (details) => _doubleTapPosition = details.localPosition,
                       onDoubleTap: () => _handleDoubleTap(context),
                       onVerticalDragUpdate: (details) => _handleVerticalGesture(context, details),
@@ -365,32 +413,53 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                           if (hasError)
                             Center(
                               child: ConstrainedBox(
-                                constraints: const BoxConstraints(maxWidth: 560),
-                                child: CinevaGlassCard(
+                                constraints: const BoxConstraints(maxWidth: 480),
+                                child: Container(
+                                  margin: const EdgeInsets.all(CinevaSpacing.lg),
+                                  padding: const EdgeInsets.all(CinevaSpacing.xl),
+                                  decoration: BoxDecoration(
+                                    color: CinevaColors.modal.withOpacity(0.96),
+                                    borderRadius: BorderRadius.circular(CinevaRadii.large),
+                                    boxShadow: CinevaShadows.modal,
+                                  ),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: <Widget>[
-                                      Text('Erreur de lecture', style: Theme.of(context).textTheme.titleLarge),
-                                      const SizedBox(height: CinevaSpacing.sm),
+                                      const Icon(
+                                        Icons.error_outline_rounded,
+                                        size: 24,
+                                        color: CinevaColors.danger,
+                                      ),
+                                      const SizedBox(height: CinevaSpacing.md),
+                                      Text('Erreur de lecture',
+                                          style: CinevaTypography.sectionTitle.copyWith(fontSize: 17)),
+                                      const SizedBox(height: CinevaSpacing.xs),
                                       Text(
-                                        effectiveError ?? 'Le flux est indisponible ou le réseau a été interrompu.',
-                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: CinevaColors.textMuted),
+                                        effectiveError ??
+                                            'Le flux est indisponible ou le réseau a été interrompu.',
+                                        style: CinevaTypography.bodyCompact,
                                       ),
                                       const SizedBox(height: CinevaSpacing.lg),
                                       Wrap(
-                                        spacing: 12,
-                                        runSpacing: 12,
+                                        spacing: CinevaSpacing.sm,
+                                        runSpacing: CinevaSpacing.sm,
                                         children: <Widget>[
-                                          CinevaPrimaryButton(
+                                          CinevaPlayButton(
                                             label: 'Réessayer',
                                             icon: Icons.refresh_rounded,
+                                            expanded: false,
+                                            height: 42,
                                             onPressed: () => _retry(detail),
                                           ),
-                                          CinevaPrimaryButton(
+                                          CinevaSecondaryButton(
                                             label: 'Retour au contenu',
                                             icon: Icons.arrow_back_rounded,
-                                            onPressed: () => context.go('/content/${Uri.encodeComponent(detail.seriesId ?? detail.id)}'),
+                                            expanded: false,
+                                            height: 42,
+                                            onPressed: () => context.go(
+                                              '/content/${Uri.encodeComponent(detail.seriesId ?? detail.id)}',
+                                            ),
                                           ),
                                         ],
                                       ),
@@ -436,6 +505,9 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                               onBack: () => context.go('/content/${Uri.encodeComponent(detail.seriesId ?? detail.id)}'),
                               onPlayPause: _togglePlayPause,
                               onSeek: _seekToRatio,
+                              titleOverride: trailer ? 'Bande-annonce — ${detail.title}' : null,
+                              locked: _controlsLocked,
+                              onToggleLock: () => setState(() => _controlsLocked = !_controlsLocked),
                               onToggleImmersive: () => setState(() => _immersive = !_immersive),
                               onOpenAudio: () => _pickAudio(detail),
                               onOpenSubtitles: () => _pickSubtitles(detail),
@@ -446,17 +518,26 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                               },
                             ),
                           ),
-                          Positioned(
-                            left: CinevaSpacing.lg,
-                            top: MediaQuery.of(context).padding.top + CinevaSpacing.lg,
-                            child: Tooltip(
-                              message: _controlsLocked ? 'Déverrouiller les commandes' : 'Verrouiller les commandes',
-                              child: IconButton.filledTonal(
-                                onPressed: () => setState(() => _controlsLocked = !_controlsLocked),
-                                icon: Icon(_controlsLocked ? Icons.lock_rounded : Icons.lock_open_rounded),
+                          // Commandes verrouillées : seul le cadenas flotte.
+                          if (_controlsLocked)
+                            Positioned(
+                              left: MediaQuery.paddingOf(context).left + CinevaSpacing.sm,
+                              top: MediaQuery.paddingOf(context).top + CinevaSpacing.sm,
+                              child: AnimatedOpacity(
+                                duration: CinevaMotion.fast,
+                                opacity: _showControls ? 1 : 0,
+                                child: IgnorePointer(
+                                  ignoring: !_showControls,
+                                  child: ControlButton(
+                                    icon: Icons.lock_rounded,
+                                    size: 44,
+                                    active: true,
+                                    tooltip: 'Déverrouiller les commandes',
+                                    onTap: () => setState(() => _controlsLocked = false),
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
                         ],
                       ),
                     ),

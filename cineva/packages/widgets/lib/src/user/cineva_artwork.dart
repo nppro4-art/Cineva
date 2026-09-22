@@ -176,37 +176,8 @@ class _MaybeRemoteArtworkState extends State<_MaybeRemoteArtwork> {
   }
 }
 
+/// Visuels de repli historiques : délègue au design system
+/// (`CinevaArtworkGradients`) pour n'avoir qu'une seule source de vérité.
 abstract final class CinevaArtworkPalette {
-  static LinearGradient gradientFor(String seed) {
-    final hash = seed.codeUnits.fold<int>(0, (value, code) => value + code);
-    final gradients = <LinearGradient>[
-      const LinearGradient(
-        colors: <Color>[Color(0xFF5B4DFF), Color(0xFF0F172A)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: <Color>[Color(0xFF7C3AED), Color(0xFF1F2937)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: <Color>[Color(0xFF0891B2), Color(0xFF111827)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: <Color>[Color(0xFFEA580C), Color(0xFF111827)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-      const LinearGradient(
-        colors: <Color>[Color(0xFF10B981), Color(0xFF111827)],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    ];
-
-    return gradients[hash % gradients.length];
-  }
+  static LinearGradient gradientFor(String seed) => CinevaArtworkGradients.forSeed(seed);
 }

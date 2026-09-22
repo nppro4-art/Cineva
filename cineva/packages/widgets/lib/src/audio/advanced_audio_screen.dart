@@ -5,74 +5,92 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app/providers.dart';
+import '../settings/settings_scaffold.dart';
+import 'audio_engine_controller.dart';
 
 const List<String> _eqBandLabels = <String>[
-  'Sub-bass (45 Hz)',
-  'Bass (90 Hz)',
-  'Bas-médium (300 Hz)',
-  'Médium (1,2 kHz)',
-  'Haut-médium (3,5 kHz)',
-  'Aigu (10 kHz)',
+  'Sub-bass · 45 Hz',
+  'Bass · 90 Hz',
+  'Bas-médium · 300 Hz',
+  'Médium · 1,2 kHz',
+  'Haut-médium · 3,5 kHz',
+  'Aigu · 10 kHz',
 ];
 
 /// Réglages DSP avancés : égaliseur 6 bandes, crossover, shelf sub-bass,
-/// réverbération et plafond du limiteur.
+/// réverbération et plafond du limiteur true-peak.
+///
+/// Chaque curseur écrit réellement dans [CinevaAudioAdvancedSettings] via
+/// l'[AudioEngineController] (persistance + push des paramètres au backend).
 class AdvancedAudioScreen extends ConsumerWidget {
   const AdvancedAudioScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final audio = ref.watch(audioEngineControllerProvider);
-    final settings = audio.settings;
-    final controller = ref.read(audioEngineControllerProvider.notifier);
+    final AudioEngineUiState audio = ref.watch(audioEngineControllerProvider);
+    final CinevaAudioSettings settings = audio.settings;
+    final AudioEngineController controller =
+        ref.read(audioEngineControllerProvider.notifier);
     final CinevaAudioAdvancedSettings advanced =
         settings.advanced ?? CinevaAudioAdvancedSettings.defaults();
+    Future<void> apply(CinevaAudioAdvancedSettings next) =>
+        controller.updateAdvanced(next);
 
-    Future<void> apply(CinevaAudioAdvancedSettings next) async {
-      await controller.updateAdvanced(next);
-    }
+    final double maxGain = advanced.eqBandGains.fold<double>(
+      0,
+      (double max, double gain) => gain.abs() > max ? gain.abs() : max,
+    );
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Audio avancé')),
-      body: CinevaScaffoldContainer(
-        child: ListView(
-          children: <Widget>[
-            const CinevaPageHeader(
-              title: 'Réglages avancés',
-              subtitle: 'Égaliseur, crossover, shelf sub-bass, réverbération et limiteur true-peak.',
+    return SettingsScreenScaffold(
+      title: 'Audio avancé',
+      subtitle: 'Égaliseur, bass management, ambiance et protection true-peak.',
+      children: <Widget>[
+        if (!audio.backendAvailable)
+          const Padding(
+            padding: EdgeInsets.only(bottom: CinevaSpacing.md),
+            child: CinevaStatusBanner(
+              title: 'Moteur indisponible',
+              message:
+                  'Cet appareil n’expose pas de traitement audio : les réglages sont enregistrés mais n’ont pas d’effet ici.',
+              tone: CinevaBannerTone.warning,
             ),
-            const SizedBox(height: CinevaSpacing.xl),
-            CinevaGlassCard(
+          ),
+        SettingsGroupHeader(
+          title: 'Égaliseur 6 bandes',
+          value: '${_db(maxGain)} max',
+        ),
+        SettingsGroup(
+          children: <Widget>[
+            CinevaSwitchTile(
+              icon: Icons.equalizer_rounded,
+              title: 'Égaliseur actif',
+              value: advanced.eqEnabled,
+              onChanged: (bool value) => apply(advanced.copyWith(eqEnabled: value)),
+            ),
+            const CinevaHairline(indent: 52),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                CinevaSpacing.md,
+                CinevaSpacing.xs,
+                CinevaSpacing.md,
+                CinevaSpacing.sm,
+              ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      const Expanded(child: CinevaSectionTitle(title: 'Égaliseur 6 bandes')),
-                      Text(
-                        '${advanced.eqBandGains.fold<double>(0, (m, g) => g.abs() > m ? g.abs() : m).toStringAsFixed(1)} dB max',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodySmall
-                            ?.copyWith(color: CinevaColors.textMuted),
-                      ),
-                    ],
-                  ),
-                  SwitchListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Égaliseur actif'),
-                    value: advanced.eqEnabled,
-                    onChanged: (enabled) => apply(advanced.copyWith(eqEnabled: enabled)),
-                  ),
                   for (int i = 0; i < _eqBandLabels.length; i++)
-                    _DbSlider(
+                    CinevaSliderTile(
                       label: _eqBandLabels[i],
                       value: i < advanced.eqBandGains.length ? advanced.eqBandGains[i] : 0,
                       min: -15,
                       max: 15,
-                      onChanged: (gain) {
-                        final List<double> gains = List<double>.from(advanced.eqBandGains);
-                        while (gains.length < 6) {
+                      enabled: advanced.eqEnabled,
+                      valueLabel: _db(
+                        i < advanced.eqBandGains.length ? advanced.eqBandGains[i] : 0,
+                      ),
+                      onChanged: (double gain) {
+                        final List<double> gains =
+                            List<double>.from(advanced.eqBandGains);
+                        while (gains.length < _eqBandLabels.length) {
                           gains.add(0);
                         }
                         gains[i] = gain;
@@ -82,176 +100,87 @@ class AdvancedAudioScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: CinevaSpacing.lg),
-            CinevaGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const CinevaSectionTitle(title: 'Bass management'),
-                  const SizedBox(height: CinevaSpacing.md),
-                  _UnitSlider(
-                    label: 'Fréquence de crossover',
-                    suffix: ' Hz',
-                    value: advanced.crossoverHz,
-                    min: 50,
-                    max: 160,
-                    divisions: 22,
-                    display: advanced.crossoverHz.round().toString(),
-                    onChanged: (v) => apply(advanced.copyWith(crossoverHz: v)),
-                  ),
-                  _UnitSlider(
-                    label: 'Shelf sub-bass',
-                    suffix: ' dB',
-                    value: advanced.subShelfGainDb,
-                    min: -6,
-                    max: 9,
-                    display: '${advanced.subShelfGainDb.toStringAsFixed(1)}',
-                    onChanged: (v) => apply(advanced.copyWith(subShelfGainDb: v)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: CinevaSpacing.lg),
-            CinevaGlassCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  const CinevaSectionTitle(title: 'Ambiance & protection'),
-                  const SizedBox(height: CinevaSpacing.md),
-                  _UnitSlider(
-                    label: 'Réverbération (room)',
-                    suffix: ' %',
-                    value: advanced.roomWetPercent,
-                    min: 0,
-                    max: 15,
-                    display: advanced.roomWetPercent.toStringAsFixed(1),
-                    onChanged: (v) => apply(advanced.copyWith(roomWetPercent: v)),
-                  ),
-                  _UnitSlider(
-                    label: 'Plafond du limiteur',
-                    suffix: ' dBFS',
-                    value: advanced.limiterCeilingDb,
-                    min: -6,
-                    max: 0,
-                    display: advanced.limiterCeilingDb.toStringAsFixed(1),
-                    onChanged: (v) => apply(advanced.copyWith(limiterCeilingDb: v)),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: CinevaSpacing.lg),
-            if (settings.advanced != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: CinevaSpacing.xl),
-                child: OutlinedButton.icon(
-                  onPressed: controller.updateAdvancedReset,
-                  icon: const Icon(Icons.restart_alt_rounded),
-                  label: const Text('Revenir aux valeurs du profil'),
-                ),
-              ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _DbSlider extends StatelessWidget {
-  const _DbSlider({
-    required this.label,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.onChanged,
-  });
-
-  final String label;
-  final double value;
-  final double min;
-  final double max;
-  final ValueChanged<double> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: CinevaSpacing.lg),
-          child: Row(
-            children: <Widget>[
-              Expanded(child: Text(label, style: Theme.of(context).textTheme.bodyMedium)),
-              Text(
-                '${value > 0 ? '+' : ''}${value.toStringAsFixed(1)} dB',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: CinevaColors.accentSoft),
-              ),
-            ],
+        const SettingsGroupHeader(title: 'Bass management'),
+        SettingsGroup(
+          padding: const EdgeInsets.symmetric(
+            horizontal: CinevaSpacing.md,
+            vertical: CinevaSpacing.sm,
           ),
+          children: <Widget>[
+            CinevaSliderTile(
+              icon: Icons.speaker_rounded,
+              label: 'Fréquence de crossover',
+              value: advanced.crossoverHz,
+              min: 50,
+              max: 160,
+              valueLabel: '${advanced.crossoverHz.round()} Hz',
+              // Pas de 5 Hz : identique aux 22 divisions d'origine.
+              onChanged: (double value) =>
+                  apply(advanced.copyWith(crossoverHz: (value / 5).round() * 5.0)),
+            ),
+            CinevaSliderTile(
+              icon: Icons.trending_down_rounded,
+              label: 'Shelf sub-bass',
+              value: advanced.subShelfGainDb,
+              min: -6,
+              max: 9,
+              valueLabel: _db(advanced.subShelfGainDb),
+              onChanged: (double value) =>
+                  apply(advanced.copyWith(subShelfGainDb: value)),
+            ),
+          ],
         ),
-        Slider(
-          value: value.clamp(min, max),
-          min: min,
-          max: max,
-          divisions: 30,
-          onChanged: onChanged,
+        const SettingsGroupHeader(title: 'Ambiance & protection'),
+        SettingsGroup(
+          padding: const EdgeInsets.symmetric(
+            horizontal: CinevaSpacing.md,
+            vertical: CinevaSpacing.sm,
+          ),
+          children: <Widget>[
+            CinevaSliderTile(
+              icon: Icons.meeting_room_rounded,
+              label: 'Réverbération (room)',
+              value: advanced.roomWetPercent,
+              min: 0,
+              max: 15,
+              valueLabel: '${_decimals(advanced.roomWetPercent)} %',
+              onChanged: (double value) =>
+                  apply(advanced.copyWith(roomWetPercent: value)),
+            ),
+            CinevaSliderTile(
+              icon: Icons.speed_rounded,
+              label: 'Plafond du limiteur',
+              value: advanced.limiterCeilingDb,
+              min: -6,
+              max: 0,
+              valueLabel: '${_decimals(advanced.limiterCeilingDb)} dBFS',
+              onChanged: (double value) =>
+                  apply(advanced.copyWith(limiterCeilingDb: value)),
+            ),
+          ],
         ),
+        if (settings.advanced != null)
+          Padding(
+            padding: const EdgeInsets.only(top: CinevaSpacing.sm),
+            child: CinevaSecondaryButton(
+              label: 'Revenir aux valeurs du profil',
+              icon: Icons.restart_alt_rounded,
+              height: 46,
+              onPressed: controller.updateAdvancedReset,
+            ),
+          ),
       ],
     );
   }
-}
 
-class _UnitSlider extends StatelessWidget {
-  const _UnitSlider({
-    required this.label,
-    required this.suffix,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.display,
-    required this.onChanged,
-    this.divisions,
-  });
-
-  final String label;
-  final String suffix;
-  final double value;
-  final double min;
-  final double max;
-  final String display;
-  final int? divisions;
-  final ValueChanged<double> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: CinevaSpacing.lg),
-          child: Row(
-            children: <Widget>[
-              Expanded(child: Text(label, style: Theme.of(context).textTheme.bodyMedium)),
-              Text(
-                '$display$suffix',
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: CinevaColors.accentSoft),
-              ),
-            ],
-          ),
-        ),
-        Slider(
-          value: value.clamp(min, max),
-          min: min,
-          max: max,
-          divisions: divisions,
-          onChanged: onChanged,
-        ),
-      ],
-    );
+  /// « +3,0 dB » / « −1,5 dB » — signe explicite, virgule décimale.
+  static String _db(double value) {
+    final String sign = value > 0 ? '+' : (value < 0 ? '−' : '');
+    return '$sign${_decimals(value.abs())} dB';
   }
+
+  static String _decimals(double value) =>
+      value.toStringAsFixed(1).replaceAll('.', ',');
 }

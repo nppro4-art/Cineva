@@ -6,122 +6,135 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../app/providers.dart';
+import '../audio/audio_engine_controller.dart';
+import '../vision/vision_controller.dart';
+import 'settings_scaffold.dart';
 
+/// Hub des paramètres Cineva.
+///
+/// Chaque entrée affiche l'état réellement persisté (langue, thème, qualité,
+/// notifications, confidentialité, Cineva Vision, moteur audio).
 class SettingsHubScreen extends ConsumerWidget {
   const SettingsHubScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final settingsAsync = ref.watch(settingsControllerProvider);
+    final AsyncValue<AppSettingsModel> settingsAsync =
+        ref.watch(settingsControllerProvider);
+    final AudioEngineUiState audio = ref.watch(audioEngineControllerProvider);
+    final VisionState vision = ref.watch(visionControllerProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Paramètres')),
-      body: CinevaScaffoldContainer(
-        child: settingsAsync.when(
-          loading: () => const CinevaLoadingView(label: 'Chargement des préférences...'),
-          error: (error, _) => Center(
-            child: CinevaStatusBanner(
-              title: 'Paramètres indisponibles',
-              message: error.toString(),
-              tone: CinevaBannerTone.error,
+    return SettingsScreenScaffold(
+      title: 'Paramètres',
+      subtitle: 'Lecture, application et compte.',
+      onRefresh: () => ref.read(settingsControllerProvider.notifier).load(),
+      children: settingsAsync.when(
+        loading: () => <Widget>[
+          ...List<Widget>.generate(
+            6,
+            (int index) => const Padding(
+              padding: EdgeInsets.only(bottom: CinevaSpacing.sm),
+              child: CinevaSkeleton(height: 54),
             ),
           ),
-          data: (settings) => ListView(
+        ],
+        error: (Object error, StackTrace stackTrace) => <Widget>[
+          CinevaStatusBanner(
+            title: 'Paramètres indisponibles',
+            message: error.toString(),
+            tone: CinevaBannerTone.error,
+          ),
+        ],
+        data: (AppSettingsModel settings) => <Widget>[
+          const SettingsGroupHeader(title: 'Lecture'),
+          SettingsGroup(
             children: <Widget>[
-              const CinevaPageHeader(
-                title: 'Préférences utilisateur',
-                subtitle: 'Thème, langue, notifications, confidentialité et qualité vidéo globale.',
+              CinevaListTile(
+                icon: Icons.tune_rounded,
+                title: 'Audio & Vidéo',
+                subtitle: 'Qualité ${settings.videoQuality.toUpperCase()} · sous-titres '
+                    '${settings.subtitlesEnabled ? 'activés' : 'désactivés'}',
+                onTap: () => context.push('/settings/audio-video'),
               ),
-              const SizedBox(height: CinevaSpacing.xl),
-              _NavTile(
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
+                icon: Icons.graphic_eq_rounded,
+                title: 'Cineva Audio',
+                subtitle: audio.backendAvailable
+                    ? '${audio.settings.profile.label} · moteur '
+                        '${audio.settings.enabled ? 'activé' : 'désactivé'}'
+                    : 'Moteur indisponible sur cet appareil',
+                onTap: () => context.push('/settings/audio-video'),
+              ),
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
+                icon: Icons.auto_awesome_rounded,
+                title: 'Cineva Vision',
+                subtitle: vision.settings?.profile.label ??
+                    settings.visionSettings.profile.label,
+                onTap: () => context.push('/settings/cineva-vision'),
+              ),
+            ],
+          ),
+          const SettingsGroupHeader(title: 'Application'),
+          SettingsGroup(
+            children: <Widget>[
+              CinevaListTile(
                 icon: Icons.translate_rounded,
                 title: 'Langue',
                 subtitle: settings.language.toUpperCase(),
                 onTap: () => context.push('/settings/language'),
               ),
-              _NavTile(
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
                 icon: Icons.palette_outlined,
-                title: 'Thème',
+                title: 'Apparence',
                 subtitle: settings.themeMode.label,
                 onTap: () => context.push('/settings/theme'),
               ),
-              _NavTile(
-                icon: Icons.high_quality_rounded,
-                title: 'Préférences vidéo',
-                subtitle: 'Qualité ${settings.videoQuality.toUpperCase()} • Sous-titres ${settings.subtitlesEnabled ? 'activés' : 'désactivés'}',
-                onTap: () => context.push('/settings/video'),
-              ),
-              _NavTile(
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
                 icon: Icons.notifications_active_outlined,
                 title: 'Notifications',
-                subtitle: settings.notificationPreferences.enabled ? 'Activées' : 'Désactivées',
+                subtitle: settings.notificationPreferences.enabled
+                    ? 'Activées'
+                    : 'Désactivées',
                 onTap: () => context.push('/settings/notifications'),
               ),
-              _NavTile(
-                icon: Icons.privacy_tip_outlined,
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
+                icon: Icons.verified_user_outlined,
                 title: 'Confidentialité',
-                subtitle: settings.privacyPreferences.analyticsEnabled ? 'Analyses activées' : 'Analyses désactivées',
+                subtitle: settings.privacyPreferences.analyticsEnabled
+                    ? 'Analyses activées'
+                    : 'Analyses désactivées',
                 onTap: () => context.push('/settings/privacy'),
               ),
-              _NavTile(
-                icon: Icons.auto_awesome_rounded,
-                title: 'Cineva Vision',
-                subtitle: settings.visionSettings.profile.label,
-                onTap: () => context.push('/settings/cineva-vision'),
-              ),
-              _NavTile(
-                icon: Icons.graphic_eq_rounded,
-                title: 'Cineva Audio',
-                subtitle: '${settings.audioSettings.profile.label} • moteur ${settings.audioSettings.enabled ? 'activé' : 'désactivé'}',
-                onTap: () => context.push('/settings/audio'),
-              ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _NavTile extends StatelessWidget {
-  const _NavTile({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: CinevaSpacing.md),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(CinevaRadii.medium),
-        onTap: onTap,
-        child: CinevaGlassCard(
-          child: Row(
+          const SettingsGroupHeader(title: 'Compte'),
+          SettingsGroup(
             children: <Widget>[
-              Icon(icon, color: CinevaColors.accentSoft),
-              const SizedBox(width: CinevaSpacing.md),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(title, style: Theme.of(context).textTheme.titleMedium),
-                    const SizedBox(height: 4),
-                    Text(subtitle, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: CinevaColors.textMuted)),
-                  ],
-                ),
+              CinevaListTile(
+                icon: Icons.person_outline_rounded,
+                title: 'Profil',
+                onTap: () => context.push('/profile'),
               ),
-              const Icon(Icons.chevron_right_rounded),
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
+                icon: Icons.devices_other_outlined,
+                title: 'Appareils',
+                onTap: () => context.push('/account/devices'),
+              ),
+              const CinevaHairline(indent: 52),
+              CinevaListTile(
+                icon: Icons.help_outline_rounded,
+                title: 'Aide & contact',
+                onTap: () => context.push('/settings/help'),
+              ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }

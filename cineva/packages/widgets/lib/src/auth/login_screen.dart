@@ -1,3 +1,4 @@
+import 'package:cineva_models/cineva_models.dart';
 import 'package:cineva_shared/cineva_shared.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
@@ -5,9 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../app/providers.dart';
+import 'login_controller.dart';
 
 enum AuthFormMode { signIn, signUp }
 
+/// Connexion / création de compte Cineva.
+///
+/// Mobile d'abord : wordmark, formulaire sur une surface sombre, bouton
+/// principal doré, clavier pris en charge (scroll + insets). Utilisée par les
+/// surfaces abonné et admin — mêmes contrôleurs, mêmes validations.
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key, required this.title, required this.surface});
 
@@ -19,9 +26,9 @@ class LoginScreen extends ConsumerStatefulWidget {
 }
 
 class _LoginScreenState extends ConsumerState<LoginScreen> {
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   AuthFormMode _mode = AuthFormMode.signIn;
 
   @override
@@ -34,105 +41,173 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final session = ref.watch(sessionControllerProvider).valueOrNull;
-    final actionState = ref.watch(loginControllerProvider);
+    final SessionSnapshot? session = ref.watch(sessionControllerProvider).valueOrNull;
+    final AsyncValue<void>? actionState = ref.watch(loginControllerProvider);
+    final CinevaMetrics metrics = CinevaMetrics.of(context);
+    final bool busy = actionState is AsyncLoading<void>;
 
     ref.listen<AsyncValue<void>?>(loginControllerProvider, (previous, next) {
       next?.whenOrNull(
-        error: (error, _) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(error.toString())));
+        error: (Object error, StackTrace stackTrace) {
+          _notify(error.toString());
         },
         data: (_) {
           if (previous is AsyncLoading<void>) {
-            final message = _mode == AuthFormMode.signUp
-                ? 'Compte créé. Vérifiez votre email si la confirmation est activée.'
-                : 'Connexion réussie.';
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+            _notify(
+              _mode == AuthFormMode.signUp
+                  ? 'Compte créé. Vérifiez votre email si la confirmation est activée.'
+                  : 'Connexion réussie.',
+            );
           }
         },
       );
     });
 
     return Scaffold(
-      body: CinevaScaffoldContainer(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 520),
-            child: ListView(
-              shrinkWrap: true,
-              children: <Widget>[
-                CinevaPageHeader(
-                  title: widget.title,
-                  subtitle: widget.surface == AppSurface.admin
-                      ? 'Connexion administrateur sécurisée'
-                      : 'Connectez-vous pour accéder à votre catalogue, vos appareils et vos abonnements.',
-                ),
-                const SizedBox(height: CinevaSpacing.xl),
-                CinevaGlassCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      if (session != null && !session.supabaseReady) ...<Widget>[
-                        CinevaStatusBanner(
-                          title: 'Supabase non configuré',
-                          message: session.message ?? 'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY pour activer la connexion réelle.',
-                          tone: CinevaBannerTone.warning,
-                        ),
-                        const SizedBox(height: CinevaSpacing.lg),
-                      ],
-                      if (_mode == AuthFormMode.signUp) ...<Widget>[
-                        CinevaTextField(
-                          controller: _fullNameController,
-                          label: 'Nom complet',
-                          prefixIcon: Icons.person_rounded,
-                        ),
-                        const SizedBox(height: CinevaSpacing.md),
-                      ],
-                      CinevaTextField(
-                        controller: _emailController,
-                        label: 'Email',
-                        hint: 'nom@cineva.app',
-                        keyboardType: TextInputType.emailAddress,
-                        prefixIcon: Icons.mail_outline_rounded,
+      backgroundColor: CinevaColors.ink,
+      body: DecoratedBox(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            center: Alignment(0, -0.7),
+            radius: 1.25,
+            colors: <Color>[Color(0xFF121215), CinevaColors.ink],
+          ),
+        ),
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(
+                metrics.gutter,
+                CinevaSpacing.xl,
+                metrics.gutter,
+                CinevaSpacing.xl,
+              ),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 460),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    const Center(child: CinevaWordmark()),
+                    const SizedBox(height: CinevaSpacing.xs),
+                    Center(
+                      child: Text(
+                        widget.surface == AppSurface.admin
+                            ? 'Console d’administration'
+                            : 'Le cinéma, sans compromis.',
+                        style: CinevaTypography.meta.copyWith(fontSize: 11.5),
                       ),
-                      const SizedBox(height: CinevaSpacing.md),
-                      CinevaTextField(
-                        controller: _passwordController,
-                        label: 'Mot de passe',
-                        obscureText: true,
-                        prefixIcon: Icons.lock_outline_rounded,
+                    ),
+                    const SizedBox(height: CinevaSpacing.xxl),
+                    Text(
+                      _mode == AuthFormMode.signIn
+                          ? 'Bon retour'
+                          : 'Créer un compte',
+                      style: CinevaTypography.screenTitle.copyWith(fontSize: 22),
+                    ),
+                    const SizedBox(height: CinevaSpacing.xs),
+                    Text(
+                      widget.surface == AppSurface.admin
+                          ? 'Connexion administrateur sécurisée.'
+                          : 'Accédez à votre catalogue, vos appareils et votre abonnement.',
+                      style: CinevaTypography.bodyCompact,
+                    ),
+                    const SizedBox(height: CinevaSpacing.xl),
+
+                    if (session != null && !session.supabaseReady) ...<Widget>[
+                      CinevaStatusBanner(
+                        title: 'Supabase non configuré',
+                        message: session.message ??
+                            'Ajoutez SUPABASE_URL et SUPABASE_ANON_KEY pour activer la connexion réelle.',
+                        tone: CinevaBannerTone.warning,
                       ),
                       const SizedBox(height: CinevaSpacing.lg),
-                      SizedBox(
-                        width: double.infinity,
-                        child: CinevaPrimaryButton(
-                          label: _mode == AuthFormMode.signIn ? 'Se connecter' : 'Créer un compte',
-                          icon: _mode == AuthFormMode.signIn ? Icons.login_rounded : Icons.person_add_alt_1_rounded,
-                          isLoading: actionState is AsyncLoading<void>,
-                          onPressed: _submit,
-                        ),
-                      ),
-                      const SizedBox(height: CinevaSpacing.md),
-                      TextButton(
-                        onPressed: () => setState(() {
-                          _mode = _mode == AuthFormMode.signIn ? AuthFormMode.signUp : AuthFormMode.signIn;
-                          ref.read(loginControllerProvider.notifier).clear();
-                        }),
+                    ],
+
+                    AnimatedSize(
+                      duration: CinevaMotion.medium,
+                      curve: CinevaCurve.decelerate,
+                      alignment: Alignment.topCenter,
+                      child: _mode == AuthFormMode.signUp
+                          ? Padding(
+                              padding: const EdgeInsets.only(bottom: CinevaSpacing.md),
+                              child: CinevaTextField(
+                                controller: _fullNameController,
+                                label: 'Nom complet',
+                                prefixIcon: Icons.person_outline_rounded,
+                                textInputAction: TextInputAction.next,
+                              ),
+                            )
+                          : const SizedBox(width: double.infinity),
+                    ),
+                    CinevaTextField(
+                      controller: _emailController,
+                      label: 'Email',
+                      hint: 'nom@cineva.app',
+                      keyboardType: TextInputType.emailAddress,
+                      prefixIcon: Icons.mail_outline_rounded,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: CinevaSpacing.md),
+                    CinevaTextField(
+                      controller: _passwordController,
+                      label: 'Mot de passe',
+                      obscureText: true,
+                      prefixIcon: Icons.lock_outline_rounded,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) {
+                        if (!busy) _submit();
+                      },
+                    ),
+                    const SizedBox(height: CinevaSpacing.xl),
+                    CinevaPlayButton(
+                      label: _mode == AuthFormMode.signIn
+                          ? 'Se connecter'
+                          : 'Créer un compte',
+                      icon: _mode == AuthFormMode.signIn
+                          ? Icons.login_rounded
+                          : Icons.person_add_alt_1_rounded,
+                      isLoading: busy,
+                      height: 52,
+                      onPressed: busy ? null : _submit,
+                    ),
+                    const SizedBox(height: CinevaSpacing.md),
+                    Center(
+                      child: TextButton(
+                        onPressed: busy
+                            ? null
+                            : () => setState(() {
+                                  _mode = _mode == AuthFormMode.signIn
+                                      ? AuthFormMode.signUp
+                                      : AuthFormMode.signIn;
+                                  ref.read(loginControllerProvider.notifier).clear();
+                                }),
                         child: Text(
                           _mode == AuthFormMode.signIn
                               ? 'Créer un compte utilisateur'
                               : 'J’ai déjà un compte',
+                          style: CinevaTypography.button.copyWith(
+                            fontSize: 12.5,
+                            color: CinevaColors.textSoft,
+                          ),
                         ),
                       ),
-                      if (_mode == AuthFormMode.signIn)
-                        TextButton(
-                          onPressed: _resetPassword,
-                          child: const Text('Réinitialiser le mot de passe'),
+                    ),
+                    if (_mode == AuthFormMode.signIn)
+                      Center(
+                        child: TextButton(
+                          onPressed: busy ? null : _resetPassword,
+                          child: Text(
+                            'Réinitialiser le mot de passe',
+                            style: CinevaTypography.button.copyWith(
+                              fontSize: 12.5,
+                              color: CinevaColors.gold,
+                            ),
+                          ),
                         ),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
         ),
@@ -140,23 +215,26 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     );
   }
 
+  void _notify(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
   Future<void> _submit() async {
-    final controller = ref.read(loginControllerProvider.notifier);
-    final email = _emailController.text.trim();
-    final password = _passwordController.text;
-    final fullName = _fullNameController.text.trim();
+    final LoginController controller = ref.read(loginControllerProvider.notifier);
+    final String email = _emailController.text.trim();
+    final String password = _passwordController.text;
+    final String fullName = _fullNameController.text.trim();
 
     if (email.isEmpty || !email.contains('@')) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez saisir un email valide.')),
-      );
+      _notify('Veuillez saisir un email valide.');
       return;
     }
 
     if (password.length < 6) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Le mot de passe doit contenir au moins 6 caractères.')),
-      );
+      _notify('Le mot de passe doit contenir au moins 6 caractères.');
       return;
     }
 
@@ -166,9 +244,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     }
 
     if (fullName.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez saisir votre nom complet.')),
-      );
+      _notify('Veuillez saisir votre nom complet.');
       return;
     }
 
@@ -180,17 +256,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _resetPassword() async {
-    final email = _emailController.text.trim();
+    final String email = _emailController.text.trim();
     if (email.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Saisissez votre email.')));
+      _notify('Saisissez votre email.');
       return;
     }
 
     await ref.read(loginControllerProvider.notifier).resetPassword(email: email);
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Si le compte existe, un email de réinitialisation a été envoyé.')),
-      );
-    }
+    _notify('Si le compte existe, un email de réinitialisation a été envoyé.');
   }
 }

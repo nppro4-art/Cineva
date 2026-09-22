@@ -6,17 +6,23 @@ void _playerEnsureController(
   required PlaybackProgressModel? progress,
   required DownloadItemModel? download,
 }) {
-  if (state._activeContentId == detail.id && state._controller != null) return;
+  final String? trailerUrl = detail.trailerUrl?.trim();
+  final bool trailer = state.widget.playTrailer && trailerUrl != null && trailerUrl.isNotEmpty;
+  final String activeKey = trailer ? 'trailer:${detail.id}' : detail.id;
 
-  state._activeContentId = detail.id;
+  if (state._activeContentId == activeKey && state._controller != null) return;
+
+  state._activeContentId = activeKey;
   state._selectedAudio = detail.audioLanguages.isNotEmpty ? detail.audioLanguages.first : 'Français';
   state._selectedSubtitle = detail.subtitleLanguages.isNotEmpty ? detail.subtitleLanguages.first : 'Aucun';
   state._selectedQuality = detail.availableQualities.isNotEmpty
       ? detail.availableQualities.first.preset
       : VideoQualityPreset.auto;
 
-  final url = detail.resolvePlaybackUrl(state._selectedQuality);
-  final localPath = download?.canPlayOffline == true ? download!.localFilePath : null;
+  final url = trailer ? trailerUrl : detail.resolvePlaybackUrl(state._selectedQuality);
+  final localPath = trailer
+      ? null
+      : (download?.canPlayOffline == true ? download!.localFilePath : null);
 
   if ((url == null || url.isEmpty) && (localPath == null || localPath.isEmpty)) {
     state._playbackError = 'Aucun flux vidéo disponible pour ce contenu.';
@@ -28,9 +34,9 @@ void _playerEnsureController(
       state,
       url: url,
       localFilePath: localPath,
-      seekToSeconds: progress?.positionSeconds ?? 0,
+      seekToSeconds: trailer ? 0 : progress?.positionSeconds ?? 0,
       autoPlay: true,
-      skipSegments: detail.skipSegments,
+      skipSegments: trailer ? const <SkipSegment>[] : detail.skipSegments,
     ),
   );
 }
@@ -138,6 +144,9 @@ void _playerVideoListener(_PlayerScreenState state) {
   }
   if (!player.value.isInitialized) return;
 
+  // Une bande-annonce ne déclenche ni épisode suivant ni sauvegarde.
+  if (state.widget.playTrailer) return;
+
   final remaining = player.value.duration.inSeconds - player.value.position.inSeconds;
   if (PlayerRuntimePolicy.shouldQueueNextEpisode(
     remainingSeconds: remaining,
@@ -206,6 +215,7 @@ void _playerPlayNextEpisode(_PlayerScreenState state) {
 }
 
 Future<void> _playerPersistProgress(_PlayerScreenState state, {bool forceComplete = false}) async {
+  if (state.widget.playTrailer) return;
   final player = state._controller;
   final detail = state.ref.read(contentDetailProvider(state.widget.contentId)).valueOrNull;
   if (player == null || detail == null || !player.value.isInitialized) return;
