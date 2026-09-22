@@ -1,8 +1,6 @@
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:flutter/material.dart';
 
-import 'cineva_pressable.dart';
-
 /// Ligne de navigation de réglages : icône, titre, sous-titre, chevron.
 ///
 /// Réagit au toucher par une très légère mise en surface (pas de ripple).

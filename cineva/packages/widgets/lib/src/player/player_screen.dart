@@ -370,7 +370,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                               child: ActionPill(
                                 icon: Icons.no_transfer_rounded,
                                 label: 'Passer ce segment • ${skipSegmentRemaining}s',
-                                onTap: () => _seekToSeconds(activeSkipSegment!.endSeconds),
+                                onTap: () => _seekToSeconds(activeSkipSegment.endSeconds),
                               ),
                             ),
                           if (showSkipIntro)
