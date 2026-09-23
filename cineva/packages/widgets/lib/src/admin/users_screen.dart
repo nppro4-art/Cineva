@@ -293,7 +293,9 @@ class _ChipText extends StatelessWidget {
 Future<void> _showUserEditor(BuildContext context, WidgetRef ref, {AppUser? user}) async {
   final formKey = GlobalKey<FormState>();
   final nameController = TextEditingController(text: user?.fullName ?? '');
-  final emailController = TextEditingController(text: user?.email ?? '');
+  // Identifiant lisible (`noah`) plutôt que l'adresse technique interne
+  // (`noah@cineva.app`) ; la conversion au moment d'enregistrer est idempotente.
+  final emailController = TextEditingController(text: CinevaIdentifier.displayName(user?.email));
   final passwordController = TextEditingController();
   final expiresController = TextEditingController(text: user?.subscriptionExpiresLabel == 'Aucune date' ? '' : user?.subscriptionExpiresLabel ?? '');
   String role = user?.role ?? 'user';
@@ -323,8 +325,14 @@ Future<void> _showUserEditor(BuildContext context, WidgetRef ref, {AppUser? user
                     const SizedBox(height: CinevaSpacing.md),
                     TextFormField(
                       controller: emailController,
-                      decoration: const InputDecoration(labelText: 'Email'),
-                      validator: (value) => (value == null || !value.contains('@')) ? 'Email invalide' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Identifiant ou email',
+                        helperText: 'Un identifiant simple suffit (noah) : aucun email '
+                            'ne sera envoyé. Une vraie adresse email reste acceptée.',
+                        helperMaxLines: 3,
+                      ),
+                      validator: (value) =>
+                          CinevaIdentifier.validationError(value ?? ''),
                     ),
                     const SizedBox(height: CinevaSpacing.md),
                     if (user == null)
@@ -390,7 +398,9 @@ Future<void> _showUserEditor(BuildContext context, WidgetRef ref, {AppUser? user
                     ref,
                     () => user == null
                         ? ref.read(adminRepositoryProvider).createUser(
-                              email: emailController.text.trim(),
+                              email: CinevaIdentifier.toEmail(
+                                CinevaIdentifier.normalize(emailController.text),
+                              ),
                               password: passwordController.text,
                               fullName: nameController.text.trim(),
                               role: role,
@@ -398,7 +408,9 @@ Future<void> _showUserEditor(BuildContext context, WidgetRef ref, {AppUser? user
                             )
                         : ref.read(adminRepositoryProvider).updateUserProfile(
                               userId: user.id,
-                              email: emailController.text.trim(),
+                              email: CinevaIdentifier.toEmail(
+                                CinevaIdentifier.normalize(emailController.text),
+                              ),
                               fullName: nameController.text.trim(),
                               role: role,
                               status: status,
