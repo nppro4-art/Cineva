@@ -17,12 +17,22 @@ void _playerEnsureController(
 
   final url = detail.resolvePlaybackUrl(state._selectedQuality);
   final localPath = download?.canPlayOffline == true ? download!.localFilePath : null;
+  final sourceValue = (localPath != null && localPath.isNotEmpty) ? localPath : url;
 
-  if ((url == null || url.isEmpty) && (localPath == null || localPath.isEmpty)) {
-    state._playbackError = 'Aucun flux vidéo disponible pour ce contenu.';
+  if (sourceValue == null || sourceValue.isEmpty) {
+    state._playbackError = 'Aucune source média disponible pour ce contenu.';
     return;
   }
 
+  state._mediaSource = MediaSourceResolver.resolve(sourceValue);
+  if (state._mediaSource!.isWebEmbed) {
+    state._controller?.removeListener(state._videoListener);
+    state._controller?.dispose();
+    state._controller = null;
+    state._playbackError = null;
+    if (state.mounted) state.setState(() {});
+    return;
+  }
   unawaited(
     _playerInitializeController(
       state,
