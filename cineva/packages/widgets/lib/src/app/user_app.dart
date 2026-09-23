@@ -25,8 +25,10 @@ import '../user/downloads_screen.dart';
 import '../user/home_screen.dart';
 import '../user/library_screen.dart';
 import '../user/profile_screen.dart';
+import '../user/profiles_screen.dart';
 import '../user/search_screen.dart';
 import '../user/subscription_expired_screen.dart';
+import '../user/subscription_screen.dart';
 import '../vision/cineva_vision_settings_screen.dart';
 import 'cineva_page_transitions.dart';
 import 'providers.dart';
@@ -180,6 +182,22 @@ final _userRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CinevaPageTransitions.push(
           state: state,
           child: const DevicesScreen(),
+        ),
+      ),
+      // Offre, prix et coordonnées de paiement (Revolut / téléphone).
+      GoRoute(
+        path: '/account/subscription',
+        pageBuilder: (context, state) => CinevaPageTransitions.push(
+          state: state,
+          child: const SubscriptionScreen(),
+        ),
+      ),
+      // Profils membres du foyer : un abonnement, jusqu'à 5 profils.
+      GoRoute(
+        path: '/account/profiles',
+        pageBuilder: (context, state) => CinevaPageTransitions.push(
+          state: state,
+          child: const ProfilesScreen(),
         ),
       ),
 

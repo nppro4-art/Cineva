@@ -1,4 +1,5 @@
 import 'package:cineva_models/cineva_models.dart';
+import 'package:cineva_shared/cineva_shared.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../app/providers.dart';
+import '../library/active_profile_controller.dart';
 import '../library/library_controller.dart';
 
 /// Profil Cineva (route `/profile`).
@@ -37,6 +39,7 @@ class ProfileScreen extends ConsumerWidget {
     final AppSettingsModel settings =
         ref.watch(settingsControllerProvider).valueOrNull ?? user.settings;
     final LibraryState library = ref.watch(libraryControllerProvider);
+    final ActiveProfileState memberProfiles = ref.watch(activeProfileControllerProvider);
     final String visionLabel = ref.watch(visionControllerProvider).settings?.profile.label ??
         settings.visionSettings.profile.label;
 
@@ -157,6 +160,24 @@ class ProfileScreen extends ConsumerWidget {
                   CinevaTileGroup(
                     title: 'Compte',
                     children: <Widget>[
+                      // Offre réelle : 15 €/mois, 5 appareils, 5 profils, et les
+                      // coordonnées pour régler (Revolut ou en main propre).
+                      CinevaListTile(
+                        icon: Icons.payments_outlined,
+                        title: 'Abonnement & paiement',
+                        subtitle: '${CinevaOffer.priceLabel} · ${CinevaOffer.maxDevices} appareils '
+                            '· ${CinevaOffer.maxProfiles} profils',
+                        onTap: () => context.push('/account/subscription'),
+                      ),
+                      CinevaListTile(
+                        icon: Icons.group_outlined,
+                        title: 'Profils du foyer',
+                        subtitle: memberProfiles.hasProfiles
+                            ? '${memberProfiles.activeProfileName} · '
+                                '${memberProfiles.profiles.length}/${CinevaOffer.maxProfiles} profils'
+                            : 'Créer un profil pour chaque membre',
+                        onTap: () => context.push('/account/profiles'),
+                      ),
                       CinevaListTile(
                         icon: Icons.devices_other_outlined,
                         title: 'Appareils',

@@ -7,4 +7,8 @@ abstract final class SupabaseConstants {
   static const homeSectionItemsTable = 'home_section_items';
   static const notificationsTable = 'notifications';
   static const subscriptionsTable = 'subscriptions';
+  static const memberProfilesTable = 'member_profiles';
+  static const favoritesTable = 'favorites';
+  static const historyTable = 'history';
+  static const downloadsTable = 'downloads';
 }

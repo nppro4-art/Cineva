@@ -1,5 +1,6 @@
 export 'src/app_env.dart';
 export 'src/app_failure.dart';
+export 'src/cineva_offer.dart';
 export 'src/app_surface.dart';
 export 'src/app_target.dart';
 export 'src/session_route_resolver.dart';

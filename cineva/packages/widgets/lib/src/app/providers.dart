@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../audio/audio_engine_controller.dart';
 import '../auth/login_controller.dart';
+import '../library/active_profile_controller.dart';
 import '../library/library_controller.dart';
 import '../search/search_controller.dart';
 import '../settings/settings_controller.dart';
@@ -43,6 +44,18 @@ final cinevaVisionServiceProvider = Provider<CinevaVisionService>((ref) => Cinev
 /// console d'administration). APIs publiques, aucune clé requise.
 final archiveOrgClientProvider = Provider<ArchiveOrgClient>((ref) => ArchiveOrgClient());
 
+/// Profil membre actif sur cet appareil. Injecté dans le dépôt bibliothèque :
+/// favoris et reprise de lecture sont filtrés par profil, sans changer les
+/// signatures existantes.
+final memberProfileScopeProvider = Provider<MemberProfileScope>((ref) => MemberProfileScope());
+
+final memberProfileRepositoryProvider = Provider<MemberProfileRepository>(
+  (ref) => SupabaseMemberProfileRepository(
+    backendService: ref.watch(backendServiceProvider),
+    localPreferencesService: ref.watch(localPreferencesServiceProvider),
+  ),
+);
+
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => SupabaseAuthRepository(ref.watch(backendServiceProvider)),
 );
@@ -69,6 +82,7 @@ final userLibraryRepositoryProvider = Provider<UserLibraryRepository>(
     localPreferencesService: ref.watch(localPreferencesServiceProvider),
     deviceFingerprintService: ref.watch(deviceFingerprintServiceProvider),
     catalogRepository: ref.watch(catalogRepositoryProvider),
+    profileScope: ref.watch(memberProfileScopeProvider),
   ),
 );
 
@@ -140,6 +154,27 @@ final libraryControllerProvider = StateNotifierProvider<LibraryController, Libra
     mediaDownloadService: ref.watch(mediaDownloadServiceProvider),
   ),
 );
+
+final activeProfileControllerProvider =
+    StateNotifierProvider<ActiveProfileController, ActiveProfileState>((ref) {
+  final ActiveProfileController controller = ActiveProfileController(
+    repository: ref.watch(memberProfileRepositoryProvider),
+    scope: ref.watch(memberProfileScopeProvider),
+    // Changer de profil change de bibliothèque : on recharge la liste et la
+    // reprise du profil sélectionné.
+    onProfileChanged: () => ref.read(libraryControllerProvider.notifier).load(),
+  );
+
+  // Connexion, déconnexion, compte différent : les profils suivent.
+  ref.listen<AsyncValue<SessionSnapshot>>(sessionControllerProvider, (previous, next) {
+    final String? before = previous?.valueOrNull?.user?.id;
+    final String? after = next.valueOrNull?.user?.id;
+    if (before != after) controller.load();
+  });
+
+  ref.onDispose(controller.dispose);
+  return controller;
+});
 
 final visionControllerProvider = StateNotifierProvider<VisionController, VisionState>(
   (ref) => VisionController(

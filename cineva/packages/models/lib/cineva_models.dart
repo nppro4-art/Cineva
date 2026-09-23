@@ -14,6 +14,7 @@ export 'src/content_tile_model.dart';
 export 'src/device_model.dart';
 export 'src/download_item_model.dart';
 export 'src/home_section_model.dart';
+export 'src/member_profile_model.dart';
 export 'src/playback_progress_model.dart';
 export 'src/season_model.dart';
 export 'src/search_filter.dart';

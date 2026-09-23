@@ -13,6 +13,7 @@ class LocalPreferencesService {
   static const _downloadsKey = 'cineva.downloads';
   static const _visionSettingsKey = 'cineva.vision_settings';
   static const _appSettingsKey = 'cineva.app_settings';
+  static const _activeProfileKey = 'cineva.active_member_profile';
 
   Future<String?> readDeviceFingerprint() async {
     final prefs = await SharedPreferences.getInstance();
@@ -49,22 +50,45 @@ class LocalPreferencesService {
     await prefs.remove(_searchHistoryKey);
   }
 
-  Future<Set<String>> readFavoriteIds() async {
+  /// Favoris en cache. [profileId] isole le cache d'un profil membre : sans
+  /// profil (ancienne version, ou base non migrée), la clé historique est
+  /// conservée telle quelle — aucune donnée existante n'est déplacée.
+  Future<Set<String>> readFavoriteIds({String? profileId}) async {
     final prefs = await SharedPreferences.getInstance();
-    return (prefs.getStringList(_favoriteIdsKey) ?? const <String>[]).toSet();
+    return (prefs.getStringList(_scopedKey(_favoriteIdsKey, profileId)) ?? const <String>[]).toSet();
   }
 
-  Future<void> saveFavoriteIds(Set<String> values) async {
+  Future<void> saveFavoriteIds(Set<String> values, {String? profileId}) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList(_favoriteIdsKey, values.toList());
+    await prefs.setStringList(_scopedKey(_favoriteIdsKey, profileId), values.toList());
   }
 
-  Future<Map<String, dynamic>> readPlaybackProgressMap() async {
-    return _readJsonMap(_playbackProgressKey);
+  /// Profil membre actif sur cet appareil (null = aucun profil choisi).
+  Future<String?> readActiveMemberProfileId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_activeProfileKey);
   }
 
-  Future<void> savePlaybackProgressMap(Map<String, dynamic> value) async {
-    await _writeJsonMap(_playbackProgressKey, value);
+  Future<void> saveActiveMemberProfileId(String? profileId) async {
+    final prefs = await SharedPreferences.getInstance();
+    if (profileId == null || profileId.isEmpty) {
+      await prefs.remove(_activeProfileKey);
+      return;
+    }
+    await prefs.setString(_activeProfileKey, profileId);
+  }
+
+  String _scopedKey(String key, String? profileId) {
+    if (profileId == null || profileId.isEmpty) return key;
+    return '$key.$profileId';
+  }
+
+  Future<Map<String, dynamic>> readPlaybackProgressMap({String? profileId}) async {
+    return _readJsonMap(_scopedKey(_playbackProgressKey, profileId));
+  }
+
+  Future<void> savePlaybackProgressMap(Map<String, dynamic> value, {String? profileId}) async {
+    await _writeJsonMap(_scopedKey(_playbackProgressKey, profileId), value);
   }
 
   Future<Map<String, dynamic>> readDownloadsMap() async {
