@@ -3,9 +3,14 @@ name: build-artifacts
 # Produit les trois binaires demandés en un seul run, connectés au backend
 # Supabase RÉEL (aucun mode démo) :
 #
-#   1. Cineva-User.apk          — application abonné  (apps/cineva_mobile, Android)
-#   2. Cineva-Admin.apk         — console admin       (apps/cineva_admin,  Android)
-#   3. Cineva-User-Windows.zip  — application abonné  (apps/cineva_windows, Windows x64)
+#   1. Cineva-User.apk           — application abonné  (apps/cineva_mobile, Android)
+#   2. Cineva-Admin.apk          — console admin       (apps/cineva_admin,  Android)
+#   3. Cineva-User-Windows.zip   — application abonné  (apps/cineva_windows, Windows x64)
+#   4. Cineva-Admin-Windows.zip  — console admin       (apps/cineva_admin,   Windows x64)
+#
+# Les deux .exe sont compilés par le même job, en matrice (2 runners en
+# parallèle, `fail-fast: false`) : si la console admin échoue, l'exe abonné est
+# quand même publié, et inversement.
 #
 # Un job d'analyse statique (flutter analyze + tests) tourne AVANT les builds :
 # il échoue vite et publie son log en artefact, ce qui évite de brûler 20 minutes
@@ -395,7 +400,7 @@ jobs:
 
   # ─────────────────────────────────────────────────────────────── Windows
   windows:
-    name: EXE release (User, Windows x64)
+    name: EXE release (User + Admin, Windows x64)
     needs: analyze
     # Image épinglée : `windows-latest` (Server 2025) embarque Visual Studio 2026
     # depuis juin 2026, que Flutter 3.24.5 ne sait pas mapper — il réclame alors
@@ -403,6 +408,20 @@ jobs:
     # `windows-2022` fournit VS 2022 (17.x), seul toolchain validé ici.
     runs-on: windows-2022
     timeout-minutes: 60
+    strategy:
+      # Chaque app est publiée indépendamment : un échec de la console admin ne
+      # prive pas l'abonné de son .exe (et réciproquement).
+      fail-fast: false
+      matrix:
+        include:
+          - app: cineva_windows
+            label: abonné
+            exe: Cineva.exe
+            zip: Cineva-User-Windows.zip
+          - app: cineva_admin
+            label: console admin
+            exe: Cineva-Admin.exe
+            zip: Cineva-Admin-Windows.zip
     steps:
       - uses: actions/checkout@v4
 
@@ -446,7 +465,7 @@ jobs:
       - name: Vérifier le toolchain Windows (VS 2022 requis)
         shell: pwsh
         run: |
-          $log = "cineva/apps/cineva_windows/toolchain.log"
+          $log = "cineva/apps/${{ matrix.app }}/toolchain.log"
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
           $version = & $vswhere -latest -products * `
             -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
@@ -462,16 +481,16 @@ jobs:
           }
           "Toolchain Windows OK." | Add-Content $log
 
-      - name: Générer le châssis Windows
+      - name: Générer le châssis Windows (${{ matrix.app }})
         shell: bash
         run: |
           set -e
-          cd cineva/apps/cineva_windows
-          flutter create --no-pub --platforms=windows --org com.cineva --project-name cineva_windows .
+          cd cineva/apps/${{ matrix.app }}
+          flutter create --no-pub --platforms=windows --org com.cineva --project-name ${{ matrix.app }} .
 
-      - name: Compiler cineva_windows (release)
+      - name: Compiler ${{ matrix.app }} (release)
         shell: bash
-        working-directory: cineva/apps/cineva_windows
+        working-directory: cineva/apps/${{ matrix.app }}
         run: |
           set -o pipefail
           flutter pub get
@@ -482,33 +501,33 @@ jobs:
             --dart-define=FIREBASE_ENABLED=false \
             2>&1 | tee build-windows.log
 
-      - name: Empaqueter le .exe
+      - name: Empaqueter le .exe (${{ matrix.label }})
         shell: pwsh
         run: |
-          $rel = "cineva/apps/cineva_windows/build/windows/x64/runner/Release"
+          $rel = "cineva/apps/${{ matrix.app }}/build/windows/x64/runner/Release"
           if (-not (Test-Path $rel)) { throw "Dossier Release introuvable : $rel" }
-          if (Test-Path "$rel/cineva_windows.exe") {
-            Rename-Item "$rel/cineva_windows.exe" "Cineva.exe"
+          if (Test-Path "$rel/${{ matrix.app }}.exe") {
+            Rename-Item "$rel/${{ matrix.app }}.exe" "${{ matrix.exe }}"
           }
           Get-ChildItem $rel | Select-Object Name, Length | Format-Table -AutoSize
-          Compress-Archive -Path "$rel/*" -DestinationPath "Cineva-User-Windows.zip" -Force
-          Get-Item Cineva-User-Windows.zip | Select-Object Name, Length
+          Compress-Archive -Path "$rel/*" -DestinationPath "${{ matrix.zip }}" -Force
+          Get-Item ${{ matrix.zip }} | Select-Object Name, Length
 
-      - name: Artefact Windows
+      - name: Artefact Windows (${{ matrix.app }})
         uses: actions/upload-artifact@v4
         with:
-          name: windows-exe
-          path: Cineva-User-Windows.zip
+          name: windows-exe-${{ matrix.app }}
+          path: ${{ matrix.zip }}
           retention-days: 14
 
-      - name: Log de build Windows
+      - name: Log de build Windows (${{ matrix.app }})
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: windows-build-log
+          name: windows-build-log-${{ matrix.app }}
           path: |
-            cineva/apps/cineva_windows/build-windows.log
-            cineva/apps/cineva_windows/toolchain.log
+            cineva/apps/${{ matrix.app }}/build-windows.log
+            cineva/apps/${{ matrix.app }}/toolchain.log
           if-no-files-found: ignore
           retention-days: 14
 
@@ -519,18 +538,18 @@ jobs:
         shell: bash
         run: |
           {
-            echo "## build Windows en échec — run ${GITHUB_RUN_NUMBER}"
+            echo "## build Windows en échec — ${{ matrix.app }} (${{ matrix.label }}) — run ${GITHUB_RUN_NUMBER}"
             echo ""
             echo "[run](https://github.com/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID})"
             echo ""
             echo "### Toolchain (vswhere + flutter doctor)"
             echo '```'
-            cat cineva/apps/cineva_windows/toolchain.log 2>/dev/null | head -60 || echo "(pas de log toolchain)"
+            cat cineva/apps/${{ matrix.app }}/toolchain.log 2>/dev/null | head -60 || echo "(pas de log toolchain)"
             echo '```'
             echo ""
-            echo "### cineva_windows (tail 150)"
+            echo "### ${{ matrix.app }} (tail 150)"
             echo '```'
-            tail -n 150 cineva/apps/cineva_windows/build-windows.log 2>/dev/null || echo "(pas de log)"
+            tail -n 150 cineva/apps/${{ matrix.app }}/build-windows.log 2>/dev/null || echo "(pas de log)"
             echo '```'
           } > /tmp/win-report.md
           head -c 60000 /tmp/win-report.md > /tmp/win-report-trunc.md
@@ -575,6 +594,7 @@ jobs:
             echo "| **Cineva-User.apk** | Android — application abonné (\`com.cineva.cineva_mobile\`) | Transférer sur le téléphone, autoriser les « sources inconnues », ouvrir le fichier |"
             echo "| **Cineva-Admin.apk** | Android — console d'administration (\`com.cineva.cineva_admin\`) | idem |"
             echo "| **Cineva-User-Windows.zip** | Windows x64 — application abonné | Dézipper puis lancer \`Cineva.exe\` (aucun installateur requis) |"
+            echo "| **Cineva-Admin-Windows.zip** | Windows x64 — console d'administration | Dézipper puis lancer \`Cineva-Admin.exe\` (aucun installateur requis) |"
             echo ""
             echo "Connectés au **backend Supabase réel** (configuration injectée à la compilation)."
             echo "Notifications push désactivées (FCM non configuré)."
@@ -589,7 +609,7 @@ jobs:
             gh release upload "$TAG" $FILES dist/SHA256SUMS.txt --clobber
           else
             gh release create "$TAG" $FILES dist/SHA256SUMS.txt \
-              --title "Cineva — binaires (APK User, APK Admin, EXE Windows) #${GITHUB_RUN_NUMBER}" \
+              --title "Cineva — binaires (APK User + Admin, EXE Windows User + Admin) #${GITHUB_RUN_NUMBER}" \
               --notes-file notes.md
           fi
           echo "Release publiée : $TAG"

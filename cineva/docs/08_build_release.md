@@ -10,6 +10,7 @@ Trois binaires sont produits :
 | `Cineva-User.apk` | `apps/cineva_mobile` (`CinevaUserApp`, `AppTarget.mobile`) | Android 7.0+ (minSdk 24) | `com.cineva.cineva_mobile` |
 | `Cineva-Admin.apk` | `apps/cineva_admin` (`CinevaAdminEntry`) | Android 7.0+ (minSdk 24) | `com.cineva.cineva_admin` |
 | `Cineva-User-Windows.zip` → `Cineva.exe` | `apps/cineva_windows` (`CinevaUserApp`, `AppTarget.windows`) | Windows x64 | — |
+| `Cineva-Admin-Windows.zip` → `Cineva-Admin.exe` | `apps/cineva_admin` (`CinevaAdminEntry`, `AppTarget.admin`) | Windows x64 | — |
 
 > Les châssis natifs (`android/`, `windows/`) ne sont **pas versionnés** : ils sont
 > générés à la volée par `flutter create` (CI) ou par
@@ -27,9 +28,14 @@ Le workflow `.github/workflows/build-artifacts.yml` enchaîne :
 2. **`apk`** — génère les châssis Android, applique libellés (`Cineva`, `Cineva Admin`),
    minSdk 24, AGP 8.1.0 + Kotlin 1.8.22, Java 17, icônes via
    `scripts/apply_android_icon.py`, puis `flutter build apk --release` pour les deux apps.
-3. **`windows`** — sur runner **`windows-2022`** (VS 2022 requis, cf. §E) : châssis Windows,
-   `flutter build windows --release`, renommage en `Cineva.exe`, zip du dossier `Release`
-   (libmpv compris, cf. §Lecture vidéo desktop).
+3. **`windows`** — sur runner **`windows-2022`** (VS 2022 requis, cf. §E), en **matrice**
+   (`fail-fast: false`, donc deux runners en parallèle et une publication indépendante) :
+   - `cineva_windows` → châssis Windows, `flutter build windows --release`, renommage en
+     `Cineva.exe`, zip `Cineva-User-Windows.zip` (libmpv compris, cf. §Lecture vidéo desktop) ;
+   - `cineva_admin` → mêmes étapes, renommage en `Cineva-Admin.exe`, zip
+     `Cineva-Admin-Windows.zip`. La console admin ne lit aucune vidéo : elle n'embarque
+     **pas** `cineva_desktop_video`, donc pas de libmpv — le zip est nettement plus léger.
+     Un échec de l'une des deux apps ne bloque pas l'autre.
 4. **`release`** — publie une GitHub Release `binaries-<n>` contenant les binaires
    disponibles + `SHA256SUMS.txt`.
 
@@ -57,7 +63,8 @@ gh release download binaries-<n> --dir ./binaires
 
 # ou via les artefacts du run (rétention 14 jours)
 gh run download <run-id> --name android-apks --dir ./binaires
-gh run download <run-id> --name windows-exe  --dir ./binaires
+gh run download <run-id> --name windows-exe-cineva_windows --dir ./binaires
+gh run download <run-id> --name windows-exe-cineva_admin   --dir ./binaires
 
 # logs de diagnostic
 gh run download <run-id> --name analyze-log      --dir ./logs
@@ -107,9 +114,11 @@ Conséquences pratiques :
 - **Android** : copier l'APK sur l'appareil, autoriser « Sources inconnues », ouvrir le
   fichier. Ou `adb install -r Cineva-User.apk`. Les deux APK coexistent (identifiants
   distincts).
-- **Windows** : dézipper `Cineva-User-Windows.zip` dans un dossier, lancer `Cineva.exe`.
+- **Windows** : dézipper `Cineva-User-Windows.zip` dans un dossier, lancer `Cineva.exe`
+  (idem `Cineva-Admin-Windows.zip` → `Cineva-Admin.exe` pour la console d'administration).
   Le dossier doit rester intact (`data/`, `flutter_windows.dll` sont chargés relativement).
   SmartScreen peut avertir : l'exécutable n'est pas signé par un certificat de code.
+  Les deux exe peuvent coexister dans des dossiers différents.
 
 ---
 
@@ -159,6 +168,9 @@ flutter build windows --release `
   --dart-define=FIREBASE_ENABLED=false
 # → build\windows\x64\runner\Release\  (cineva_windows.exe + data\ + DLL)
 ```
+
+Console d'administration : mêmes commandes dans `cineva\apps\cineva_admin` avec
+`--project-name cineva_admin` → `cineva_admin.exe` (à renommer `Cineva-Admin.exe`).
 
 `scripts/build_windows.sh` existe pour macOS/Linux mais ne sert qu'à la documentation :
 sur ces systèmes il échouera faute de MSVC.
