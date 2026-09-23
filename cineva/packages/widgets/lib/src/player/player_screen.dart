@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cineva_models/cineva_models.dart';
+import 'package:cineva_repositories/cineva_repositories.dart';
 import 'package:cineva_shared/cineva_shared.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';

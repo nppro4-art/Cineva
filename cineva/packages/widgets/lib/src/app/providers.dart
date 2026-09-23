@@ -44,6 +44,11 @@ final cinevaVisionServiceProvider = Provider<CinevaVisionService>((ref) => Cinev
 /// console d'administration). APIs publiques, aucune clé requise.
 final archiveOrgClientProvider = Provider<ArchiveOrgClient>((ref) => ArchiveOrgClient());
 
+/// Vérification d'une adresse vidéo saisie par l'administrateur : dit si elle
+/// renvoie un flux lisible, un fichier audio, une page web ou une erreur
+/// d'accès, avant que le film ne soit publié.
+final mediaStreamProbeProvider = Provider<MediaStreamProbe>((ref) => MediaStreamProbe());
+
 /// Profil membre actif sur cet appareil. Injecté dans le dépôt bibliothèque :
 /// favoris et reprise de lecture sont filtrés par profil, sans changer les
 /// signatures existantes.

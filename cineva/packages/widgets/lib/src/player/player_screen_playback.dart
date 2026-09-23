@@ -25,8 +25,20 @@ void _playerEnsureController(
       : (download?.canPlayOffline == true ? download!.localFilePath : null);
 
   if ((url == null || url.isEmpty) && (localPath == null || localPath.isEmpty)) {
-    state._playbackError = 'Aucun flux vidéo disponible pour ce contenu.';
+    state._playbackError = mediaSourceEmptyReason;
     return;
+  }
+
+  // Une page web (iframe d'un lecteur tiers, lien de visionnage) ne contient
+  // aucun flux décodable : on l'annonce immédiatement au lieu de laisser le
+  // moteur charger puis échouer avec un message cryptique. Un fichier
+  // téléchargé, lui, est toujours lu.
+  if (localPath == null || localPath.isEmpty) {
+    final String? blocking = mediaSourceBlockingReason(url);
+    if (blocking != null) {
+      state._playbackError = blocking;
+      return;
+    }
   }
 
   unawaited(
@@ -129,7 +141,10 @@ Future<void> _playerInitializeController(
     if (state.mounted) {
       state.setState(() {
         state._isSwitchingQuality = false;
-        state._playbackError = 'Le flux est indisponible, l’URL a expiré ou le réseau est momentanément inaccessible. ($error)';
+        state._playbackError = 'Le flux est indisponible, l’URL a expiré ou le '
+            'réseau est momentanément inaccessible. Le lecteur lit un fichier '
+            'vidéo direct (MP4/H.264, MKV, WebM), un flux HLS (.m3u8) ou un '
+            'fichier téléchargé — pas une page web. ($error)';
       });
     }
   }

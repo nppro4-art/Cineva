@@ -228,3 +228,41 @@ Deux réponses, complémentaires :
 
 Le même mécanisme fonctionne en sens inverse (`42703`) : une colonne du payload
 que la base ne connaît pas encore est retirée et l’écriture retentée.
+
+---
+
+## Formats de flux acceptés par le lecteur
+
+Le lecteur s'appuie sur un moteur média réel (`video_player` sur mobile,
+`media_kit` sur desktop). Il décode un **flux**, jamais une page web.
+
+| Adresse saisie dans « Chemin vidéo » | Verdict |
+|---|---|
+| `https://cdn.mon-site.fr/films/titre.mp4` (ou `.mkv`, `.webm`, `.mov`, `.m4v`) | ✅ fichier vidéo direct |
+| `https://cdn.mon-site.fr/live/index.m3u8` | ✅ flux HLS |
+| `https://cdn.mon-site.fr/vod/master.mpd` | ✅ flux DASH (surtout desktop) |
+| `/storage/emulated/0/Cineva/film.mp4`, `C:\Cineva\film.mp4`, `file:///…` | ✅ fichier local / téléchargé |
+| `https://un-hebergeur.tld/iframe/1234`, `…/embed/1234`, `…/watch?v=…` | ❌ page web (lecteur tiers) |
+| `https://youtube.com/…`, `youtu.be/…`, `vimeo.com/…` | ❌ page web |
+| `https://cdn.mon-site.fr/piste.mp3` | ❌ fichier audio, pas une vidéo |
+
+Une page HTML — y compris un « iframe » d'hébergeur — ne contient aucun flux
+décodeable : **aucun réglage du lecteur, aucun navigateur intégré ne la rendra
+lisible dans le lecteur vidéo**. L'application le dit maintenant explicitement :
+
+* **dans le lecteur abonné** : l'adresse est qualifiée avant ouverture ; si ce
+  n'est pas un flux, le message explique ce qui est attendu au lieu d'un échec
+  cryptique après un long chargement ;
+* **dans l'admin** : le bouton **« Tester le flux »**, sous le champ
+  « Chemin vidéo » de la fiche, interroge l'adresse (en-têtes seulement, le
+  fichier n'est pas téléchargé) et rend un verdict : flux vidéo direct, HLS,
+  DASH, page web, audio, accès refusé (401/403), introuvable (404), serveur en
+  échec (5xx) ou délai dépassé.
+
+### Rappels
+
+* Le contenu doit être un fichier dont vous détenez les droits, un flux que vous
+  servez vous-même (CDN, Supabase Storage), ou un titre du domaine public
+  importé d'Internet Archive.
+* Un film sans adresse vidéo lisible s'affiche dans le catalogue mais échoue à
+  la lecture : testez le flux avant de publier.

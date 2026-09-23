@@ -34,6 +34,9 @@ Future<void> _showCatalogEditor(
   bool isPublished = existing?.isPublished ?? false;
   bool saving = false;
   String? saveError;
+  bool checkingStream = false;
+  bool streamCheckOk = false;
+  String? streamCheck;
   Uint8List? posterBytes;
   Uint8List? backdropBytes;
   String? posterFilename;
@@ -172,6 +175,75 @@ Future<void> _showCatalogEditor(
                         ),
                       ],
                     ),
+                    const SizedBox(height: CinevaSpacing.sm),
+                    // Vérification de l'adresse vidéo : mieux vaut un verdict
+                    // clair ici qu'un film publié qui échoue à la lecture.
+                    Row(
+                      children: <Widget>[
+                        TextButton.icon(
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: CinevaSpacing.sm),
+                            minimumSize: const Size(0, 36),
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: checkingStream
+                              ? null
+                              : () async {
+                                  final String candidate = videoController.text.trim();
+                                  if (candidate.isEmpty) {
+                                    setState(() {
+                                      streamCheckOk = false;
+                                      streamCheck = mediaSourceEmptyReason;
+                                    });
+                                    return;
+                                  }
+                                  setState(() {
+                                    checkingStream = true;
+                                    streamCheck = null;
+                                  });
+                                  final MediaStreamProbeResult result =
+                                      await ref.read(mediaStreamProbeProvider).probe(candidate);
+                                  if (!dialogContext.mounted) return;
+                                  setState(() {
+                                    checkingStream = false;
+                                    streamCheckOk = result.playable;
+                                    streamCheck = result.message;
+                                  });
+                                },
+                          icon: checkingStream
+                              ? const SizedBox(
+                                  width: 14,
+                                  height: 14,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: CinevaColors.gold,
+                                  ),
+                                )
+                              : const Icon(Icons.network_check_rounded, size: 18),
+                          label: const Text('Tester le flux'),
+                        ),
+                        if (streamCheck != null) ...<Widget>[
+                          const SizedBox(width: CinevaSpacing.sm),
+                          Icon(
+                            streamCheckOk
+                                ? Icons.check_circle_outline_rounded
+                                : Icons.error_outline_rounded,
+                            size: 16,
+                            color: streamCheckOk ? CinevaColors.success : CinevaColors.danger,
+                          ),
+                        ],
+                      ],
+                    ),
+                    if (streamCheck != null) ...<Widget>[
+                      const SizedBox(height: CinevaSpacing.xs),
+                      Text(
+                        streamCheck!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: streamCheckOk ? CinevaColors.textSoft : CinevaColors.danger,
+                              height: 1.35,
+                            ),
+                      ),
+                    ],
                     const SizedBox(height: CinevaSpacing.md),
                     TextField(controller: ratingController, keyboardType: const TextInputType.numberWithOptions(decimal: true), decoration: const InputDecoration(labelText: 'Notation')),
                     if (contentType == 'movie') ...<Widget>[
