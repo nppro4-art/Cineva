@@ -1,0 +1,60 @@
+name: build-windows
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/build-windows.yml"
+      - "cineva/apps/cineva_windows/**"
+      - "cineva/packages/**"
+
+permissions:
+  contents: write
+
+jobs:
+  exe:
+    name: Windows release (Cineva)
+    runs-on: windows-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: stable
+          cache: true
+
+      - name: Enable Windows
+        run: flutter config --enable-windows-desktop
+
+      - name: Generate Windows runner
+        shell: pwsh
+        run: flutter create --no-pub --platforms=windows --org com.cineva --project-name cineva_windows cineva/apps/cineva_windows
+
+      - name: Install dependencies
+        working-directory: cineva/apps/cineva_windows
+        run: flutter pub get
+
+      - name: Build release
+        working-directory: cineva/apps/cineva_windows
+        run: flutter build windows --release
+
+      - name: Package Windows build
+        shell: pwsh
+        run: |
+          $src = "cineva/apps/cineva_windows/build/windows/x64/runner/Release"
+          if (-not (Test-Path $src)) { throw "Build output not found: $src" }
+          Compress-Archive -Path "$src/*" -DestinationPath "Cineva-Windows-x64.zip" -Force
+          Get-ChildItem $src | Format-Table Name,Length
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "windows-${{ github.run_number }}"
+          gh release create $tag Cineva-Windows-x64.zip --title "Cineva Windows — build #${{ github.run_number }}" --notes "Cineva Windows x64 release."
