@@ -86,8 +86,10 @@ Crée la table `member_profiles` et rattache les données personnelles au profil
   second membre qui aime le même film serait refusé ;
 - RLS : un compte ne voit et ne modifie que ses propres profils.
 
-**Ordre à respecter** : `repair_movies.sql` puis
-`migration_profils_abonnement.sql`, puis installer le nouveau build. Un build
+**Ordre à respecter** : `repair_movies.sql`, puis
+`repair_not_null_columns.sql` (si la base vient d’un schéma plus ancien — erreur
+`23502` à l’enregistrement d’une fiche), puis `migration_profils_abonnement.sql`,
+puis installer le nouveau build. Un build
 récent sur une base non migrée ne casse rien (les requêtes `profile_id` échouent,
 sont rattrapées, et l'app retombe sur son cache local), mais les profils
 afficheront « Profils indisponibles ».

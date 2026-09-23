@@ -159,8 +159,9 @@ trouvable par la **Recherche**, mais n’apparaît sur aucun rail.
   désactivé tant que le travail n’est pas terminé.
 * En cas d’échec, l’erreur s’affiche **dans la boîte de dialogue**, avec une
   explication en clair pour les codes PostgreSQL usuels (`42P01` table absente,
-  `42501` droits refusés, `42703` colonne manquante, `23505` doublon,
-  `23503` référence introuvable, `PGRST301` session expirée).
+  `42501` droits refusés, `42703` colonne manquante, `23502` colonne exigée par
+  une base plus ancienne, `23505` doublon, `23503` référence introuvable,
+  `PGRST301` session expirée).
 * La fiche enregistrée mais dont les **catégories** n’ont pas pu être liées
   (table de liaison absente) n’est plus un échec : le film est bien en base, un
   avertissement explique quoi jouer pour rétablir les liaisons. La liste du
@@ -197,3 +198,33 @@ select (select count(*) from public.home_sections)      as sections,
 
 Si l’étape 1 ou 2 est incomplète : rejouer **en entier**
 `supabase/repair_movies.sql`, puis `supabase/migration_profils_abonnement.sql`.
+
+### Base plus ancienne que l’application (erreur `23502`)
+
+Symptôme : tout est rempli, et l’enregistrement répond
+
+```
+null value in column "sources" of relation "movies" violates not-null constraint (23502)
+```
+
+La table `movies` du projet contient une colonne qui **n’est pas** dans
+`supabase/schema.sql` (ici `sources`), héritée d’un schéma plus ancien ou d’un
+autre projet, déclarée `NOT NULL` **sans valeur par défaut**. L’application ne
+l’écrit pas — elle ne peut pas deviner son contenu — et Postgres refuse donc
+l’insertion. Rien à voir avec les champs laissés vides : seul `title` est
+obligatoire, toutes les autres colonnes de l’application sont nullable ou ont un
+défaut.
+
+Deux réponses, complémentaires :
+
+* **en base (recommandé)** — `supabase/repair_not_null_columns.sql` : pose une
+  valeur par défaut adaptée au type de chaque colonne concernée (ou la rend
+  optionnelle si le type est exotique). Aucune colonne supprimée, aucune donnée
+  modifiée, script rejouable.
+* **dans l’application** — l’upsert est tolérant : sur `23502`, la colonne est
+  initialisée avec une valeur neutre de la forme observée sur une ligne
+  existante (liste jsonb, objet, texte, nombre, booléen) et un avertissement le
+  signale. La fiche est donc enregistrée même avant d’avoir joué le script.
+
+Le même mécanisme fonctionne en sens inverse (`42703`) : une colonne du payload
+que la base ne connaît pas encore est retirée et l’écriture retentée.

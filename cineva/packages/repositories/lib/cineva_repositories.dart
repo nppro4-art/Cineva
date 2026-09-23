@@ -6,6 +6,7 @@ export 'src/catalog_repository.dart';
 export 'src/demo_catalog_source.dart';
 export 'src/member_profile_repository.dart';
 export 'src/member_profile_scope.dart';
+export 'src/schema_drift_support.dart';
 export 'src/session_repository.dart';
 export 'src/supabase_admin_repository.dart';
 export 'src/supabase_app_settings_repository.dart';

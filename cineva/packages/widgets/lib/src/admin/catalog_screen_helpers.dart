@@ -102,6 +102,13 @@ String _catalogErrorText(Object error) {
         '(il pose les GRANT et les droits par défaut), puis réessayez.';
   } else if (raw.contains('42703') || (raw.contains('column') && raw.contains('does not exist'))) {
     hint = 'Colonne manquante en base : rejouez `supabase/repair_movies.sql`.';
+  } else if (raw.contains('23502') || raw.contains('not-null constraint')) {
+    final String? column = notNullViolationColumn(raw);
+    hint = 'Votre base réclame une valeur pour la colonne '
+        '${column == null ? 'd’une table' : '« $column »'}, que l’application '
+        'n’écrit pas : cette table vient d’un schéma plus ancien que l’app. '
+        'Jouez `supabase/repair_not_null_columns.sql` dans le SQL Editor '
+        '(aucune donnée n’est modifiée), puis réessayez.';
   } else if (raw.contains('23505')) {
     hint = 'Une fiche identique existe déjà (contrainte d’unicité).';
   } else if (raw.contains('23503')) {

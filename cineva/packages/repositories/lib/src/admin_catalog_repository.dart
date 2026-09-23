@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'admin_catalog_query_support.dart';
 import 'admin_supabase_gateway.dart';
+import 'schema_drift_support.dart';
 import 'supabase_support.dart';
 
 class SupabaseAdminCatalogRepository {
@@ -166,12 +167,13 @@ class SupabaseAdminCatalogRepository {
       'published_at': movie.isPublished ? DateTime.now().toIso8601String() : null,
     }..removeWhere((key, value) => value == null);
 
-    final row = await _upsertWithSchemaFallback(
+    final upsert = await _upsertWithSchemaFallback(
       client,
       table: 'movies',
       payload: payload,
       columnKeys: const <String>['intro_end_seconds', 'credits_start_seconds', 'skip_segments'],
     );
+    final row = upsert.row;
     final id = row['id'] as String;
     // La fiche est déjà en base à ce stade : un échec de liaison (table de
     // liaison absente, droits manquants) ne doit surtout pas faire croire que
@@ -185,7 +187,7 @@ class SupabaseAdminCatalogRepository {
     );
     return CatalogSaveOutcome(
       item: _mapCatalogMovie(row, movie.categoryIds),
-      warning: warning,
+      warning: _joinWarnings(upsert.legacyColumns, warning),
     );
   }
 
@@ -237,7 +239,13 @@ class SupabaseAdminCatalogRepository {
       'published_at': series.isPublished ? DateTime.now().toIso8601String() : null,
     }..removeWhere((key, value) => value == null);
 
-    final row = await client.from('series').upsert(payload).select().single();
+    final upsert = await _upsertWithSchemaFallback(
+      client,
+      table: 'series',
+      payload: payload,
+      columnKeys: const <String>[],
+    );
+    final row = upsert.row;
     final id = row['id'] as String;
     final warning = await _replaceCategoryLinks(
       client,
@@ -248,7 +256,7 @@ class SupabaseAdminCatalogRepository {
     );
     return CatalogSaveOutcome(
       item: _mapCatalogSeries(Map<String, dynamic>.from(row), series.categoryIds),
-      warning: warning,
+      warning: _joinWarnings(upsert.legacyColumns, warning),
     );
   }
 
@@ -445,28 +453,108 @@ class SupabaseAdminCatalogRepository {
   /// Upsert tolérant au schéma : si les colonnes cibles n'existent pas
   /// encore dans la base (migration non appliquée), réessaye sans elles.
   /// Les valeurs restent disponibles dans `metadata` (écriture double).
-  Future<Map<String, dynamic>> _upsertWithSchemaFallback(
+  /// Écriture tolérante aux bases qui ont dérivé du schéma, dans les deux sens.
+  ///
+  /// * `42703` — une colonne du payload n'existe pas dans cette base (migration
+  ///   non jouée) : on la retire et on retente, comme avant ;
+  /// * `23502` — cette base exige une valeur pour une colonne `NOT NULL` sans
+  ///   défaut que l'application n'écrit pas (colonne héritée d'un autre schéma,
+  ///   par exemple `movies.sources`). Sans cela, **la fiche ne s'enregistre
+  ///   pas du tout** alors que l'administrateur a tout rempli. On initialise la
+  ///   colonne avec une valeur neutre de la forme observée sur une ligne
+  ///   existante, et l'avertissement remonte jusqu'à l'écran.
+  Future<_UpsertOutcome> _upsertWithSchemaFallback(
     SupabaseClient client, {
     required String table,
     required Map<String, dynamic> payload,
     required List<String> columnKeys,
   }) async {
-    try {
-      final row = await client.from(table).upsert(payload).select().single();
-      return Map<String, dynamic>.from(row as Map);
-    } on PostgrestException catch (error) {
-      if (!_isMissingColumn(error)) rethrow;
-      final fallback = Map<String, dynamic>.from(payload);
-      for (final key in columnKeys) {
-        fallback.remove(key);
+    var values = Map<String, dynamic>.from(payload);
+    final legacyColumns = <String>[];
+    final plans = <String, List<Object?>>{};
+    final attempts = <String, int>{};
+
+    for (var round = 0; round < 12; round++) {
+      try {
+        final row = await client.from(table).upsert(values).select().single();
+        return _UpsertOutcome(row: Map<String, dynamic>.from(row as Map), legacyColumns: legacyColumns);
+      } on PostgrestException catch (error) {
+        final text = '${error.code} ${error.message} ${error.details} ${error.hint}';
+
+        if (_isMissingColumn(error)) {
+          final unknown = columnKeys.where(values.containsKey).toList();
+          if (unknown.isEmpty) rethrow;
+          values = Map<String, dynamic>.from(values)..removeWhere((key, _) => unknown.contains(key));
+          continue;
+        }
+
+        // Colonne NOT NULL jamais écrite par l'application, ou valeur neutre
+        // déjà tentée et refusée (mauvais type) : on passe à la forme suivante.
+        final column = notNullViolationColumn(text) ?? namedColumnAmong(text, legacyColumns);
+        if (column == null) rethrow;
+
+        final plan = plans[column] ??=
+            await _neutralColumnPlanFor(client, table: table, column: column);
+        final index = attempts[column] ?? 0;
+        if (index >= plan.length) rethrow;
+
+        values = Map<String, dynamic>.from(values)..[column] = plan[index];
+        attempts[column] = index + 1;
+        if (!legacyColumns.contains(column)) legacyColumns.add(column);
       }
-      final row = await client.from(table).upsert(fallback).select().single();
-      return Map<String, dynamic>.from(row as Map);
     }
+
+    // Boucle épuisée : dernier essai, l'exception remonte telle quelle.
+    final row = await client.from(table).upsert(values).select().single();
+    return _UpsertOutcome(row: Map<String, dynamic>.from(row as Map), legacyColumns: legacyColumns);
+  }
+
+  /// Forme attendue par une colonne héritée, déduite d'une ligne existante :
+  /// liste jsonb, objet jsonb, texte, nombre ou booléen. Sans échantillon
+  /// lisible, les formes génériques sont essayées dans l'ordre.
+  Future<List<Object?>> _neutralColumnPlanFor(
+    SupabaseClient client, {
+    required String table,
+    required String column,
+  }) async {
+    Object? sample;
+    try {
+      final rows = await client.from(table).select(column).limit(1);
+      if (rows.isNotEmpty) sample = (rows.first as Map)[column];
+    } catch (_) {
+      sample = null;
+    }
+    return neutralColumnPlan(sample);
+  }
+
+  /// Regroupe les avertissements non bloquants en un seul message.
+  String? _joinWarnings(List<String> legacyColumns, String? categoryWarning) {
+    final parts = <String>[
+      if (legacyColumns.isNotEmpty) _legacyColumnsWarning(legacyColumns),
+      if (categoryWarning != null) categoryWarning,
+    ];
+    return parts.isEmpty ? null : parts.join(' ');
+  }
+
+  String _legacyColumnsWarning(List<String> columns) {
+    final names = columns.map((column) => '« $column »').join(', ');
+    return 'votre base exigeait une valeur pour $names, colonne(s) absente(s) du '
+        'schéma de l’application : elle(s) a/ont été initialisée(s) vide(s) pour '
+        'que la fiche soit enregistrée. Pour réparer définitivement, jouez '
+        '`supabase/repair_not_null_columns.sql` dans le SQL Editor.';
   }
 
   bool _isMissingColumn(PostgrestException error) {
     final details = '${error.code} ${error.message} ${error.details} ${error.hint}';
     return details.contains('42703') || details.contains('does not exist');
   }
+}
+
+/// Résultat d'un upsert tolérant : la ligne écrite, et les colonnes héritées
+/// qu'il a fallu initialiser pour y parvenir.
+class _UpsertOutcome {
+  const _UpsertOutcome({required this.row, required this.legacyColumns});
+
+  final Map<String, dynamic> row;
+  final List<String> legacyColumns;
 }
