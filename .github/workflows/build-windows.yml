@@ -24,7 +24,10 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.5"
+          # Flutter 3.24.x forces the legacy Visual Studio 2019 CMake
+          # generator. GitHub current Windows runners no longer ship VS2019.
+          # Flutter 3.47 detects the installed Visual Studio toolchain.
+          flutter-version: "3.47.0"
           channel: stable
           cache: true
 
