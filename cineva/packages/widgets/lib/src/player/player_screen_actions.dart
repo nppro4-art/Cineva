@@ -209,6 +209,13 @@ Future<String?> _playerPickOption(
 }
 
 Future<void> _playerRetry(_PlayerScreenState state, ContentDetailModel detail) async {
+  if (state._mediaSource?.isWebEmbed == true) {
+    state.setState(() {
+      state._playbackError = null;
+      state._activeContentId = null;
+    });
+    return;
+  }
   final currentPosition = state._controller?.value.isInitialized ?? false ? state._controller!.value.position.inSeconds : 0;
   final url = detail.resolvePlaybackUrl(state._selectedQuality) ?? detail.videoUrl;
   if (url == null) return;
