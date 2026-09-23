@@ -132,15 +132,19 @@ class _ArchiveImportDialogState extends State<_ArchiveImportDialog> {
 
     final repository = widget.outerRef.read(adminRepositoryProvider);
     final failures = <String>[];
+    String? categoryWarning;
     for (final draft in chosen) {
       try {
-        await repository.saveMovie(
+        final outcome = await repository.saveMovie(
           draft.toCatalogItem(
             isPublished: _publishImmediately,
             categoryIds: _categoryId == null ? const <String>[] : <String>[_categoryId!],
           ),
         );
         _imported += 1;
+        // La fiche est en base : un échec de liaison des catégories ne doit pas
+        // être confondu avec un échec d'import.
+        categoryWarning ??= outcome.warning;
       } catch (error) {
         _failed += 1;
         if (failures.length < 3) failures.add('${draft.title} : ${_importErrorMessage(error)}');
@@ -155,7 +159,8 @@ class _ArchiveImportDialogState extends State<_ArchiveImportDialog> {
       _importing = false;
       _message = '$_imported film(s) importé(s)'
           '${_publishImmediately ? ' et publié(s)' : ' en brouillon'}'
-          '${_failed == 0 ? '.' : ' · $_failed échec(s) — ${failures.join(' | ')}'}';
+          '${_failed == 0 ? '.' : ' · $_failed échec(s) — ${failures.join(' | ')}'}'
+          '${categoryWarning == null ? '' : ' · $categoryWarning'}';
     });
   }
 

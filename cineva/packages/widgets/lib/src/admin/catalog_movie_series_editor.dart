@@ -32,6 +32,8 @@ Future<void> _showCatalogEditor(
   final selectedCategoryIds = <String>{...(existing?.categoryIds ?? const <String>[])};
   bool isFeatured = existing?.isFeatured ?? false;
   bool isPublished = existing?.isPublished ?? false;
+  bool saving = false;
+  String? saveError;
   Uint8List? posterBytes;
   Uint8List? backdropBytes;
   String? posterFilename;
@@ -87,6 +89,38 @@ Future<void> _showCatalogEditor(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
+                    // L'erreur reste visible DANS la boîte de dialogue : rien ne
+                    // se ferme tant que la fiche n'est pas enregistrée.
+                    if (saveError != null) ...<Widget>[
+                      Container(
+                        padding: const EdgeInsets.all(CinevaSpacing.sm),
+                        decoration: BoxDecoration(
+                          color: CinevaColors.danger.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(CinevaRadii.small),
+                        ),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              size: 18,
+                              color: CinevaColors.danger,
+                            ),
+                            const SizedBox(width: CinevaSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                saveError!,
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: CinevaColors.textSoft,
+                                      height: 1.35,
+                                    ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: CinevaSpacing.md),
+                    ],
                     Row(
                       children: <Widget>[
                         Expanded(child: TextField(controller: titleController, decoration: const InputDecoration(labelText: 'Titre'))),
@@ -246,86 +280,163 @@ Future<void> _showCatalogEditor(
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
                       value: isPublished,
-                      onChanged: (value) => setState(() => isPublished = value),
+                      onChanged: saving ? null : (value) => setState(() => isPublished = value),
                       title: const Text('Publier ce contenu'),
+                      subtitle: const Text(
+                        'Désactivé, la fiche est enregistrée mais reste invisible '
+                        'dans l’app abonné.',
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
             actions: <Widget>[
-              TextButton(onPressed: () => Navigator.of(dialogContext).pop(), child: const Text('Annuler')),
+              TextButton(
+                onPressed: saving ? null : () => Navigator.of(dialogContext).pop(),
+                child: const Text('Annuler'),
+              ),
               FilledButton(
-                onPressed: () async {
-                  Navigator.of(dialogContext).pop();
+                onPressed: saving
+                    ? null
+                    : () async {
+                        if (titleController.text.trim().isEmpty) {
+                          setState(() => saveError = 'Le titre est obligatoire.');
+                          return;
+                        }
 
-                  String? posterPath = existing?.posterPath;
-                  String? backdropPath = existing?.backdropPath;
-                  String? logoPath = existing?.logoPath;
-                  if (posterBytes != null && posterFilename != null) {
-                    posterPath = await ref.read(adminRepositoryProvider).uploadMedia(
+                        setState(() {
+                          saving = true;
+                          saveError = null;
+                        });
+
+                        // Téléversement des images : un échec du stockage ne doit
+                        // pas empêcher l'enregistrement de la fiche. L'image déjà
+                        // en place est conservée et l'administrateur est prévenu.
+                        final List<String> uploadWarnings = <String>[];
+                        Future<String?> upload({
+                          required Uint8List? bytes,
+                          required String? filename,
+                          required String bucket,
+                          required String? current,
+                          required String label,
+                        }) async {
+                          if (bytes == null || filename == null) return current;
+                          try {
+                            return await ref.read(adminRepositoryProvider).uploadMedia(
+                                  bucket: bucket,
+                                  filename: filename,
+                                  bytes: bytes,
+                                  contentType: _inferContentType(filename),
+                                );
+                          } catch (error) {
+                            uploadWarnings.add(
+                              '$label non téléversée (${_catalogErrorText(error)})',
+                            );
+                            return current;
+                          }
+                        }
+
+                        final String? posterPath = await upload(
+                          bytes: posterBytes,
+                          filename: posterFilename,
                           bucket: 'posters',
-                          filename: posterFilename!,
-                          bytes: posterBytes!,
-                          contentType: _inferContentType(posterFilename!),
+                          current: existing?.posterPath,
+                          label: 'Affiche',
                         );
-                  }
-                  if (backdropBytes != null && backdropFilename != null) {
-                    backdropPath = await ref.read(adminRepositoryProvider).uploadMedia(
+                        final String? backdropPath = await upload(
+                          bytes: backdropBytes,
+                          filename: backdropFilename,
                           bucket: 'backdrops',
-                          filename: backdropFilename!,
-                          bytes: backdropBytes!,
-                          contentType: _inferContentType(backdropFilename!),
+                          current: existing?.backdropPath,
+                          label: 'Image de fond',
                         );
-                  }
-                  if (logoBytes != null && logoFilename != null) {
-                    logoPath = await ref.read(adminRepositoryProvider).uploadMedia(
+                        final String? logoPath = await upload(
+                          bytes: logoBytes,
+                          filename: logoFilename,
                           bucket: 'posters',
-                          filename: logoFilename!,
-                          bytes: logoBytes!,
-                          contentType: _inferContentType(logoFilename!),
+                          current: existing?.logoPath,
+                          label: 'Logo',
                         );
-                  }
 
-                  final item = AdminCatalogItemModel(
-                    id: existing?.id ?? '',
-                    contentType: contentType,
-                    title: titleController.text.trim(),
-                    synopsis: synopsisController.text.trim(),
-                    genres: _splitCommaValues(genresController.text),
-                    audioLanguages: _splitCommaValues(audioController.text),
-                    subtitleLanguages: _splitCommaValues(subtitlesController.text),
-                    castNames: _splitCommaValues(castController.text),
-                    categoryIds: selectedCategoryIds.toList(),
-                    isFeatured: isFeatured,
-                    isPublished: isPublished,
-                    originalTitle: originalTitleController.text.trim().isEmpty ? null : originalTitleController.text.trim(),
-                    posterPath: posterPath,
-                    backdropPath: backdropPath,
-                    logoPath: logoPath,
-                    trailerPath: trailerController.text.trim().isEmpty ? null : trailerController.text.trim(),
-                    videoPath: videoController.text.trim().isEmpty ? null : videoController.text.trim(),
-                    releaseYear: int.tryParse(yearController.text.trim()),
-                    durationMinutes: int.tryParse(durationController.text.trim()),
-                    ageRating: ageRatingController.text.trim().isEmpty ? null : ageRatingController.text.trim(),
-                    directorName: directorController.text.trim().isEmpty ? null : directorController.text.trim(),
-                    countries: _splitCommaValues(countriesController.text),
-                    rating: double.tryParse(ratingController.text.trim()),
-                    introEndSeconds: contentType == 'movie' ? int.tryParse(introController.text.trim()) : null,
-                    creditsStartSeconds: contentType == 'movie' ? int.tryParse(creditsController.text.trim()) : null,
-                    skipSegments: contentType == 'movie' ? _skipSegmentsFromRows(skipSegmentRows) : const <SkipSegment>[],
-                  );
+                        final item = AdminCatalogItemModel(
+                          id: existing?.id ?? '',
+                          contentType: contentType,
+                          title: titleController.text.trim(),
+                          synopsis: synopsisController.text.trim(),
+                          genres: _splitCommaValues(genresController.text),
+                          audioLanguages: _splitCommaValues(audioController.text),
+                          subtitleLanguages: _splitCommaValues(subtitlesController.text),
+                          castNames: _splitCommaValues(castController.text),
+                          categoryIds: selectedCategoryIds.toList(),
+                          isFeatured: isFeatured,
+                          isPublished: isPublished,
+                          originalTitle: originalTitleController.text.trim().isEmpty ? null : originalTitleController.text.trim(),
+                          posterPath: posterPath,
+                          backdropPath: backdropPath,
+                          logoPath: logoPath,
+                          trailerPath: trailerController.text.trim().isEmpty ? null : trailerController.text.trim(),
+                          videoPath: videoController.text.trim().isEmpty ? null : videoController.text.trim(),
+                          releaseYear: int.tryParse(yearController.text.trim()),
+                          durationMinutes: int.tryParse(durationController.text.trim()),
+                          ageRating: ageRatingController.text.trim().isEmpty ? null : ageRatingController.text.trim(),
+                          directorName: directorController.text.trim().isEmpty ? null : directorController.text.trim(),
+                          countries: _splitCommaValues(countriesController.text),
+                          rating: double.tryParse(ratingController.text.trim()),
+                          introEndSeconds: contentType == 'movie' ? int.tryParse(introController.text.trim()) : null,
+                          creditsStartSeconds: contentType == 'movie' ? int.tryParse(creditsController.text.trim()) : null,
+                          skipSegments: contentType == 'movie' ? _skipSegmentsFromRows(skipSegmentRows) : const <SkipSegment>[],
+                        );
 
-                  await _runCatalogAction(
-                    context,
-                    ref,
-                    () => contentType == 'movie'
-                        ? ref.read(adminRepositoryProvider).saveMovie(item)
-                        : ref.read(adminRepositoryProvider).saveSeries(item),
-                    successMessage: contentType == 'movie' ? 'Film enregistré.' : 'Série enregistrée.',
-                  );
-                },
-                child: const Text('Enregistrer'),
+                        try {
+                          final CatalogSaveOutcome outcome = contentType == 'movie'
+                              ? await ref.read(adminRepositoryProvider).saveMovie(item)
+                              : await ref.read(adminRepositoryProvider).saveSeries(item);
+
+                          // La boîte de dialogue ne se ferme qu'une fois la fiche
+                          // réellement en base.
+                          if (!dialogContext.mounted) return;
+                          Navigator.of(dialogContext).pop();
+
+                          final bool published = outcome.item.isPublished;
+                          final String saved = contentType == 'movie'
+                              ? (published
+                                  ? 'Film enregistré et publié.'
+                                  : 'Film enregistré — non publié : il reste invisible '
+                                      'dans l’app tant que « Publier ce contenu » '
+                                      'n’est pas activé.')
+                              : (published
+                                  ? 'Série enregistrée et publiée.'
+                                  : 'Série enregistrée — non publiée : elle reste '
+                                      'invisible dans l’app.');
+                          final List<String> warnings = <String>[
+                            if (outcome.warning != null) outcome.warning!,
+                            ...uploadWarnings,
+                          ];
+                          _finishCatalogAction(
+                            context,
+                            ref,
+                            message: warnings.isEmpty ? saved : '$saved ${warnings.join(' ')}',
+                            long: warnings.isNotEmpty,
+                          );
+                        } catch (error) {
+                          if (!dialogContext.mounted) return;
+                          setState(() {
+                            saving = false;
+                            saveError = _catalogErrorText(error);
+                          });
+                        }
+                      },
+                child: saving
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: CinevaColors.gold,
+                        ),
+                      )
+                    : const Text('Enregistrer'),
               ),
             ],
           );

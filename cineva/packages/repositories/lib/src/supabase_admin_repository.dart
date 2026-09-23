@@ -155,7 +155,7 @@ class SupabaseAdminRepository implements AdminRepository {
   Future<EpisodeModel> saveEpisode(EpisodeModel episode) => _catalogRepository.saveEpisode(episode);
 
   @override
-  Future<AdminCatalogItemModel> saveMovie(AdminCatalogItemModel movie) => _catalogRepository.saveMovie(movie);
+  Future<CatalogSaveOutcome> saveMovie(AdminCatalogItemModel movie) => _catalogRepository.saveMovie(movie);
 
   @override
   Future<SeasonModel> saveSeason({String? id, required String seriesId, required int seasonNumber, required String title, String? synopsis, String? posterPath}) {
@@ -170,7 +170,7 @@ class SupabaseAdminRepository implements AdminRepository {
   }
 
   @override
-  Future<AdminCatalogItemModel> saveSeries(AdminCatalogItemModel series) => _catalogRepository.saveSeries(series);
+  Future<CatalogSaveOutcome> saveSeries(AdminCatalogItemModel series) => _catalogRepository.saveSeries(series);
 
   @override
   Future<void> setExpiration({required String userId, required DateTime expiresAt, String? note}) {

@@ -171,6 +171,9 @@ Future<void> _showSeriesStructureManager(BuildContext context, WidgetRef ref, Ad
                                                 ref,
                                                 () => repository.saveSeries(updatedSeries),
                                                 successMessage: 'Épisode pilote défini.',
+                                                warningOf: (result) => result is CatalogSaveOutcome
+                                                    ? result.warning
+                                                    : null,
                                               );
                                             },
                                             child: Text(series.pilotEpisodeId == episode.id ? 'Pilote' : 'Définir pilote'),

@@ -84,9 +84,9 @@ abstract interface class AdminRepository {
 
   Future<List<AdminCatalogItemModel>> fetchSeries({String query = ''});
 
-  Future<AdminCatalogItemModel> saveMovie(AdminCatalogItemModel movie);
+  Future<CatalogSaveOutcome> saveMovie(AdminCatalogItemModel movie);
 
-  Future<AdminCatalogItemModel> saveSeries(AdminCatalogItemModel series);
+  Future<CatalogSaveOutcome> saveSeries(AdminCatalogItemModel series);
 
   Future<void> deleteMovie(String id);
 

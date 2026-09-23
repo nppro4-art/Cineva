@@ -7,6 +7,7 @@ export 'src/admin_user_filter.dart';
 export 'src/admin_watch_stat_model.dart';
 export 'src/app_settings_model.dart';
 export 'src/app_user.dart';
+export 'src/catalog_save_outcome.dart';
 export 'src/cineva_audio_settings_model.dart';
 export 'src/cineva_vision_models.dart';
 export 'src/content_detail_model.dart';

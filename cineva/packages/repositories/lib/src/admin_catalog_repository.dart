@@ -129,7 +129,7 @@ class SupabaseAdminCatalogRepository {
     return _mapEpisode(row, seriesId: episode.seriesId);
   }
 
-  Future<AdminCatalogItemModel> saveMovie(AdminCatalogItemModel movie) async {
+  Future<CatalogSaveOutcome> saveMovie(AdminCatalogItemModel movie) async {
     final client = await _gateway.client();
     final skipSegmentsJson = _skipSegmentsJson(movie.skipSegments);
     final metadata = Map<String, dynamic>.from(movie.metadata)
@@ -173,8 +173,20 @@ class SupabaseAdminCatalogRepository {
       columnKeys: const <String>['intro_end_seconds', 'credits_start_seconds', 'skip_segments'],
     );
     final id = row['id'] as String;
-    await _replaceCategoryLinks(client, table: 'movie_categories', foreignKey: 'movie_id', contentId: id, categoryIds: movie.categoryIds);
-    return _mapCatalogMovie(row, movie.categoryIds);
+    // La fiche est déjà en base à ce stade : un échec de liaison (table de
+    // liaison absente, droits manquants) ne doit surtout pas faire croire que
+    // le film n'a pas été enregistré.
+    final warning = await _replaceCategoryLinks(
+      client,
+      table: 'movie_categories',
+      foreignKey: 'movie_id',
+      contentId: id,
+      categoryIds: movie.categoryIds,
+    );
+    return CatalogSaveOutcome(
+      item: _mapCatalogMovie(row, movie.categoryIds),
+      warning: warning,
+    );
   }
 
   Future<SeasonModel> saveSeason({String? id, required String seriesId, required int seasonNumber, required String title, String? synopsis, String? posterPath}) async {
@@ -199,7 +211,7 @@ class SupabaseAdminCatalogRepository {
     );
   }
 
-  Future<AdminCatalogItemModel> saveSeries(AdminCatalogItemModel series) async {
+  Future<CatalogSaveOutcome> saveSeries(AdminCatalogItemModel series) async {
     final client = await _gateway.client();
     final metadata = Map<String, dynamic>.from(series.metadata)
       ..['rating'] = series.rating
@@ -227,8 +239,17 @@ class SupabaseAdminCatalogRepository {
 
     final row = await client.from('series').upsert(payload).select().single();
     final id = row['id'] as String;
-    await _replaceCategoryLinks(client, table: 'series_categories', foreignKey: 'series_id', contentId: id, categoryIds: series.categoryIds);
-    return _mapCatalogSeries(Map<String, dynamic>.from(row), series.categoryIds);
+    final warning = await _replaceCategoryLinks(
+      client,
+      table: 'series_categories',
+      foreignKey: 'series_id',
+      contentId: id,
+      categoryIds: series.categoryIds,
+    );
+    return CatalogSaveOutcome(
+      item: _mapCatalogSeries(Map<String, dynamic>.from(row), series.categoryIds),
+      warning: warning,
+    );
   }
 
   Future<String> uploadMedia({required String bucket, required String filename, required Uint8List bytes, required String contentType}) async {
@@ -255,19 +276,33 @@ class SupabaseAdminCatalogRepository {
     return _mapCategory(Map<String, dynamic>.from(row));
   }
 
-  Future<void> _replaceCategoryLinks(
+  /// Remplace les liaisons contenu ↔ catégories.
+  ///
+  /// Renvoie `null` si tout a abouti, sinon un avertissement lisible : la fiche
+  /// est déjà enregistrée, seule la liaison a échoué (le plus souvent parce que
+  /// la table `movie_categories` / `series_categories` manque en base après une
+  /// suppression de table — `supabase/repair_movies.sql` la recrée).
+  Future<String?> _replaceCategoryLinks(
     SupabaseClient client, {
     required String table,
     required String foreignKey,
     required String contentId,
     required List<String> categoryIds,
   }) async {
-    await client.from(table).delete().eq(foreignKey, contentId);
-    if (categoryIds.isEmpty) return;
-    await client.from(table).insert(categoryIds.map((categoryId) => <String, dynamic>{
-          foreignKey: contentId,
-          'category_id': categoryId,
-        }).toList());
+    try {
+      await client.from(table).delete().eq(foreignKey, contentId);
+      if (categoryIds.isEmpty) return null;
+      await client.from(table).insert(categoryIds.map((categoryId) => <String, dynamic>{
+            foreignKey: contentId,
+            'category_id': categoryId,
+          }).toList());
+      return null;
+    } on PostgrestException catch (error) {
+      return 'la fiche est enregistrée, mais ses catégories n’ont pas pu être '
+          'liées (table `$table` : ${error.message}). Jouez '
+          '`supabase/repair_movies.sql`, puis rouvrez la fiche pour choisir ses '
+          'catégories.';
+    }
   }
 
   Future<List<AdminCatalogItemModel>> _fetchCatalogItems({
@@ -279,11 +314,18 @@ class SupabaseAdminCatalogRepository {
   }) async {
     final client = await _gateway.client();
     final rows = await client.from(contentTable).select().order('updated_at', ascending: false);
-    final categoryLinks = await client.from(categoryTable).select();
     final categoryIdsByContent = <String, List<String>>{};
-    for (final dynamic row in categoryLinks) {
-      final map = Map<String, dynamic>.from(row as Map);
-      categoryIdsByContent.putIfAbsent(map[categoryKey] as String, () => <String>[]).add(map['category_id'] as String);
+    try {
+      final categoryLinks = await client.from(categoryTable).select();
+      for (final dynamic row in categoryLinks) {
+        final map = Map<String, dynamic>.from(row as Map);
+        categoryIdsByContent.putIfAbsent(map[categoryKey] as String, () => <String>[]).add(map['category_id'] as String);
+      }
+    } on PostgrestException {
+      // Table de liaison absente (base partiellement réparée) : le catalogue
+      // doit rester lisible, simplement sans catégories. Jouer
+      // `supabase/repair_movies.sql` recrée `$categoryTable` et les liaisons
+      // réapparaissent au prochain chargement.
     }
 
     return rows

@@ -134,3 +134,66 @@ depuis l'éditeur de catalogue.
 Les analyses réseau sont isolées dans `ArchiveOrgClient` / `TmdbClient` ; les
 parseurs sont `static` et testés sur des réponses réelles tronquées, sans aucun
 appel réseau en CI.
+
+---
+
+## Dépannage : « je remplis la fiche, rien ne s’enregistre »
+
+Un film n’est visible dans l’app abonné que si **trois** conditions sont réunies.
+Elles sont indépendantes : la fiche peut être en base sans être publiée, et
+publiée sans être sur l’accueil.
+
+| # | Condition | Où la vérifier |
+|---|-----------|----------------|
+| 1 | Les tables et les droits existent (`movies`, `movie_categories`, GRANT `authenticated`) | SQL Editor — `supabase/repair_movies.sql` |
+| 2 | La fiche est **publiée** (interrupteur « Publier ce contenu ») | Admin → Catalogue → Films, colonne/badge « Publié » |
+| 3 | La fiche figure dans une **section d’accueil** | Admin → Catalogue → onglet « Accueil » (ou `supabase/seed_demo_catalog.sql`) |
+
+Sans la condition 3, l’accueil de l’app affiche son état vide : le film reste
+trouvable par la **Recherche**, mais n’apparaît sur aucun rail.
+
+### Comportement de l’application (depuis `binaries-16`)
+
+* La boîte de dialogue **reste ouverte** pendant l’enregistrement ; le bouton
+  « Enregistrer » se transforme en indicateur de progression et « Annuler » est
+  désactivé tant que le travail n’est pas terminé.
+* En cas d’échec, l’erreur s’affiche **dans la boîte de dialogue**, avec une
+  explication en clair pour les codes PostgreSQL usuels (`42P01` table absente,
+  `42501` droits refusés, `42703` colonne manquante, `23505` doublon,
+  `23503` référence introuvable, `PGRST301` session expirée).
+* La fiche enregistrée mais dont les **catégories** n’ont pas pu être liées
+  (table de liaison absente) n’est plus un échec : le film est bien en base, un
+  avertissement explique quoi jouer pour rétablir les liaisons. La liste du
+  catalogue se charge même sans table de liaison (catégories vides).
+* Le message de succès distingue « Film enregistré et publié. » de
+  « Film enregistré — non publié : il reste invisible dans l’app… ».
+
+### Diagnostic SQL (SQL Editor, 10 secondes)
+
+```sql
+-- 1. Tables présentes ? (une erreur « relation does not exist » ici = table manquante)
+select table_name
+from information_schema.tables
+where table_schema = 'public'
+  and table_name in ('movies','series','categories','movie_categories',
+                     'series_categories','home_sections','home_section_items')
+order by table_name;
+
+-- 2. Droits de lecture du rôle abonné sur les films ? (0 ligne = GRANT absent)
+select grantee, privilege_type
+from information_schema.role_table_grants
+where table_schema = 'public' and table_name = 'movies'
+  and privilege_type = 'SELECT';
+
+-- 3. Contenu réellement publié ?
+select count(*) as films,
+       count(*) filter (where is_published) as films_publies
+from public.movies;
+
+-- 4. Accueil alimenté ?
+select (select count(*) from public.home_sections)      as sections,
+       (select count(*) from public.home_section_items) as elements;
+```
+
+Si l’étape 1 ou 2 est incomplète : rejouer **en entier**
+`supabase/repair_movies.sql`, puis `supabase/migration_profils_abonnement.sql`.
