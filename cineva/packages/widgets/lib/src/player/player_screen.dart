@@ -12,6 +12,8 @@ import 'package:video_player/video_player.dart';
 import '../app/providers.dart';
 import '../vision/cineva_vision_layer.dart';
 import 'player_formatters.dart';
+import 'embedded_web_player.dart';
+import 'media_source_resolver.dart';
 import 'player_overlays.dart';
 import 'player_runtime_policy.dart';
 
@@ -74,6 +76,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
   String? _nextEpisodeId;
   int _nextEpisodeCountdown = 0;
   String? _activeContentId;
+  MediaSource? _mediaSource;
 
   @override
   void initState() {
@@ -168,6 +171,8 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
         );
 
         final player = _controller;
+        final mediaSource = _mediaSource;
+        final isWebEmbed = mediaSource?.isWebEmbed == true;
         final activePlayer = player != null && player.value.isInitialized ? player : null;
         final hasError = _playbackError != null || (player?.value.hasError ?? false);
         final effectiveError = _playbackError ?? player?.value.errorDescription;
@@ -261,8 +266,13 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                             curve: Curves.easeOutCubic,
                             color: Colors.black,
                             child: Center(
-                              child: activePlayer != null
-                                  ? AnimatedScale(
+                              child: isWebEmbed
+                                  ? CinevaEmbeddedWebPlayer(
+                                      key: ValueKey(mediaSource!.value),
+                                      url: mediaSource.value,
+                                    )
+                                  : activePlayer != null
+                                      ? AnimatedScale(
                                       duration: const Duration(milliseconds: 260),
                                       curve: Curves.easeOutCubic,
                                       scale: _immersive ? 1.02 : 1,
@@ -409,10 +419,11 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
                                 ),
                               ),
                             ),
-                          AnimatedOpacity(
-                            duration: const Duration(milliseconds: 180),
-                            opacity: _showControls && !_controlsLocked ? 1 : 0,
-                            child: PlayerControls(
+                          if (!isWebEmbed)
+                            AnimatedOpacity(
+                              duration: const Duration(milliseconds: 180),
+                              opacity: _showControls && !_controlsLocked ? 1 : 0,
+                              child: PlayerControls(
                               detail: detail,
                               controller: player,
                               volume: _volume,
