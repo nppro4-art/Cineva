@@ -121,13 +121,13 @@ class SupabaseAdminCatalogRepository {
       'published_at': DateTime.now().toIso8601String(),
     }..removeWhere((key, value) => value == null);
 
-    final row = await _upsertWithSchemaFallback(
+    final upsert = await _upsertWithSchemaFallback(
       client,
       table: 'episodes',
       payload: payload,
       columnKeys: const <String>['skip_segments'],
     );
-    return _mapEpisode(row, seriesId: episode.seriesId);
+    return _mapEpisode(upsert.row, seriesId: episode.seriesId);
   }
 
   Future<CatalogSaveOutcome> saveMovie(AdminCatalogItemModel movie) async {
