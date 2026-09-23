@@ -260,7 +260,10 @@ String probeFailureMessage(DioException error) {
       return 'Vérification interrompue.';
     case DioExceptionType.badResponse:
       return _statusMessage(error.response?.statusCode ?? 0);
-    case DioExceptionType.unknown:
-      return 'Impossible de joindre cette adresse ($message).';
+    // `unknown`, et selon la version de dio `transformTimeout` : on ne nomme
+    // pas les valeurs apparues après 5.7 pour rester compilable partout.
+    default:
+      return 'Impossible de joindre cette adresse ou de traiter sa réponse '
+          '($message).';
   }
 }
