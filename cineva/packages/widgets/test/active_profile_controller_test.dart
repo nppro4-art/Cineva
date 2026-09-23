@@ -7,6 +7,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// Un abonnement couvre 5 profils : le contrôleur doit refuser le 6e sans
 /// appeler le réseau, basculer la bibliothèque au changement de profil, et
 /// retomber sur un profil valide après suppression.
+///
+/// Il n'impose jamais un profil à la place de l'abonné : sans choix mémorisé
+/// sur l'appareil, aucun profil n'est actif et `needsSelection` demande le sas
+/// « Qui regarde ? » (`/profiles/select`).
 void main() {
   test('charge les profils et restaure le profil actif de l’appareil', () async {
     final repository = _FakeMemberProfileRepository(
@@ -29,7 +33,7 @@ void main() {
     expect(controller.state.error, isNull);
   });
 
-  test('sans profil mémorisé, le premier profil devient actif et est enregistré', () async {
+  test('sans profil mémorisé, aucun profil n’est imposé : le sas est demandé', () async {
     final repository = _FakeMemberProfileRepository(
       profiles: <MemberProfileModel>[_profile('p1', 'Noah'), _profile('p2', 'Léa')],
     );
@@ -42,14 +46,24 @@ void main() {
 
     await Future<void>.delayed(Duration.zero);
 
+    expect(controller.state.profiles, hasLength(2));
+    expect(controller.state.activeProfileId, isNull);
+    expect(controller.state.needsSelection, isTrue);
+    expect(scope.hasActiveProfile, isFalse);
+    expect(repository.savedActiveId, isNull);
+
+    // Le choix de l'abonné ferme le sas et est mémorisé sur cet appareil.
+    await controller.selectProfile('p1');
+
     expect(controller.state.activeProfileId, 'p1');
-    expect(repository.savedActiveId, 'p1');
+    expect(controller.state.needsSelection, isFalse);
     expect(scope.activeProfileId, 'p1');
+    expect(repository.savedActiveId, 'p1');
   });
 
-  test('un profil mémorisé disparu est remplacé, pas conservé', () async {
+  test('un profil mémorisé disparu renvoie au sas, sans basculer sur un autre membre', () async {
     final repository = _FakeMemberProfileRepository(
-      profiles: <MemberProfileModel>[_profile('p1', 'Noah')],
+      profiles: <MemberProfileModel>[_profile('p1', 'Noah'), _profile('p2', 'Léa')],
       storedActiveId: 'p-inexistant',
     );
     final scope = MemberProfileScope();
@@ -61,8 +75,50 @@ void main() {
 
     await Future<void>.delayed(Duration.zero);
 
-    expect(controller.state.activeProfileId, 'p1');
-    expect(repository.savedActiveId, 'p1');
+    expect(controller.state.activeProfileId, isNull);
+    expect(controller.state.needsSelection, isTrue);
+    expect(scope.activeProfileId, isNull);
+    // L'identifiant périmé est effacé de la mémoire de l'appareil.
+    expect(repository.savedActiveId, isNull);
+  });
+
+  test('le sas n’est pas demandé quand le compte n’a aucun profil', () async {
+    final repository = _FakeMemberProfileRepository();
+    final controller = ActiveProfileController(
+      repository: repository,
+      scope: MemberProfileScope(),
+      onProfileChanged: () {},
+    );
+
+    await Future<void>.delayed(Duration.zero);
+
+    expect(controller.state.profiles, isEmpty);
+    expect(controller.state.needsSelection, isFalse);
+    expect(controller.state.error, isNull);
+  });
+
+  test('le sas n’est pas demandé pendant le chargement, puis l’est une fois terminé', () async {
+    final controller = ActiveProfileController(
+      repository: _FakeMemberProfileRepository(
+        profiles: <MemberProfileModel>[_profile('p1', 'Noah')],
+        fetchDelay: const Duration(milliseconds: 30),
+      ),
+      scope: MemberProfileScope(),
+      onProfileChanged: () {},
+    );
+
+    await Future<void>.delayed(Duration.zero);
+
+    // Chargement en cours : on ne bloque pas l'abonné sur un sas vide.
+    expect(controller.state.isLoading, isTrue);
+    expect(controller.state.needsSelection, isFalse);
+
+    await Future<void>.delayed(const Duration(milliseconds: 60));
+
+    expect(controller.state.isLoading, isFalse);
+    expect(controller.state.profiles, hasLength(1));
+    expect(controller.state.activeProfileId, isNull);
+    expect(controller.state.needsSelection, isTrue);
   });
 
   test('changer de profil met à jour la portée et recharge la bibliothèque', () async {
@@ -236,11 +292,15 @@ class _FakeMemberProfileRepository implements MemberProfileRepository {
     this.profiles = const <MemberProfileModel>[],
     this.storedActiveId,
     this.failure,
+    this.fetchDelay = Duration.zero,
   });
 
   final List<MemberProfileModel> profiles;
   final String? storedActiveId;
   final AppFailure? failure;
+
+  /// Latence simulée, pour observer l'état « chargement en cours ».
+  final Duration fetchDelay;
 
   String? savedActiveId;
   int createCalls = 0;
@@ -248,6 +308,9 @@ class _FakeMemberProfileRepository implements MemberProfileRepository {
 
   @override
   Future<List<MemberProfileModel>> fetchProfiles() async {
+    if (fetchDelay > Duration.zero) {
+      await Future<void>.delayed(fetchDelay);
+    }
     final error = failure;
     if (error != null) throw error;
     return List<MemberProfileModel>.of(profiles);
