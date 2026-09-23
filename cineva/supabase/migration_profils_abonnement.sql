@@ -159,41 +159,89 @@ before insert on public.watch_events
 for each row execute function public.assign_default_member_profile();
 
 -- Rattachement des lignes existantes au profil par défaut de leur compte.
+--
+-- Sous-requête corrélée dans le SET (et PAS `update ... from lateral (...)`) :
+-- dans un UPDATE, la table cible ne fait pas partie de la from_list, donc un
+-- item LATERAL n'a pas le droit de la référencer — PostgreSQL refuse avec
+-- « 42P10 invalid reference to FROM-clause entry for table "t" ».
+-- Le `exists` évite d'écrire NULL sur les lignes d'un compte sans profil.
 update public.favorites t
-set profile_id = mp.id
-from lateral (
-  select id from public.member_profiles
-  where account_id = t.user_id order by sort_order, created_at limit 1
-) mp
-where t.profile_id is null;
+set profile_id = (
+  select mp.id
+  from public.member_profiles mp
+  where mp.account_id = t.user_id
+  order by mp.sort_order, mp.created_at
+  limit 1
+)
+where t.profile_id is null
+  and exists (
+    select 1 from public.member_profiles mp2 where mp2.account_id = t.user_id
+  );
 
 update public.history t
-set profile_id = mp.id
-from lateral (
-  select id from public.member_profiles
-  where account_id = t.user_id order by sort_order, created_at limit 1
-) mp
-where t.profile_id is null;
+set profile_id = (
+  select mp.id
+  from public.member_profiles mp
+  where mp.account_id = t.user_id
+  order by mp.sort_order, mp.created_at
+  limit 1
+)
+where t.profile_id is null
+  and exists (
+    select 1 from public.member_profiles mp2 where mp2.account_id = t.user_id
+  );
 
 update public.downloads t
-set profile_id = mp.id
-from lateral (
-  select id from public.member_profiles
-  where account_id = t.user_id order by sort_order, created_at limit 1
-) mp
-where t.profile_id is null;
+set profile_id = (
+  select mp.id
+  from public.member_profiles mp
+  where mp.account_id = t.user_id
+  order by mp.sort_order, mp.created_at
+  limit 1
+)
+where t.profile_id is null
+  and exists (
+    select 1 from public.member_profiles mp2 where mp2.account_id = t.user_id
+  );
 
 -- -----------------------------------------------------------------------------
 -- 5. Unicités par profil (deux membres peuvent aimer le même film)
 --    L'ancienne unicité « par compte » est remplacée, pas simplement ajoutée :
 --    sans ça, le second profil qui aime le même film serait refusé.
 -- -----------------------------------------------------------------------------
-alter table public.favorites drop constraint if exists favorites_user_id_content_type_content_id_key;
+-- L'ancienne unicité « par compte » porte un nom auto-généré par PostgreSQL
+-- (`favorites_user_id_content_type_content_id_key`) qui peut différer si la
+-- table a été recréée à la main. On la supprime donc **par ses colonnes**, pas
+-- par son nom : une vieille contrainte oubliée empêcherait deux profils du même
+-- foyer d'aimer le même film, sans message d'erreur pour le dire.
+do $$
+declare
+  legacy record;
+begin
+  for legacy in
+    select rel.relname as table_name, con.conname as constraint_name
+    from pg_constraint con
+    join pg_class rel on rel.oid = con.conrelid
+    join pg_namespace nsp on nsp.oid = rel.relnamespace
+    where nsp.nspname = 'public'
+      and con.contype = 'u'
+      and rel.relname in ('favorites', 'history')
+      and (
+        select array_agg(a.attname::text order by a.attname::text)
+        from unnest(con.conkey) as k(attnum)
+        join pg_attribute a on a.attrelid = con.conrelid and a.attnum = k.attnum
+      ) = array['content_id', 'content_type', 'user_id']
+  loop
+    execute format('alter table public.%I drop constraint %I',
+                   legacy.table_name, legacy.constraint_name);
+  end loop;
+end;
+$$;
+
 alter table public.favorites drop constraint if exists favorites_unique_per_profile;
 alter table public.favorites
   add constraint favorites_unique_per_profile unique (user_id, profile_id, content_type, content_id);
 
-alter table public.history drop constraint if exists history_user_id_content_type_content_id_key;
 alter table public.history drop constraint if exists history_unique_per_profile;
 alter table public.history
   add constraint history_unique_per_profile unique (user_id, profile_id, content_type, content_id);
@@ -241,4 +289,16 @@ select
   (select (value_json ->> 'max_devices_per_account')::int
      from public.app_settings where key = 'limits')                               as max_appareils,
   (select count(*) from public.favorites where profile_id is null)                as favoris_non_rattaches,
-  (select count(*) from public.history where profile_id is null)                  as historique_non_rattache;
+  (select count(*) from public.history where profile_id is null)                  as historique_non_rattache,
+  (select count(*)
+     from pg_constraint con
+     join pg_class rel on rel.oid = con.conrelid
+     join pg_namespace nsp on nsp.oid = rel.relnamespace
+    where nsp.nspname = 'public'
+      and con.contype = 'u'
+      and rel.relname in ('favorites', 'history')
+      and (
+        select array_agg(a.attname::text order by a.attname::text)
+        from unnest(con.conkey) as k(attnum)
+        join pg_attribute a on a.attrelid = con.conrelid and a.attnum = k.attnum
+      ) = array['content_id', 'content_type', 'user_id'])                        as anciennes_unicites_restantes;

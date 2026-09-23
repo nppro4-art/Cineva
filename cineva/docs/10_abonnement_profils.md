@@ -54,6 +54,20 @@ cette fois les `GRANT`, les `ALTER DEFAULT PRIVILEGES` et les limites
 
 ### 2. `cineva/supabase/migration_profils_abonnement.sql` — pour les profils
 
+> **Erreur `42P10 invalid reference to FROM-clause entry for table "t"` —
+> corrigée.** Le rattachement des favoris / historique / téléchargements
+> existants utilisait `update … from lateral (…)`, or dans un `UPDATE` la table
+> cible ne fait pas partie de la `from_list` : un item `LATERAL` n'a pas le
+> droit de la référencer. Remplacé par des sous-requêtes corrélées dans le
+> `SET` (avec un `exists` pour ne rien écrire sur les comptes sans profil).
+>
+> Au passage, l'ancienne unicité « par compte » sur `favorites` / `history` est
+> supprimée **par ses colonnes** (bloc `do` sur `pg_constraint`) et non plus par
+> son nom auto-généré : si la table a été recréée à la main, le nom peut
+> différer, et une contrainte oubliée empêcherait deux profils du même foyer
+> d'aimer le même film — sans aucune erreur pour le signaler. La requête de
+> contrôle renvoie `anciennes_unicites_restantes`, qui doit valoir `0`.
+
 Crée la table `member_profiles` et rattache les données personnelles au profil :
 
 - `member_profiles` : `account_id` (le compte abonné), `name`, `avatar_key`,
