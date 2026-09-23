@@ -1,5 +1,6 @@
 import 'package:cineva_shared/cineva_shared.dart';
 import 'package:dio/dio.dart';
+import 'tmdb_search_plan.dart';
 
 /// Type de média supporté par l'import TMDB.
 enum TmdbMediaType { movie, series }
@@ -189,24 +190,50 @@ class TmdbClient {
     int? year,
     int limit = 12,
   }) async {
-    final trimmed = query.trim();
-    if (trimmed.isEmpty) return const <TmdbSearchHit>[];
+    // Une seule requête suffit rarement : une année restée dans le titre, un
+    // accent oublié, un sous-titre français complet (« Vaiana, la légende du
+    // bout du monde ») ou un titre original anglais renvoient zéro fiche. On
+    // essaie donc du plus précis au plus large, et la première tentative
+    // fructueuse gagne.
+    final plan = buildTmdbQueryPlan(rawQuery: query, year: year);
+    if (plan.isEmpty) return const <TmdbSearchHit>[];
 
+    for (final attempt in plan.attempts) {
+      final hits = await _searchOnce(
+        query: attempt.query,
+        year: attempt.year,
+        language: attempt.language,
+        mediaType: mediaType,
+        limit: limit,
+      );
+      if (hits.isNotEmpty) return hits;
+    }
+    return const <TmdbSearchHit>[];
+  }
+
+  /// Un appel `search/movie` ou `search/tv`.
+  Future<List<TmdbSearchHit>> _searchOnce({
+    required String query,
+    required String language,
+    required TmdbMediaType mediaType,
+    required int limit,
+    int? year,
+  }) async {
     late final Response<dynamic> response;
     try {
       response = await _dio.get<dynamic>(
         mediaType == TmdbMediaType.movie ? 'search/movie' : 'search/tv',
         queryParameters: <String, dynamic>{
           'api_key': _apiKey,
-          'language': 'fr-FR',
-          'query': trimmed,
+          'language': language,
+          'query': query,
           'include_adult': false,
           if (year != null)
             (mediaType == TmdbMediaType.movie ? 'year' : 'first_air_date_year'): year,
         },
       );
     } on DioException catch (error) {
-      throw _failureFrom(error, id: trimmed);
+      throw _failureFrom(error, id: query);
     }
 
     final hits = parseSearchResults(response.data, mediaType);

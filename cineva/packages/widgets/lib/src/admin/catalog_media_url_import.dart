@@ -102,6 +102,10 @@ class _MediaUrlImportDialogState extends State<_MediaUrlImportDialog> {
       _hits = const <TmdbSearchHit>[];
     });
 
+    // Même préparation que dans le client : sert à dire à l'administrateur ce
+    // qui a été cherché (titre nettoyé, année détectée) quand rien ne remonte.
+    final TmdbQueryPlan plan = buildTmdbQueryPlan(rawQuery: query, year: _hint?.year);
+
     try {
       final hits = await widget.outerRef.read(adminRepositoryProvider).searchTmdbTitles(
             query: query,
@@ -113,7 +117,7 @@ class _MediaUrlImportDialogState extends State<_MediaUrlImportDialog> {
         _searching = false;
         _hits = hits;
         _message = hits.isEmpty
-            ? 'Aucune fiche TMDB pour « $query » avec ces critères. Corrigez le titre, ou créez la fiche sans métadonnées.'
+            ? _noResultMessage(query, plan)
             : '${hits.length} fiche(s) trouvée(s) — choisissez la bonne.';
       });
     } catch (error) {
@@ -123,6 +127,17 @@ class _MediaUrlImportDialogState extends State<_MediaUrlImportDialog> {
         _message = _importErrorMessage(error);
       });
     }
+  }
+
+  /// Message d'échec : ce qui a été cherché, et comment débloquer la situation.
+  String _noResultMessage(String query, TmdbQueryPlan plan) {
+    final String title = plan.title.isEmpty ? query : plan.title;
+    final String year = plan.year == null ? '' : ' (${plan.year})';
+    return 'Aucune fiche TMDB pour « $title »$year. Recherche tentée sur le titre '
+        'complet, le titre court, sans accents et sur la fiche anglaise. '
+        'Vérifiez l’orthographe — un titre court suffit souvent (« Vaiana ») —, '
+        'retirez l’année si elle est incertaine, ou créez la fiche sans '
+        'métadonnées.';
   }
 
   Future<void> _openFromHit(TmdbSearchHit hit) async {

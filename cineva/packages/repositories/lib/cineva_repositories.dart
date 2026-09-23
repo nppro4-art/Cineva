@@ -17,5 +17,6 @@ export 'src/supabase_user_library_repository.dart';
 export 'src/supabase_vision_settings_repository.dart';
 export 'src/tmdb/media_url_title_hint.dart';
 export 'src/tmdb/tmdb_client.dart';
+export 'src/tmdb/tmdb_search_plan.dart';
 export 'src/user_library_repository.dart';
 export 'src/vision_settings_repository.dart';

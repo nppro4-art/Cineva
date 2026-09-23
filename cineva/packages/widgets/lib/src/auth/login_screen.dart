@@ -126,11 +126,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: _mode == AuthFormMode.signUp
                           ? Padding(
                               padding: const EdgeInsets.only(bottom: CinevaSpacing.md),
-                              child: CinevaTextField(
-                                controller: _fullNameController,
-                                label: 'Nom complet',
-                                prefixIcon: Icons.person_outline_rounded,
-                                textInputAction: TextInputAction.next,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  CinevaTextField(
+                                    controller: _fullNameController,
+                                    label: 'Nom affiché (facultatif)',
+                                    hint: 'Ex. Dupont',
+                                    prefixIcon: Icons.badge_outlined,
+                                    textInputAction: TextInputAction.next,
+                                  ),
+                                  const SizedBox(height: CinevaSpacing.xs),
+                                  Text(
+                                    'Le nom visible dans l’app — pas besoin de '
+                                    'votre vrai nom. Vide, c’est votre '
+                                    'identifiant qui sera affiché.',
+                                    style: CinevaTypography.meta,
+                                  ),
+                                ],
                               ),
                             )
                           : const SizedBox(width: double.infinity),
@@ -264,13 +277,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return;
     }
 
-    if (fullName.isEmpty) {
-      _notify('Veuillez saisir votre nom complet.');
-      return;
-    }
-
     await controller.signUp(
-      fullName: fullName,
+      // Le nom affiché est décoratif : à défaut de choix, c'est l'identifiant
+      // qui sert de pseudonyme (jamais l'état civil, qui n'est pas demandé).
+      fullName: fullName.isEmpty ? CinevaIdentifier.displayName(email) : fullName,
       email: email,
       password: password,
     );

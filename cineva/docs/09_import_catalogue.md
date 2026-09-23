@@ -22,6 +22,26 @@ vous ne voulez pas saisir la fiche à la main.
    Le champ reste modifiable — **rien n'est envoyé à TMDB sans que vous le voyiez**.
 3. « Chercher sur TMDB » renvoie une liste de candidats (affiche, année, note,
    amorce de synopsis). Vous cliquez sur la bonne fiche.
+
+   La recherche est **tolérante** : le titre saisi est d'abord nettoyé (année
+   retirée du texte et transformée en filtre, entités HTML comme `&gt;`,
+   guillemets, balises de copie `1080p.WEB-DL.x264-VOSTFR`, ponctuation finale),
+   puis TMDB est interrogé du plus précis au plus large jusqu'à obtenir des
+   fiches :
+
+   | Ordre | Requête |
+   | --- | --- |
+   | 1 | titre complet + année, en français |
+   | 2 | titre complet sans année, en français |
+   | 3 | titre court (avant la virgule) + année, puis sans année |
+   | 4 | titre sans accents |
+   | 5 | titre complet puis titre court, sur la fiche anglaise (`en-US`) |
+
+   « Vaiana, la legende du bout du monde (2026) » trouve donc la fiche même sans
+   accents, même si l'année est fausse, et même si TMDB n'indexe que « Vaiana ».
+   Les virgules et apostrophes internes sont conservées (elles font partie des
+   titres français), et un mot de langue n'est retiré qu'en **fin** de titre :
+   « The French Dispatch » reste intact.
 4. L'éditeur de catalogue s'ouvre pré-rempli, **URL vidéo déjà en place**. Vous
    complétez (catégories, langues, publication) et enregistrez.
 
@@ -104,7 +124,8 @@ depuis l'éditeur de catalogue.
 | --- | --- |
 | Client Internet Archive (énumération, fiche, choix du MP4, licence) | `packages/repositories/lib/src/archive/archive_org_client.dart` |
 | Titre déduit d'une URL vidéo | `packages/repositories/lib/src/tmdb/media_url_title_hint.dart` |
-| Recherche de candidats TMDB | `packages/repositories/lib/src/tmdb/tmdb_client.dart` (`searchTitles`, `parseSearchResults`) |
+| Recherche de candidats TMDB | `packages/repositories/lib/src/tmdb/tmdb_client.dart` (`searchTitles`, `_searchOnce`, `parseSearchResults`) |
+| Nettoyage du titre + tentatives de recherche | `packages/repositories/lib/src/tmdb/tmdb_search_plan.dart` (`buildTmdbQueryPlan`, `sanitizeTmdbTitle`, `extractTmdbYear`, `shortTmdbTitle`, `stripTmdbAccents`) |
 | Contrat d'import côté admin | `packages/repositories/lib/src/admin_repository.dart` (`searchTmdbTitles`) |
 | Boîte de dialogue « URL vidéo » | `packages/widgets/lib/src/admin/catalog_media_url_import.dart` |
 | Boîte de dialogue « Archive.org » | `packages/widgets/lib/src/admin/catalog_archive_import.dart` |

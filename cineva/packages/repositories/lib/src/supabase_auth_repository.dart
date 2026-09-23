@@ -53,6 +53,40 @@ class SupabaseAuthRepository implements AuthRepository {
     );
   }
 
+  @override
+  Future<void> updateFullName({required String fullName}) async {
+    final String name = fullName.trim().replaceAll(RegExp(r'\s+'), ' ');
+    if (name.isEmpty) {
+      throw const AppFailure(
+        'Le nom affiché ne peut pas être vide.',
+        code: 'EMPTY_DISPLAY_NAME',
+      );
+    }
+    if (name.length > 60) {
+      throw const AppFailure(
+        'Le nom affiché doit contenir au plus 60 caractères.',
+        code: 'DISPLAY_NAME_TOO_LONG',
+      );
+    }
+
+    final client = await _client();
+    final userId = client.auth.currentUser?.id;
+    if (userId == null) {
+      throw const AppFailure('Aucune session active.', code: 'NO_SESSION');
+    }
+
+    try {
+      await client
+          .from(SupabaseConstants.profilesTable)
+          .update(<String, dynamic>{'full_name': name}).eq('id', userId);
+    } on PostgrestException catch (error) {
+      throw AppFailure(
+        'Nom non enregistré : ${error.message}',
+        code: error.code,
+      );
+    }
+  }
+
   Future<SupabaseClient> _client() async {
     final state = await _backendService.ensureInitialized();
     final client = _backendService.client;

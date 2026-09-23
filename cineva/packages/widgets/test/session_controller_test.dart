@@ -69,6 +69,7 @@ void main() {
 
 class _FakeAuthRepository implements AuthRepository {
   bool signOutCalled = false;
+  String? updatedFullName;
 
   @override
   Stream<void> authStateChanges() => const Stream<void>.empty();
@@ -86,6 +87,11 @@ class _FakeAuthRepository implements AuthRepository {
 
   @override
   Future<void> signUp({required String email, required String password, required String fullName}) async {}
+
+  @override
+  Future<void> updateFullName({required String fullName}) async {
+    updatedFullName = fullName;
+  }
 }
 
 class _FakeSessionRepository implements SessionRepository {

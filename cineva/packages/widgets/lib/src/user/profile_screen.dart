@@ -80,7 +80,10 @@ class ProfileScreen extends ConsumerWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate(
                 <Widget>[
-                  _IdentityCard(user: user),
+                  _IdentityCard(
+                    user: user,
+                    onEditName: () => _showDisplayNameSheet(context, ref, user),
+                  ),
                   const SizedBox(height: CinevaSpacing.md),
                   _StatsCard(
                     user: user,
@@ -253,60 +256,74 @@ class ProfileScreen extends ConsumerWidget {
 }
 
 class _IdentityCard extends StatelessWidget {
-  const _IdentityCard({required this.user});
+  const _IdentityCard({required this.user, required this.onEditName});
 
   final AppUser user;
+
+  /// Ouvre la feuille « Nom affiché » : le nom visible dans l'app est un
+  /// pseudonyme modifiable, pas l'état civil de l'abonné.
+  final VoidCallback onEditName;
 
   @override
   Widget build(BuildContext context) {
     final bool active = user.hasActiveSubscription;
 
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: CinevaColors.card,
-        gradient: CinevaScrims.profileHeader,
-        borderRadius: BorderRadius.circular(CinevaRadii.card),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(CinevaSpacing.lg),
-        child: Row(
-          children: <Widget>[
-            CinevaAvatar(
-              imagePath: user.avatarPath,
-              initials: CinevaContentLabels.initials(user.fullName),
-              size: 60,
-              ring: true,
-            ),
-            const SizedBox(width: CinevaSpacing.md),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    user.fullName,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: CinevaTypography.sectionTitle.copyWith(fontSize: 17),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    CinevaIdentifier.displayName(user.email),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: CinevaTypography.meta.copyWith(fontSize: 11.5),
-                  ),
-                  const SizedBox(height: CinevaSpacing.sm),
-                  _SubscriptionPill(
-                    active: active,
-                    label: user.subscriptionExpiresAt == null
-                        ? ''
-                        : user.subscriptionExpiresLabel,
-                  ),
-                ],
+    return CinevaPressable(
+      onTap: onEditName,
+      semanticLabel: 'Modifier le nom affiché (${user.fullName})',
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: CinevaColors.card,
+          gradient: CinevaScrims.profileHeader,
+          borderRadius: BorderRadius.circular(CinevaRadii.card),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(CinevaSpacing.lg),
+          child: Row(
+            children: <Widget>[
+              CinevaAvatar(
+                imagePath: user.avatarPath,
+                initials: CinevaContentLabels.initials(user.fullName),
+                size: 60,
+                ring: true,
               ),
-            ),
-          ],
+              const SizedBox(width: CinevaSpacing.md),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    Text(
+                      user.fullName,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CinevaTypography.sectionTitle.copyWith(fontSize: 17),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      CinevaIdentifier.displayName(user.email),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: CinevaTypography.meta.copyWith(fontSize: 11.5),
+                    ),
+                    const SizedBox(height: CinevaSpacing.sm),
+                    _SubscriptionPill(
+                      active: active,
+                      label: user.subscriptionExpiresAt == null
+                          ? ''
+                          : user.subscriptionExpiresLabel,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: CinevaSpacing.sm),
+              const Icon(
+                Icons.edit_rounded,
+                size: 18,
+                color: CinevaColors.textFaint,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -540,6 +557,144 @@ class _ProfileSkeleton extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: CinevaSpacing.sm),
                 child: CinevaSkeleton(height: 52),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Feuille « Nom affiché » : le pseudonyme visible dans l'app.
+///
+/// Le nom affiché est décoratif (en-tête du Profil, initiales de l'avatar sur
+/// l'accueil) : l'abonné peut y mettre « Dupont » ou n'importe quel pseudo, et
+/// le changer quand il veut. Son identifiant de connexion ne bouge pas.
+Future<void> _showDisplayNameSheet(
+  BuildContext context,
+  WidgetRef ref,
+  AppUser user,
+) {
+  return showCinevaSheet<void>(
+    context: context,
+    builder: (BuildContext sheetContext) => _DisplayNameSheet(user: user),
+  );
+}
+
+class _DisplayNameSheet extends ConsumerStatefulWidget {
+  const _DisplayNameSheet({required this.user});
+
+  final AppUser user;
+
+  @override
+  ConsumerState<_DisplayNameSheet> createState() => _DisplayNameSheetState();
+}
+
+class _DisplayNameSheetState extends ConsumerState<_DisplayNameSheet> {
+  late final TextEditingController _controller =
+      TextEditingController(text: widget.user.fullName);
+  bool _saving = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final String name = _controller.text.trim().replaceAll(RegExp(r'\s+'), ' ');
+    if (name.isEmpty) {
+      setState(() => _error = 'Choisissez un nom à afficher.');
+      return;
+    }
+    if (name.length > 60) {
+      setState(() => _error = 'Le nom affiché doit contenir au plus 60 caractères.');
+      return;
+    }
+
+    setState(() {
+      _saving = true;
+      _error = null;
+    });
+
+    try {
+      await ref.read(authRepositoryProvider).updateFullName(fullName: name);
+      // La session est la source du nom affiché : on la rafraîchit pour que
+      // l'en-tête et les initiales de l'accueil suivent immédiatement.
+      await ref.read(sessionControllerProvider.notifier).refresh(showLoader: false);
+      if (!mounted) return;
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(const SnackBar(content: Text('Nom affiché mis à jour.')));
+    } on AppFailure catch (failure) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _error = failure.message;
+      });
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _error = 'Enregistrement impossible : $error';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CinevaSheetContainer(
+      title: 'Nom affiché',
+      subtitle: 'Visible uniquement dans l’app (en-tête du profil, initiales de '
+          'l’avatar). Votre identifiant de connexion ne change pas.',
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: CinevaSpacing.md,
+          right: CinevaSpacing.md,
+          bottom: CinevaSpacing.md + MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            CinevaTextField(
+              controller: _controller,
+              label: 'Pseudonyme',
+              hint: 'Ex. Dupont',
+              prefixIcon: Icons.badge_outlined,
+              textInputAction: TextInputAction.done,
+              onChanged: (String value) {
+                if (_error != null) setState(() => _error = null);
+              },
+              onSubmitted: (_) => _save(),
+            ),
+            if (_error != null) ...<Widget>[
+              const SizedBox(height: CinevaSpacing.md),
+              CinevaStatusBanner(
+                message: _error!,
+                tone: CinevaBannerTone.error,
+              ),
+            ],
+            const SizedBox(height: CinevaSpacing.lg),
+            CinevaPrimaryButton(
+              label: 'Enregistrer',
+              icon: Icons.check_rounded,
+              isLoading: _saving,
+              onPressed: _save,
+            ),
+            const SizedBox(height: CinevaSpacing.sm),
+            CinevaSecondaryButton(
+              label: 'Utiliser mon identifiant',
+              icon: Icons.alternate_email_rounded,
+              onPressed: _saving
+                  ? null
+                  : () => setState(() {
+                        _controller.text =
+                            CinevaIdentifier.displayName(widget.user.email);
+                        _error = null;
+                      }),
             ),
           ],
         ),
