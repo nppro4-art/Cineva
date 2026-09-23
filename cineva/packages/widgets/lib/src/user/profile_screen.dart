@@ -291,7 +291,7 @@ class _IdentityCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 3),
                   Text(
-                    user.email,
+                    CinevaIdentifier.displayName(user.email),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: CinevaTypography.meta.copyWith(fontSize: 11.5),

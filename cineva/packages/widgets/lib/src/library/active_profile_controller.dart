@@ -36,6 +36,12 @@ class ActiveProfileState extends Equatable {
 
   bool get hasProfiles => profiles.isNotEmpty;
 
+  /// Le sas « Qui regarde ? » doit-il s'afficher ? Des profils existent, mais
+  /// aucun n'est choisi sur cet appareil (premier lancement, ou profil actif
+  /// supprimé ailleurs). Pendant le chargement on ne décide rien : mieux vaut
+  /// laisser passer que bloquer l'abonné sur un sas vide.
+  bool get needsSelection => !isLoading && profiles.isNotEmpty && activeProfileId == null;
+
   /// Places encore libres sur l'abonnement.
   int get remainingSlots {
     final int left = CinevaOffer.maxProfiles - profiles.length;
@@ -91,7 +97,10 @@ class ActiveProfileController extends StateNotifier<ActiveProfileState> {
     try {
       final List<MemberProfileModel> profiles = await _repository.fetchProfiles();
       final String? stored = await _repository.readActiveProfileId();
-      final String? resolved = _resolveActive(profiles, stored);
+      // Un profil mémorisé disparu (supprimé sur un autre appareil) redevient
+      // « aucun profil » : le sas de choix réapparaît plutôt que de basculer en
+      // silence sur le compte d'un autre membre du foyer.
+      final String? resolved = _knownProfileId(profiles, stored);
 
       _scope.setActiveProfile(resolved);
       if (resolved != stored) {
@@ -206,7 +215,12 @@ class ActiveProfileController extends StateNotifier<ActiveProfileState> {
           if (item.id != profileId) item,
       ];
       final bool wasActive = state.activeProfileId == profileId;
-      final String? nextActive = wasActive ? _resolveActive(remaining, null) : state.activeProfileId;
+      // Suppression du profil actif : on retombe sur le premier profil restant
+      // (l'abonné vient de faire un choix explicite, inutile de le renvoyer au
+      // sas), sinon plus aucun profil.
+      final String? nextActive = wasActive
+          ? (remaining.isEmpty ? null : remaining.first.id)
+          : state.activeProfileId;
 
       _scope.setActiveProfile(nextActive);
       await _repository.saveActiveProfileId(nextActive);
@@ -234,11 +248,11 @@ class ActiveProfileController extends StateNotifier<ActiveProfileState> {
     state = state.copyWith(clearError: true);
   }
 
-  String? _resolveActive(List<MemberProfileModel> profiles, String? stored) {
-    if (profiles.isEmpty) return null;
+  String? _knownProfileId(List<MemberProfileModel> profiles, String? stored) {
+    if (stored == null || stored.isEmpty) return null;
     for (final MemberProfileModel profile in profiles) {
       if (profile.id == stored) return stored;
     }
-    return profiles.first.id;
+    return null;
   }
 }

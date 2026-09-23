@@ -74,7 +74,6 @@ create table if not exists public.movies (
 -- -----------------------------------------------------------------------------
 -- 2. Colonnes manquantes (cas d'une table recréée à la main, sans updated_at)
 -- -----------------------------------------------------------------------------
-alter table public.movies add column if not exists id uuid primary key default gen_random_uuid();
 alter table public.movies add column if not exists title text not null default '';
 alter table public.movies add column if not exists original_title text;
 alter table public.movies add column if not exists synopsis text;
@@ -110,13 +109,26 @@ alter table public.movies alter column title drop default;
 -- -----------------------------------------------------------------------------
 create table if not exists public.categories (
   id uuid primary key default gen_random_uuid(),
-  name text not null unique,
-  slug text,
-  sort_order integer not null default 0,
-  is_enabled boolean not null default true,
+  name text not null,
+  slug text not null unique,
+  category_type text not null default 'generic'
+    check (category_type in ('generic', 'genre', 'curation', 'home')),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Colonnes manquantes si la table a été recréée à la main (nulles ou à défaut,
+-- donc sans risque sur une table déjà peuplée).
+alter table public.categories add column if not exists name text;
+alter table public.categories add column if not exists slug text;
+alter table public.categories add column if not exists category_type text not null default 'generic';
+alter table public.categories add column if not exists created_at timestamptz not null default now();
+alter table public.categories add column if not exists updated_at timestamptz not null default now();
+
+drop trigger if exists trg_categories_updated_at on public.categories;
+create trigger trg_categories_updated_at
+before update on public.categories
+for each row execute function public.set_updated_at();
 
 create table if not exists public.movie_categories (
   id uuid primary key default gen_random_uuid(),
@@ -159,11 +171,15 @@ for all
 using (public.is_admin())
 with check (public.is_admin());
 
-drop policy if exists "categories_read_enabled_or_admin" on public.categories;
-create policy "categories_read_enabled_or_admin"
+drop policy if exists "categories_read_authenticated" on public.categories;
+create policy "categories_read_authenticated"
 on public.categories
 for select
-using ((is_enabled = true and auth.uid() is not null) or public.is_admin());
+using (auth.uid() is not null);
+
+-- Nettoyage d'une éventuelle policy fantôme créée par une version précédente
+-- de ce script (elle référençait une colonne is_enabled qui n'existe pas).
+drop policy if exists "categories_read_enabled_or_admin" on public.categories;
 
 drop policy if exists "categories_admin_write" on public.categories;
 create policy "categories_admin_write"

@@ -53,11 +53,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         },
         data: (_) {
           if (previous is AsyncLoading<void>) {
-            _notify(
-              _mode == AuthFormMode.signUp
-                  ? 'Compte créé. Vérifiez votre email si la confirmation est activée.'
-                  : 'Connexion réussie.',
-            );
+            _notify(_successMessage());
           }
         },
       );
@@ -141,11 +137,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                     CinevaTextField(
                       controller: _emailController,
-                      label: 'Email',
-                      hint: 'nom@cineva.app',
-                      keyboardType: TextInputType.emailAddress,
-                      prefixIcon: Icons.mail_outline_rounded,
+                      label: 'Identifiant',
+                      hint: 'noah',
+                      keyboardType: TextInputType.text,
+                      prefixIcon: Icons.badge_outlined,
                       textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: CinevaSpacing.xs),
+                    Text(
+                      'Pas d’email nécessaire : choisissez un identifiant '
+                      '(3 à 24 caractères). Une adresse email reste acceptée.',
+                      style: CinevaTypography.meta,
                     ),
                     const SizedBox(height: CinevaSpacing.md),
                     CinevaTextField(
@@ -222,16 +224,35 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// Message de fin d'action : connexion, inscription ouverte, inscription en
+  /// attente de confirmation email.
+  String _successMessage() {
+    if (_mode != AuthFormMode.signUp) return 'Connexion réussie.';
+    final bool sessionOpened =
+        ref.read(sessionControllerProvider).valueOrNull?.user != null;
+    return sessionOpened
+        ? 'Compte créé. Vous êtes connecté avec votre identifiant.'
+        : 'Compte créé, mais aucune session n’a été ouverte : la confirmation par '
+            'email est activée côté Supabase. Désactivez « Confirm email » '
+            '(Authentication → Providers → Email) pour les comptes par identifiant.';
+  }
+
   Future<void> _submit() async {
     final LoginController controller = ref.read(loginControllerProvider.notifier);
-    final String email = _emailController.text.trim();
     final String password = _passwordController.text;
     final String fullName = _fullNameController.text.trim();
 
-    if (email.isEmpty || !email.contains('@')) {
-      _notify('Veuillez saisir un email valide.');
+    final String? identifierError =
+        CinevaIdentifier.validationError(_emailController.text);
+    if (identifierError != null) {
+      _notify(identifierError);
       return;
     }
+    // Supabase n'authentifie que des adresses email : un identifiant simple est
+    // converti en adresse synthétique (jamais envoyée, jamais lue).
+    final String email = CinevaIdentifier.toEmail(
+      CinevaIdentifier.normalize(_emailController.text),
+    );
 
     if (password.length < 6) {
       _notify('Le mot de passe doit contenir au moins 6 caractères.');
@@ -256,9 +277,24 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   Future<void> _resetPassword() async {
-    final String email = _emailController.text.trim();
-    if (email.isEmpty) {
-      _notify('Saisissez votre email.');
+    final String? identifierError =
+        CinevaIdentifier.validationError(_emailController.text);
+    if (identifierError != null) {
+      _notify(identifierError);
+      return;
+    }
+    final String email = CinevaIdentifier.toEmail(
+      CinevaIdentifier.normalize(_emailController.text),
+    );
+
+    if (CinevaIdentifier.isSyntheticEmail(email)) {
+      // Aucune boîte aux lettres derrière un identifiant : envoyer un email de
+      // réinitialisation ne servirait à rien. On dit la vérité et on oriente.
+      _notify(
+        'Un compte par identifiant ne reçoit pas d’email. Contactez le '
+        '${CinevaOffer.contactName} au ${CinevaOffer.supportPhoneDisplay} pour '
+        'réinitialiser le mot de passe.',
+      );
       return;
     }
 

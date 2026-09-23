@@ -26,6 +26,8 @@ export 'src/user/downloads_screen.dart';
 export 'src/user/home_screen.dart';
 export 'src/user/home_skeleton.dart';
 export 'src/user/library_screen.dart';
+export 'src/user/profile_form_sheet.dart';
+export 'src/user/profile_gate_screen.dart';
 export 'src/user/profile_screen.dart';
 export 'src/user/profiles_screen.dart';
 export 'src/user/search_screen.dart';

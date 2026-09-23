@@ -24,6 +24,7 @@ import '../user/devices_screen.dart';
 import '../user/downloads_screen.dart';
 import '../user/home_screen.dart';
 import '../user/library_screen.dart';
+import '../user/profile_gate_screen.dart';
 import '../user/profile_screen.dart';
 import '../user/profiles_screen.dart';
 import '../user/search_screen.dart';
@@ -70,8 +71,14 @@ final _userRouterProvider = Provider<GoRouter>((ref) {
         data: (snapshot) => snapshot.phase,
         orElse: () => SessionPhase.booting,
       );
+      final profileState = ref.read(activeProfileControllerProvider);
       return SessionRouteResolver.resolve(
-        SessionRouteInput(surface: AppSurface.user, phase: phase, location: state.uri.path),
+        SessionRouteInput(
+          surface: AppSurface.user,
+          phase: phase,
+          location: state.uri.path,
+          needsProfileSelection: profileState.needsSelection,
+        ),
       );
     },
     routes: <RouteBase>[
@@ -192,9 +199,17 @@ final _userRouterProvider = Provider<GoRouter>((ref) {
           child: const SubscriptionScreen(),
         ),
       ),
+      // Sas « Qui regarder ? » : choisi au premier lancement sur cet appareil.
+      GoRoute(
+        path: SessionRouteResolver.profileSelect,
+        pageBuilder: (context, state) => CinevaPageTransitions.modal(
+          state: state,
+          child: const ProfileGateScreen(),
+        ),
+      ),
       // Profils membres du foyer : un abonnement, jusqu'à 5 profils.
       GoRoute(
-        path: '/account/profiles',
+        path: SessionRouteResolver.profileManage,
         pageBuilder: (context, state) => CinevaPageTransitions.push(
           state: state,
           child: const ProfilesScreen(),

@@ -70,4 +70,88 @@ void main() {
       );
     });
   });
+
+  group('SessionRouteResolver sas de profil', () {
+    test('authenticated user without active profile lands on the gate', () {
+      expect(
+        SessionRouteResolver.resolve(
+          const SessionRouteInput(
+            surface: AppSurface.user,
+            phase: SessionPhase.authenticated,
+            location: '/home',
+            needsProfileSelection: true,
+          ),
+        ),
+        SessionRouteResolver.profileSelect,
+      );
+    });
+
+    test('gate does not redirect to itself', () {
+      expect(
+        SessionRouteResolver.resolve(
+          const SessionRouteInput(
+            surface: AppSurface.user,
+            phase: SessionPhase.authenticated,
+            location: '/profiles/select',
+            needsProfileSelection: true,
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('profile management stays reachable from the gate', () {
+      expect(
+        SessionRouteResolver.resolve(
+          const SessionRouteInput(
+            surface: AppSurface.user,
+            phase: SessionPhase.authenticated,
+            location: '/account/profiles',
+            needsProfileSelection: true,
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('choosing a profile leaves the gate for home', () {
+      expect(
+        SessionRouteResolver.resolve(
+          const SessionRouteInput(
+            surface: AppSurface.user,
+            phase: SessionPhase.authenticated,
+            location: '/profiles/select',
+          ),
+        ),
+        SessionRouteResolver.userHome,
+      );
+    });
+
+    test('home stays reachable when no profile is required', () {
+      expect(
+        SessionRouteResolver.resolve(
+          const SessionRouteInput(
+            surface: AppSurface.user,
+            phase: SessionPhase.authenticated,
+            location: '/home',
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('gate never applies to the admin app', () {
+      expect(
+        SessionRouteResolver.resolve(
+          const SessionRouteInput(
+            surface: AppSurface.admin,
+            phase: SessionPhase.authenticated,
+            location: '/dashboard',
+            needsProfileSelection: true,
+          ),
+        ),
+        isNull,
+      );
+    });
+  });
 }

@@ -21,8 +21,14 @@ Tout ce qui est critique doit être validé côté serveur :
 ### Auth
 - création et gestion des comptes ;
 - sessions ;
-- récupération mot de passe ;
-- rôles applicatifs via `profiles.role`.
+- récupération mot de passe (comptes créés avec une vraie adresse email) ;
+- rôles applicatifs via `profiles.role` ;
+- **connexion par identifiant** : l'app convertit `noah` en `noah@cineva.app`
+  (`CinevaIdentifier`), Supabase ne gère que des emails. Aucun email n'est
+  envoyé à cette adresse.
+- **réglage requis** : Authentication → Providers → Email → « Confirm email »
+  **désactivé**, sinon un compte créé par identifiant n'obtient aucune session
+  (détails dans `10_abonnement_profils.md`, section E).
 
 ### Postgres
 - données métier ;

@@ -1,4 +1,5 @@
 import 'package:cineva_models/cineva_models.dart';
+import 'package:cineva_shared/cineva_shared.dart';
 import 'package:cineva_theme/cineva_theme.dart';
 import 'package:cineva_ui/cineva_ui.dart';
 import 'package:flutter/material.dart';
@@ -145,7 +146,12 @@ class _AdminUserCard extends ConsumerWidget {
                   children: <Widget>[
                     Text(user.fullName, style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 4),
-                    Text(user.email, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: CinevaColors.textMuted)),
+                    Text(
+                      CinevaIdentifier.isSyntheticEmail(user.email)
+                          ? '${CinevaIdentifier.displayName(user.email)} · compte par identifiant'
+                          : user.email,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: CinevaColors.textMuted),
+                    ),
                   ],
                 ),
               ),
@@ -201,7 +207,13 @@ class _AdminUserCard extends ConsumerWidget {
                 onPressed: () => _confirmAction(
                   context,
                   title: 'Réinitialiser le mot de passe',
-                  message: 'Envoyer un email de réinitialisation à ${user.email} ?',
+                  message: CinevaIdentifier.isSyntheticEmail(user.email)
+                      ? 'Ce compte se connecte avec l’identifiant '
+                          '« ${CinevaIdentifier.displayName(user.email)} » : il n’a '
+                          'pas de boîte email, la réinitialisation n’aboutira pas. '
+                          'Passez par Supabase (Authentication → Users) ou faites '
+                          'créer un compte avec une vraie adresse email.'
+                      : 'Envoyer un email de réinitialisation à ${user.email} ?',
                   onConfirm: () => _runAdminAction(
                     context,
                     ref,

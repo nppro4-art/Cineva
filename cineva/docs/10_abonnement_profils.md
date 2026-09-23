@@ -31,6 +31,27 @@ Le script restaure aussi le trigger `updated_at`, l'index de lecture
 Une requête de contrôle termine le script : `colonne_updated_at_ok` et
 `table_movie_categories_ok` doivent valoir `true`, `max_appareils` doit valoir `5`.
 
+#### Erreur `42703 column "is_enabled" does not exist` — corrigée
+
+Une première version du script recréait `categories` avec des colonnes
+inventées (`is_enabled`, `sort_order`) au lieu de recopier le vrai schéma :
+l'exécution s'arrêtait net sur la policy, **avant** les `GRANT` et avant
+l'upsert `app_settings.limits`. Les erreurs `42501` restaient donc présentes.
+
+Le script est désormais aligné sur `supabase/schema.sql` :
+
+- `categories(id, name, slug not null unique, category_type, created_at, updated_at)` —
+  pas de `is_enabled` ni de `sort_order` ;
+- policy réelle `categories_read_authenticated` (`auth.uid() is not null`) ;
+- trigger `trg_categories_updated_at` ;
+- les colonnes `slug` / `category_type` sont ajoutées de façon défensive
+  (`ADD COLUMN IF NOT EXISTS`) pour une base ancienne qui les aurait perdues.
+
+**À faire : rejouer `repair_movies.sql` en entier** dans SQL Editor. Le script
+est idempotent, tout ce qui a déjà été appliqué est simplement revérifié, et
+cette fois les `GRANT`, les `ALTER DEFAULT PRIVILEGES` et les limites
+5 appareils / 5 profils / 15 € passent.
+
 ### 2. `cineva/supabase/migration_profils_abonnement.sql` — pour les profils
 
 Crée la table `member_profiles` et rattache les données personnelles au profil :
@@ -83,6 +104,7 @@ par une policy « administration uniquement », l'app abonné ne peut pas la lir
 | Écran | Route | Contenu |
 | --- | --- | --- |
 | Profil → **Abonnement & paiement** | `/account/subscription` | prix, ce qui est compris, appareils x/5, profils x/5, date d'expiration, marche à suivre pour payer, téléphone et Revolut copiables d'un geste |
+| **Qui regarde ?** (après connexion) | `/profiles/select` | choix du profil ou création, puis accueil de ce profil |
 | Profil → **Profils du foyer** | `/account/profiles` | liste des profils, création (nom, avatar, couleur, profil enfant), modification, suppression, profil actif |
 | Profil → **Appareils** | `/account/devices` | appareils connectés, déconnexion unitaire ou globale |
 
@@ -103,7 +125,54 @@ La suppression est définitive et emporte les favoris et l'historique de ce
 profil (cascade en base sur `profile_id`). Une feuille de confirmation le dit
 explicitement avant l'action. L'abonnement et les autres profils ne bougent pas.
 
-## D. Où est le code
+## D. Sas « Qui regarde ? » au démarrage
+
+Après la connexion, l'app ne tombe plus directement sur l'accueil : elle
+demande d'abord quel profil regarde — ou propose d'en créer un — puis ouvre
+l'accueil **de ce profil** (sa liste, sa reprise de lecture).
+
+| Situation | Comportement |
+| --- | --- |
+| Profils en base, aucun choisi sur cet appareil | sas `/profiles/select` |
+| Profil choisi (mémorisé sur l'appareil) | accueil direct |
+| Base sans table `member_profiles` (migration non jouée) | accueil direct, l'app fonctionne comme avant |
+| Chargement des profils en cours | accueil direct : on ne bloque jamais sur un sas vide |
+| Erreur réseau sur les profils | sas avec un bandeau d'erreur **et** un bouton « Continuer sans profil » |
+| Profil actif supprimé sur un autre appareil | le sas réapparaît (pas de bascule silencieuse sur le profil d'un autre membre) |
+| Console d'administration | jamais de sas (les profils ne concernent que l'app abonné) |
+
+Depuis le sas, « Gérer les profils » ouvre `/account/profiles` : renommer,
+changer l'avatar ou supprimer un profil ne renvoie pas à la case départ.
+
+Le sas est piloté par `ActiveProfileState.needsSelection` (profils présents +
+aucun profil actif + chargement terminé), lu par le `redirect` du routeur ; le
+routeur est rafraîchi à chaque changement d'état des profils
+(`routerRefreshNotifierProvider`).
+
+## E. Connexion par identifiant (sans email)
+
+La connexion et l'inscription demandent un **identifiant** (`noah`) et un mot
+de passe. Aucun email n'est nécessaire, donc aucun email à envoyer.
+
+| Élément | Détail |
+| --- | --- |
+| Conversion | `noah` → `noah@cineva.app` (`CinevaIdentifier.toEmail`) : Supabase n'authentifie que des adresses email |
+| Domaine de repli | `cineva.app` (adresse synthétique, aucune boîte derrière) |
+| Règles | 3 à 24 caractères, lettres/chiffres/`.`/`-`/`_`, commence et finit par une lettre ou un chiffre |
+| Vrai email | toujours accepté, inchangé (comptes existants, administrateurs) |
+| Affichage | l'écran Profil et la console admin montrent `noah`, pas `noah@cineva.app` |
+| Mot de passe oublié | impossible par email avec un identifiant : l'app le dit et oriente vers le `+33 7 87 14 69 92` ; la console admin affiche le même avertissement avant l'action |
+
+**Réglage Supabase obligatoire** : Authentication → Providers → Email →
+**désactiver « Confirm email »**. Tant que la confirmation est activée, un
+compte créé par identifiant n'obtient aucune session (l'email de confirmation
+part vers une adresse qui n'existe pas). L'app détecte ce cas et affiche un
+message explicite après l'inscription.
+
+Les comptes déjà créés avec une vraie adresse email continuent de se connecter
+avec cette adresse.
+
+## F. Où est le code
 
 | Rôle | Fichier |
 | --- | --- |
@@ -114,5 +183,7 @@ explicitement avant l'action. L'abonnement et les autres profils ne bougent pas.
 | Filtrage par profil (favoris, reprise) | `packages/repositories/lib/src/supabase_user_library_repository.dart` |
 | Cache local par profil | `packages/services/lib/src/storage/local_preferences_service.dart` |
 | Contrôleur (chargement, bascule, plafond) | `packages/widgets/lib/src/library/active_profile_controller.dart` |
-| Écrans | `packages/widgets/lib/src/user/subscription_screen.dart`, `profiles_screen.dart` |
-| Tests | `packages/{shared,models,repositories,widgets}/test/*profile*`, `cineva_offer_test.dart` |
+| Écrans | `packages/widgets/lib/src/user/subscription_screen.dart`, `profiles_screen.dart`, `profile_gate_screen.dart` (sas), `profile_form_sheet.dart` (formulaire partagé) |
+| Sas de profil (routage) | `packages/shared/lib/src/session_route_resolver.dart`, `packages/widgets/lib/src/app/user_app.dart` |
+| Identifiant ↔ email | `packages/shared/lib/src/cineva_identifier.dart`, `packages/widgets/lib/src/auth/login_screen.dart` |
+| Tests | `packages/{shared,models,repositories,widgets}/test/*profile*`, `cineva_offer_test.dart`, `cineva_identifier_test.dart`, `session_route_resolver_test.dart` |

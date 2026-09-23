@@ -123,6 +123,9 @@ final sessionControllerProvider = StateNotifierProvider<SessionController, Async
 final routerRefreshNotifierProvider = Provider<RouterRefreshNotifier>((ref) {
   final notifier = RouterRefreshNotifier();
   ref.listen<AsyncValue<SessionSnapshot>>(sessionControllerProvider, (_, __) => notifier.trigger());
+  // Le sas « Qui regarde ? » et l'accueil dépendent du profil actif : sans ce
+  // rafraîchissement, le redirect ne serait pas réévalué après le choix.
+  ref.listen<ActiveProfileState>(activeProfileControllerProvider, (_, __) => notifier.trigger());
   ref.onDispose(notifier.dispose);
   return notifier;
 });
