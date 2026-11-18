@@ -55,6 +55,30 @@ final catalogRepositoryProvider = Provider<CatalogRepository>(
   (ref) => SupabaseCatalogRepository(ref.watch(backendServiceProvider)),
 );
 
+/// Optional third-party and first-party media providers. Applications can
+/// override this registry at the ProviderScope boundary; the default remains
+/// empty so existing Cineva behaviour is unchanged.
+final cinevaMediaProviderRegistryProvider = Provider<CinevaMediaProviderRegistry>(
+  (ref) => CinevaMediaProviderRegistry(const <CinevaMediaProvider>[]),
+);
+
+final externalMediaSearchProvider =
+    FutureProvider.family<List<CinevaProviderItem>, String>((ref, query) {
+  return ref.watch(cinevaMediaProviderRegistryProvider).search(query);
+});
+
+final externalMediaCatalogProvider =
+    FutureProvider.family<List<CinevaProviderItem>, String>((ref, catalogId) {
+  return ref.watch(cinevaMediaProviderRegistryProvider).catalog(
+        catalogId: catalogId,
+      );
+});
+
+final externalMediaSourcesProvider =
+    FutureProvider.family<List<CinevaProviderSource>, String>((ref, contentId) {
+  return ref.watch(cinevaMediaProviderRegistryProvider).resolve(contentId);
+});
+
 final adminRepositoryProvider = Provider<AdminRepository>(
   (ref) => SupabaseAdminRepository(ref.watch(backendServiceProvider)),
 );
