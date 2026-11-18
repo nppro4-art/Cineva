@@ -1,0 +1,50 @@
+name: media-engine-validation
+
+on:
+  push:
+    branches:
+      - feature/adaptive-media-engine
+    paths:
+      - ".github/workflows/media-engine-validation.yml"
+      - "cineva/packages/widgets/**"
+      - "cineva/packages/services/**"
+      - "cineva/packages/models/**"
+  pull_request:
+    paths:
+      - "cineva/packages/widgets/**"
+      - "cineva/packages/services/**"
+      - "cineva/packages/models/**"
+
+permissions:
+  contents: read
+
+jobs:
+  flutter-packages:
+    name: Flutter package tests and analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: stable
+          cache: true
+      - name: Install widget package dependencies
+        working-directory: cineva/packages/widgets
+        run: flutter pub get
+      - name: Analyze widget package
+        working-directory: cineva/packages/widgets
+        run: flutter analyze --fatal-infos
+      - name: Test widget package
+        working-directory: cineva/packages/widgets
+        run: flutter test
+      - name: Install services package dependencies
+        working-directory: cineva/packages/services
+        run: flutter pub get
+      - name: Analyze services package
+        working-directory: cineva/packages/services
+        run: flutter analyze --fatal-infos
+      - name: Test services package
+        working-directory: cineva/packages/services
+        run: flutter test
