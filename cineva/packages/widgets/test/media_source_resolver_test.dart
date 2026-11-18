@@ -16,6 +16,40 @@ void main() {
       expect(MediaSourceResolver.resolve('https://cdn.example.com/manifest.mpd').type, MediaSourceType.dash);
     });
 
+    test('detects HLS and DASH from MIME metadata', () {
+      expect(
+        MediaSourceResolver.resolve(
+          'https://cdn.example.com/stream',
+          mimeType: 'application/vnd.apple.mpegurl',
+        ).type,
+        MediaSourceType.hls,
+      );
+      expect(
+        MediaSourceResolver.resolve(
+          'https://cdn.example.com/manifest',
+          mimeType: 'application/dash+xml',
+        ).type,
+        MediaSourceType.dash,
+      );
+    });
+
+    test('detects direct media from MIME metadata', () {
+      expect(
+        MediaSourceResolver.resolve(
+          'https://cdn.example.com/resource',
+          mimeType: 'video/mp4',
+        ).type,
+        MediaSourceType.directVideo,
+      );
+      expect(
+        MediaSourceResolver.resolve(
+          'https://cdn.example.com/resource',
+          mimeType: 'audio/aac',
+        ).type,
+        MediaSourceType.directAudio,
+      );
+    });
+
     test('detects iframe/provider URLs as web embeds', () {
       expect(MediaSourceResolver.resolve('https://sharecloudy.com/iframe/32542978').type, MediaSourceType.webEmbed);
     });
