@@ -6,7 +6,13 @@ void _playerEnsureController(
   required PlaybackProgressModel? progress,
   required DownloadItemModel? download,
 }) {
-  if (state._activeContentId == detail.id && state._controller != null) return;
+  if (state._activeContentId == detail.id &&
+      (state._controller != null || state._externalSourceResolutionAttempted)) {
+    return;
+  }
+  if (state._activeContentId != detail.id) {
+    state._externalSourceResolutionAttempted = false;
+  }
 
   state._activeContentId = detail.id;
   state._selectedAudio = detail.audioLanguages.isNotEmpty ? detail.audioLanguages.first : 'Français';
@@ -20,6 +26,7 @@ void _playerEnsureController(
   final sourceValue = (localPath != null && localPath.isNotEmpty) ? localPath : url;
 
   if (sourceValue == null || sourceValue.isEmpty) {
+    state._externalSourceResolutionAttempted = true;
     state._playbackError = 'Recherche de sources de lecture disponibles...';
     unawaited(
       _playerTryExternalProviderSources(
