@@ -9,6 +9,7 @@ import '../audio/audio_engine_controller.dart';
 import '../auth/login_controller.dart';
 import '../library/library_controller.dart';
 import '../player/provider_playback_resolver.dart';
+import '../player/media_source_ranking.dart';
 import '../search/search_controller.dart';
 import '../settings/settings_controller.dart';
 import '../vision/vision_controller.dart';
