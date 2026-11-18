@@ -18,7 +18,7 @@ class MediaSource {
 }
 
 class MediaSourceResolver {
-  static MediaSource resolve(String value) {
+  static MediaSource resolve(String value, {String? mimeType}) {
     final source = value.trim();
     if (source.isEmpty) {
       throw const FormatException('La source média est vide.');
@@ -35,16 +35,25 @@ class MediaSourceResolver {
     }
 
     final path = uri.path.toLowerCase();
-    if (path.endsWith('.m3u8') || lower.contains('.m3u8?')) {
+    final mime = mimeType?.split(';').first.trim().toLowerCase() ?? '';
+    if (path.endsWith('.m3u8') ||
+        lower.contains('.m3u8?') ||
+        mime == 'application/vnd.apple.mpegurl' ||
+        mime == 'application/x-mpegurl' ||
+        mime == 'audio/mpegurl') {
       return MediaSource(type: MediaSourceType.hls, value: source);
     }
-    if (path.endsWith('.mpd') || lower.contains('.mpd?')) {
+    if (path.endsWith('.mpd') ||
+        lower.contains('.mpd?') ||
+        mime == 'application/dash+xml') {
       return MediaSource(type: MediaSourceType.dash, value: source);
     }
-    if (_hasExtension(path, <String>{'.mp3', '.m4a', '.aac', '.wav', '.flac', '.ogg', '.opus'})) {
+    if (_hasExtension(path, <String>{'.mp3', '.m4a', '.aac', '.wav', '.flac', '.ogg', '.opus'}) ||
+        mime.startsWith('audio/')) {
       return MediaSource(type: MediaSourceType.directAudio, value: source);
     }
-    if (_hasExtension(path, <String>{'.mp4', '.webm', '.mov', '.mkv', '.avi', '.m4v', '.ts'})) {
+    if (_hasExtension(path, <String>{'.mp4', '.webm', '.mov', '.mkv', '.avi', '.m4v', '.ts'}) ||
+        mime.startsWith('video/')) {
       return MediaSource(type: MediaSourceType.directVideo, value: source);
     }
 
