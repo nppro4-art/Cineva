@@ -13,7 +13,13 @@ class FakeProvider implements CinevaMediaProvider {
   Future<List<CinevaProviderItem>> search(String query) async {
     if (fail) throw StateError('provider failure');
     return [
-      CinevaProviderItem(id: 'shared', title: 'Shared title', providerId: id),
+      CinevaProviderItem(
+        id: 'shared',
+        title: 'Shared title',
+        providerId: id,
+        posterUrl: id == 'second' ? 'https://img.example.com/poster.jpg' : null,
+        genres: id == 'second' ? const ['Drama'] : const [],
+      ),
       CinevaProviderItem(id: '${id}-only', title: 'Unique', providerId: id),
     ];
   }
@@ -51,6 +57,9 @@ void main() {
       final results = await registry.search('  dune  ');
       expect(results.map((item) => item.id).toSet(),
           {'shared', 'first-only', 'second-only'});
+      final shared = results.firstWhere((item) => item.id == 'shared');
+      expect(shared.posterUrl, 'https://img.example.com/poster.jpg');
+      expect(shared.genres, contains('Drama'));
     });
 
     test('isolates provider failures', () async {
