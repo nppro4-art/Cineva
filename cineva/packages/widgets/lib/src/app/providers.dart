@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../audio/audio_engine_controller.dart';
 import '../auth/login_controller.dart';
 import '../library/library_controller.dart';
+import '../player/provider_playback_resolver.dart';
 import '../search/search_controller.dart';
 import '../settings/settings_controller.dart';
 import '../vision/vision_controller.dart';
@@ -77,6 +78,17 @@ final externalMediaCatalogProvider =
 final externalMediaSourcesProvider =
     FutureProvider.family<List<CinevaProviderSource>, String>((ref, contentId) {
   return ref.watch(cinevaMediaProviderRegistryProvider).resolve(contentId);
+});
+
+final providerPlaybackResolverProvider = Provider<CinevaProviderPlaybackResolver>((ref) {
+  return CinevaProviderPlaybackResolver(
+    registry: ref.watch(cinevaMediaProviderRegistryProvider),
+  );
+});
+
+final externalPlaybackCandidatesProvider =
+    FutureProvider.family<List<MediaSourceCandidate>, String>((ref, contentId) {
+  return ref.watch(providerPlaybackResolverProvider).resolve(contentId);
 });
 
 final adminRepositoryProvider = Provider<AdminRepository>(
