@@ -59,6 +59,16 @@ void main() {
           ['fast', 'high-quality', 'unreliable']);
     });
 
+    test('selects the highest safe rendition instead of the fastest low rendition', () {
+      final selected = ranking.selectBest([
+        candidate('480p', quality: 1, bitrate: 1200, latency: 80),
+        candidate('720p', quality: 2, bitrate: 2800, latency: 300),
+        candidate('1080p', quality: 3, bitrate: 6000, latency: 50),
+      ], availableBandwidthKbps: 4000);
+
+      expect(selected?.id, '720p');
+    });
+
     test('returns null when no candidate fits the bandwidth budget', () {
       expect(
         ranking.selectBest(
