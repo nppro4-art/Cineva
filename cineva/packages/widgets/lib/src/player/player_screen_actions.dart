@@ -218,8 +218,16 @@ Future<void> _playerRetry(_PlayerScreenState state, ContentDetailModel detail) a
   }
   final currentPosition = state._controller?.value.isInitialized ?? false ? state._controller!.value.position.inSeconds : 0;
   final url = detail.resolvePlaybackUrl(state._selectedQuality) ?? detail.videoUrl;
-  if (url == null) return;
   state.setState(() => state._playbackError = null);
+  if (url == null || url.isEmpty) {
+    state._externalSourceResolutionAttempted = true;
+    await _playerTryExternalProviderSources(
+      state,
+      detail: detail,
+      seekToSeconds: currentPosition,
+    );
+    return;
+  }
   await _playerInitializeController(
     state,
     url: url,
