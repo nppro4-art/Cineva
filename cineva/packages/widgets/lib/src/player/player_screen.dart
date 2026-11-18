@@ -76,6 +76,7 @@ class _PlayerScreenState extends ConsumerState<PlayerScreen> with WidgetsBinding
   String? _nextEpisodeId;
   int _nextEpisodeCountdown = 0;
   String? _activeContentId;
+  bool _externalSourceResolutionAttempted = false;
   MediaSource? _mediaSource;
 
   @override

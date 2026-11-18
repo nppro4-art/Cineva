@@ -8,6 +8,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../audio/audio_engine_controller.dart';
 import '../auth/login_controller.dart';
 import '../library/library_controller.dart';
+import '../player/provider_playback_resolver.dart';
+import '../player/media_source_ranking.dart';
 import '../search/search_controller.dart';
 import '../settings/settings_controller.dart';
 import '../vision/vision_controller.dart';
@@ -54,6 +56,41 @@ final sessionRepositoryProvider = Provider<SessionRepository>(
 final catalogRepositoryProvider = Provider<CatalogRepository>(
   (ref) => SupabaseCatalogRepository(ref.watch(backendServiceProvider)),
 );
+
+/// Optional third-party and first-party media providers. Applications can
+/// override this registry at the ProviderScope boundary; the default remains
+/// empty so existing Cineva behaviour is unchanged.
+final cinevaMediaProviderRegistryProvider = Provider<CinevaMediaProviderRegistry>(
+  (ref) => CinevaMediaProviderRegistry(const <CinevaMediaProvider>[]),
+);
+
+final externalMediaSearchProvider =
+    FutureProvider.family<List<CinevaProviderItem>, String>((ref, query) {
+  return ref.watch(cinevaMediaProviderRegistryProvider).search(query);
+});
+
+final externalMediaCatalogProvider =
+    FutureProvider.family<List<CinevaProviderItem>, String>((ref, catalogId) {
+  return ref.watch(cinevaMediaProviderRegistryProvider).catalog(
+        catalogId: catalogId,
+      );
+});
+
+final externalMediaSourcesProvider =
+    FutureProvider.family<List<CinevaProviderSource>, String>((ref, contentId) {
+  return ref.watch(cinevaMediaProviderRegistryProvider).resolve(contentId);
+});
+
+final providerPlaybackResolverProvider = Provider<CinevaProviderPlaybackResolver>((ref) {
+  return CinevaProviderPlaybackResolver(
+    registry: ref.watch(cinevaMediaProviderRegistryProvider),
+  );
+});
+
+final externalPlaybackCandidatesProvider =
+    FutureProvider.family<List<MediaSourceCandidate>, String>((ref, contentId) {
+  return ref.watch(providerPlaybackResolverProvider).resolve(contentId);
+});
 
 final adminRepositoryProvider = Provider<AdminRepository>(
   (ref) => SupabaseAdminRepository(ref.watch(backendServiceProvider)),

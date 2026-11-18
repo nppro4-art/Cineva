@@ -7,3 +7,4 @@ export 'src/network/network_status_service.dart';
 export 'src/notifications/push_notification_service.dart';
 export 'src/storage/local_preferences_service.dart';
 export 'src/vision/cineva_vision_service.dart';
+export 'src/media/cineva_media_provider.dart';

@@ -6,7 +6,13 @@ void _playerEnsureController(
   required PlaybackProgressModel? progress,
   required DownloadItemModel? download,
 }) {
-  if (state._activeContentId == detail.id && state._controller != null) return;
+  if (state._activeContentId == detail.id &&
+      (state._controller != null || state._externalSourceResolutionAttempted)) {
+    return;
+  }
+  if (state._activeContentId != detail.id) {
+    state._externalSourceResolutionAttempted = false;
+  }
 
   state._activeContentId = detail.id;
   state._selectedAudio = detail.audioLanguages.isNotEmpty ? detail.audioLanguages.first : 'Français';
@@ -20,7 +26,15 @@ void _playerEnsureController(
   final sourceValue = (localPath != null && localPath.isNotEmpty) ? localPath : url;
 
   if (sourceValue == null || sourceValue.isEmpty) {
-    state._playbackError = 'Aucune source média disponible pour ce contenu.';
+    state._externalSourceResolutionAttempted = true;
+    state._playbackError = 'Recherche de sources de lecture disponibles...';
+    unawaited(
+      _playerTryExternalProviderSources(
+        state,
+        detail: detail,
+        seekToSeconds: progress?.positionSeconds ?? 0,
+      ),
+    );
     return;
   }
 
@@ -240,5 +254,53 @@ extension _PlayerAudioEngineX on _PlayerScreenState {
     } catch (_) {
       // provider indisponible pendant une transition de page
     }
+  }
+}
+
+/// Last-resort source discovery: first-party URLs and offline downloads always
+/// win. Add-on sources are queried only when Cineva has no playable URL.
+Future<void> _playerTryExternalProviderSources(
+  _PlayerScreenState state, {
+  required ContentDetailModel detail,
+  required int seekToSeconds,
+}) async {
+  try {
+    final candidates = await state.ref
+        .read(providerPlaybackResolverProvider)
+        .resolve(detail.id);
+    if (!state.mounted || state._activeContentId != detail.id) return;
+    if (candidates.isEmpty) {
+      state.setState(() {
+        state._playbackError = 'Aucune source média disponible pour ce contenu.';
+      });
+      return;
+    }
+
+    final selected = candidates.first;
+    state._mediaSource = selected.source;
+    if (selected.source.isWebEmbed) {
+      state._controller?.removeListener(state._videoListener);
+      await state._controller?.dispose();
+      state._controller = null;
+      if (state.mounted) {
+        state.setState(() => state._playbackError = null);
+      }
+      return;
+    }
+
+    await _playerInitializeController(
+      state,
+      url: selected.source.value,
+      localFilePath: null,
+      seekToSeconds: seekToSeconds,
+      autoPlay: true,
+      skipSegments: detail.skipSegments,
+    );
+  } catch (error) {
+    if (!state.mounted || state._activeContentId != detail.id) return;
+    state.setState(() {
+      state._playbackError =
+          'Impossible de résoudre une source externe. ($error)';
+    });
   }
 }
