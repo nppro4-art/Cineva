@@ -22,18 +22,18 @@ class SourceProvider implements CinevaMediaProvider {
 
   @override
   Future<List<CinevaProviderSource>> resolve(String contentId) async => [
-        const CinevaProviderSource(
+        CinevaProviderSource(
           id: 'hd',
           providerId: 'addon',
-          url: 'https://cdn.example.com/hd',
+          url: Uri.parse('https://cdn.example.com/hd'),
           mimeType: 'application/vnd.apple.mpegurl',
           qualityLabel: '1080p',
           bitrateKbps: 5000,
         ),
-        const CinevaProviderSource(
+        CinevaProviderSource(
           id: 'sd',
           providerId: 'addon',
-          url: 'https://cdn.example.com/sd.mp4',
+          url: Uri.parse('https://cdn.example.com/sd.mp4'),
           qualityLabel: '480p',
           bitrateKbps: 1200,
         ),
