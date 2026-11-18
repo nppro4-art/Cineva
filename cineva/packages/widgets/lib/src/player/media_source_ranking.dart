@@ -105,6 +105,17 @@ class MediaSourceRanking {
       candidates,
       availableBandwidthKbps: availableBandwidthKbps,
     );
-    return ranked.isEmpty ? null : ranked.first;
+    if (ranked.isEmpty) return null;
+    ranked.sort((a, b) {
+      final quality = b.qualityRank.compareTo(a.qualityRank);
+      if (quality != 0) return quality;
+      final bitrate = (b.bitrateKbps ?? 0).compareTo(a.bitrateKbps ?? 0);
+      if (bitrate != 0) return bitrate;
+      final reliability = a.failureCount.compareTo(b.failureCount);
+      if (reliability != 0) return reliability;
+      return (a.startupLatencyMs ?? 1 << 30)
+          .compareTo(b.startupLatencyMs ?? 1 << 30);
+    });
+    return ranked.first;
   }
 }
