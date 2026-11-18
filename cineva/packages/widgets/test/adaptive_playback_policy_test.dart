@@ -27,16 +27,24 @@ void main() {
     });
 
     test('requires stable samples before an upshift', () {
-      final policy = AdaptivePlaybackPolicy(upshiftConfirmationSamples: 2);
-      policy.addThroughputSample(
-        bytesDownloaded: 100000,
-        elapsed: const Duration(seconds: 1),
+      final policy = AdaptivePlaybackPolicy(
+        smoothingFactor: 1,
+        upshiftConfirmationSamples: 2,
       );
       final options = [
-        rendition('low', 300, 1),
+        rendition('low', 200, 1),
         rendition('high', 900, 2),
       ];
+      policy.addThroughputSample(
+        bytesDownloaded: 50000,
+        elapsed: const Duration(seconds: 1),
+      );
       expect(policy.choose(candidates: options)?.id, 'low');
+
+      policy.addThroughputSample(
+        bytesDownloaded: 1000000,
+        elapsed: const Duration(seconds: 1),
+      );
       expect(policy.choose(candidates: options), isNull);
       expect(policy.choose(candidates: options)?.id, 'high');
     });
