@@ -143,7 +143,31 @@ class CinevaMediaProviderRegistry {
       final key = item.id.trim().isNotEmpty
           ? item.id.trim()
           : '${item.providerId}:${item.title.trim().toLowerCase()}';
-      if (key.isNotEmpty) byIdentity.putIfAbsent(key, () => item);
+      if (key.isEmpty) continue;
+      final existing = byIdentity[key];
+      if (existing == null) {
+        byIdentity[key] = item;
+      } else {
+        // Preserve the first provider's canonical identity while filling
+        // metadata gaps from subsequent catalogue sources.
+        byIdentity[key] = CinevaProviderItem(
+          id: existing.id,
+          title: existing.title.isNotEmpty ? existing.title : item.title,
+          providerId: existing.providerId,
+          description: existing.description ?? item.description,
+          posterUrl: existing.posterUrl ?? item.posterUrl,
+          backdropUrl: existing.backdropUrl ?? item.backdropUrl,
+          releaseYear: existing.releaseYear ?? item.releaseYear,
+          genres: List<String>.unmodifiable(
+            <String>{...existing.genres, ...item.genres},
+          ),
+          rating: existing.rating ?? item.rating,
+          externalIds: <String, String>{
+            ...item.externalIds,
+            ...existing.externalIds,
+          },
+        );
+      }
     }
     return List<CinevaProviderItem>.unmodifiable(byIdentity.values);
   }
